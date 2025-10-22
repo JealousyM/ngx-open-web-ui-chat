@@ -1,0 +1,149 @@
+<div class="app-container">
+  <aside class="sidebar">
+    <h2>OpenWebUI Chat</h2>
+    
+    <div class="config-section">
+      <h3>Configuration</h3>
+      
+      <div class="form-group">
+        <label for="host-input">Host URL</label>
+        <input 
+          id="host-input"
+          type="text" 
+          [ngModel]="hostUrl()"
+          (ngModelChange)="hostUrl.set($event)"
+          placeholder="http://localhost:8080"
+          [disabled]="chatConnected()"
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="apikey-input">API Key</label>
+        <input 
+          id="apikey-input"
+          type="password" 
+          [ngModel]="apiKey()"
+          (ngModelChange)="apiKey.set($event)"
+          placeholder="sk-..."
+          [disabled]="chatConnected()"
+        />
+      </div>
+      
+      <button 
+        class="btn btn-primary"
+        (click)="loadModels()"
+        [disabled]="!canLoadModels()">
+        @if (loadingModels()) {
+          Loading...
+        } @else {
+          Show Models
+        }
+      </button>
+    </div>
+    
+    @if (models().length > 0) {
+      <div class="models-section">
+        <h3>Models</h3>
+        <div class="form-group">
+          <label for="model-select">Select Model</label>
+          <select 
+            id="model-select" 
+            [value]="selectedModelId()" 
+            (change)="onModelChange($event)"
+            [disabled]="chatConnected()">
+            <option value="">-- Select a model --</option>
+            @for (model of models(); track model.id) {
+              <option [value]="model.id">{{ model.name || model.id }}</option>
+            }
+          </select>
+        </div>
+        
+        @if (selectedModelId()) {
+          <button 
+            class="btn btn-success"
+            (click)="connectChat()"
+            [disabled]="chatConnected()">
+            @if (chatConnected()) {
+              ✓ Connected
+            } @else {
+              Connect Chat
+            }
+          </button>
+        }
+      </div>
+    }
+    
+    @if (chatConnected()) {
+      <div class="chat-controls">
+        <h3>Chat Controls</h3>
+        
+        <div class="form-group">
+          <label for="language-select">Language</label>
+          <select 
+            id="language-select" 
+            [value]="currentLanguage()" 
+            (change)="onLanguageChange($event)">
+            @for (lang of languages; track lang.code) {
+              <option [value]="lang.code">{{ lang.name }}</option>
+            }
+          </select>
+        </div>
+        
+        <button 
+          class="btn btn-danger"
+          (click)="clearChat()"
+          [disabled]="!hasMessages()">
+          Clear Chat
+        </button>
+        
+        <button 
+          class="btn btn-secondary"
+          (click)="disconnect()">
+          Disconnect
+        </button>
+      </div>
+    }
+  </aside>
+  
+  <main class="chat-area">
+    @if (!chatConnected()) {
+      <div class="placeholder">
+        <div class="placeholder-content">
+          <h2>Welcome to OpenWebUI Chat</h2>
+          <p>Please configure your connection and select a model to start chatting.</p>
+          <div class="steps">
+            <div class="step" [class.completed]="hostUrl() && apiKey()">
+              <span class="step-number">1</span>
+              <span class="step-text">Enter Host URL and API Key</span>
+            </div>
+            <div class="step" [class.completed]="models().length > 0">
+              <span class="step-number">2</span>
+              <span class="step-text">Load Models</span>
+            </div>
+            <div class="step" [class.completed]="selectedModelId()">
+              <span class="step-number">3</span>
+              <span class="step-text">Select a Model</span>
+            </div>
+            <div class="step" [class.completed]="chatConnected()">
+              <span class="step-number">4</span>
+              <span class="step-text">Connect and Start Chatting</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <openwebui-chat 
+        #chatComponent
+        [modelId]="selectedModelId()"
+        [apiKey]="apiKey()"
+        [endpoint]="hostUrl()"
+        [language]="currentLanguage()"
+        [debug]="true"
+        [enableMarkdown]="true"
+        (chatInitialized)="onChatInitialized()"
+        (messagesChanged)="onMessagesChanged($event)">
+      </openwebui-chat>
+    }
+  </main>
+</div>
+

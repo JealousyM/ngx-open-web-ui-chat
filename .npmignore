@@ -1,0 +1,10 @@
+src/
+*.ts
+!*.d.ts
+tsconfig.json
+ng-package.json
+README.md
+node_modules/
+.angular/
+
+

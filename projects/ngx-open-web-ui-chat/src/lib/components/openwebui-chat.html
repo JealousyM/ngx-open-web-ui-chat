@@ -1,0 +1,40 @@
+<div class="openwebui-chat-container">
+  <div class="chat-messages">
+    @for (msg of messages(); track $index) {
+      <div class="message" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+        <div class="message-content">
+          @if (enableMarkdown) {
+            <markdown [data]="msg.content"></markdown>
+          } @else {
+            {{ msg.content }}
+          }
+        </div>
+      </div>
+    }
+    @if (isLoading()) {
+      <div class="message assistant loading">
+        <div class="message-content">
+          @if (enableMarkdown) {
+            <markdown [data]="currentResponse()"></markdown>
+          } @else {
+            {{ currentResponse() }}
+          }
+          <span class="cursor">▊</span>
+        </div>
+      </div>
+    }
+  </div>
+  <div class="chat-input">
+    <input
+      type="text"
+      [(ngModel)]="inputMessage"
+      (keyup.enter)="sendMessageInternal()"
+      [disabled]="isLoading()"
+      [placeholder]="t.placeholder"
+    />
+    <button (click)="sendMessageInternal()" [disabled]="isLoading() || !inputMessage.trim()">
+      {{ t.send }}
+    </button>
+  </div>
+</div>
+
