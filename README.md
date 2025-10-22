@@ -4,6 +4,17 @@
 
 Modern Angular 20 library for embedding OpenWebUI chat in your applications with full **conversation history**, **markdown support**, and **Angular 2025 architecture**.
 
+## 🌐 Live Demo
+
+**[Try the live demo →](https://jealousym.github.io/ngx-open-web-ui-chat/)**
+
+Interactive demo showcasing all features:
+- Dynamic configuration
+- Model selection
+- Real-time chat with conversation history
+- Markdown rendering
+- Multi-language support
+
 ## ✨ Features
 
 - 🚀 **Angular 2025 Ready** - Zoneless, Signals, Modern file structure

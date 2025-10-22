@@ -5,7 +5,10 @@
   "scripts": {
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch"
+    "build:prod": "ng build --configuration production --base-href /ngx-open-web-ui-chat/",
+    "watch": "ng build --watch",
+    "deploy": "npm run build:prod && npx angular-cli-ghpages --dir=dist/test-app/browser",
+    "deploy:ci": "npx angular-cli-ghpages --dir=dist/test-app/browser --no-silent"
   },
   "dependencies": {
     "@angular/animations": "^20.0.0",

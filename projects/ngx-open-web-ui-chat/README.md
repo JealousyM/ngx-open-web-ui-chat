@@ -6,6 +6,9 @@ Angular 20 component library for embedding OpenWebUI chat with conversation hist
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
 [![Zoneless](https://img.shields.io/badge/Zoneless-✓-green)]()
 [![Signals](https://img.shields.io/badge/Signals-✓-blue)]()
+[![Demo](https://img.shields.io/badge/Demo-Live-blue)](https://jealousym.github.io/ngx-open-web-ui-chat/)
+
+## 🌐 [Live Demo](https://jealousym.github.io/ngx-open-web-ui-chat/)
 
 ## Features
 
