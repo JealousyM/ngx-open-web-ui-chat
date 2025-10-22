@@ -1,0 +1,15 @@
+{
+  "name": "ngx-open-web-ui-chat-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:lib": "cd projects/ngx-open-web-ui-chat && npm run build",
+    "build:app": "cd test-app && npm run build",
+    "start:app": "cd test-app && npm start",
+    "start:static": "cd test-static && python -m http.server 8080"
+  },
+  "workspaces": [
+    "projects/ngx-open-web-ui-chat",
+    "test-app"
+  ]
+}

@@ -1,0 +1,336 @@
+# OpenWebUI TypeScript Embedded SDK
+
+[![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
+
+Modern Angular 20 library for embedding OpenWebUI chat in your applications with full **conversation history**, **markdown support**, and **Angular 2025 architecture**.
+
+## ✨ Features
+
+- 🚀 **Angular 2025 Ready** - Zoneless, Signals, Modern file structure
+- 💬 **Conversation History** - AI remembers all previous messages
+- 📝 **Markdown Support** - Rich text rendering with ngx-markdown
+- ⚡ **Signals & Zoneless** - Latest Angular reactive patterns
+- 📡 **Streaming Responses** - Real-time chat with typing indicator
+- 🌍 **Multi-language** - 10 languages supported
+- 🎨 **Customizable** - SCSS with modern features
+- 🔧 **TypeScript** - Full type safety
+- 📱 **Responsive** - Mobile-friendly design
+
+## 🚀 Quick Start
+
+### Installation
+
+```bash
+npm install ngx-open-web-ui-chat
+```
+
+### Setup
+
+#### 1. Configure Bootstrap (main.ts)
+
+```typescript
+import { bootstrapApplication } from '@angular/platform-browser';
+import { provideZonelessChangeDetection } from '@angular/core';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideMarkdown } from 'ngx-markdown';
+import { AppComponent } from './app/app.component';
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideZonelessChangeDetection(),  // Zoneless mode!
+    provideHttpClient(withInterceptorsFromDi()),
+    provideMarkdown()  // For markdown rendering
+  ]
+}).catch((err) => console.error(err));
+```
+
+#### 2. Use Component
+
+```typescript
+import { Component } from '@angular/core';
+import { OpenwebuiChatComponent } from 'ngx-open-web-ui-chat';
+
+@Component({
+  standalone: true,
+  imports: [OpenwebuiChatComponent],
+  template: `
+    <openwebui-chat
+      [endpoint]="'https://your-openwebui-instance.com'"
+      [modelId]="'llama3'"
+      [apiKey]="'sk-your-api-key'">
+    </openwebui-chat>
+  `
+})
+export class AppComponent {}
+```
+
+## 📖 Key Concepts
+
+### Conversation History
+
+The component **automatically maintains conversation context**:
+
+```json
+[
+  {"role": "user", "content": "Hello"},
+  {"role": "assistant", "content": "Hi! How can I help?"},
+  {"role": "user", "content": "What did I just say?"},
+  {"role": "assistant", "content": "You said 'Hello'"}
+]
+```
+
+**Features:**
+- ✅ Full conversation history sent with each request
+- ✅ AI remembers all previous messages
+- ✅ Context-aware responses
+
+### Angular 2025 Architecture
+
+**Zoneless Change Detection:**
+```typescript
+provideZonelessChangeDetection()  // No ZoneJS!
+```
+
+**Signals for State:**
+```typescript
+messages = signal<ChatMessage[]>([]);
+isLoading = signal(false);
+```
+
+**Modern File Structure:**
+```
+components/
+├── openwebui-chat.ts       ← Logic
+├── openwebui-chat.html     ← Template
+└── openwebui-chat.scss     ← Styles (SCSS!)
+```
+
+## 📁 Project Structure
+
+```
+openwebui-ts-embedded-sdk/
+├── projects/
+│   └── ngx-open-web-ui-chat/    # Library package
+│       ├── src/lib/
+│       │   ├── components/
+│       │   │   ├── openwebui-chat.ts
+│       │   │   ├── openwebui-chat.html
+│       │   │   └── openwebui-chat.scss
+│       │   ├── services/
+│       │   │   └── openwebui-api.ts
+│       │   ├── models/
+│       │   └── i18n/
+│       └── dist/                 # Built package
+├── test-app/                     # Test application
+│   ├── src/app/
+│   │   ├── app.component.ts
+│   │   ├── app.component.html
+│   │   └── app.component.scss
+│   └── package.json
+├── docs/                         # Documentation
+│   ├── API.md
+│   ├── I18N.md
+│   ├── MARKDOWN.md
+├── README.md                     # This file
+└── package.json
+```
+
+## 🎯 API Reference
+
+### Inputs
+
+| Input | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `endpoint` | `string` | ✅ | - | OpenWebUI instance URL |
+| `modelId` | `string` | ✅ | - | AI model identifier |
+| `apiKey` | `string` | ✅ | - | API key |
+| `enableMarkdown` | `boolean` | ❌ | `true` | Enable markdown |
+| `debug` | `boolean` | ❌ | `false` | Debug logging |
+| `language` | `string` | ❌ | `'en'` | UI language |
+
+### Outputs
+
+| Output | Type | Description |
+|--------|------|-------------|
+| `chatInitialized` | `EventEmitter<void>` | Chat session ready |
+| `messagesChanged` | `EventEmitter<number>` | Message count changed |
+
+### Methods
+
+| Method | Description |
+|--------|-------------|
+| `sendMessage(message: string)` | Send a message programmatically |
+| `clearChat()` | Clear all messages |
+| `createNewChat()` | Create new chat session |
+| `changeModel(modelId: string)` | Switch to different model |
+
+**[Full API Documentation →](./docs/API.md)**
+
+## 🛠️ Development
+
+### Build Library
+
+```bash
+cd projects/ngx-open-web-ui-chat
+npm run build
+```
+
+Output: `projects/ngx-open-web-ui-chat/dist/`
+
+### Test Application
+
+```bash
+cd test-app
+npm start
+```
+
+Visit: `http://localhost:4200`
+
+**Features:**
+- Dynamic host & API key configuration
+- Model selection
+- Progressive connection flow
+- Chat controls (clear, disconnect, language)
+- Beautiful UI with step-by-step guide
+
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| **[API Reference](./docs/API.md)** | Complete API documentation |
+| **[Markdown Guide](./docs/MARKDOWN.md)** | Markdown features & examples |
+| **[I18N Guide](./docs/I18N.md)** | Multi-language support |
+
+## 🔧 Technology Stack
+
+- **Angular 20.x** - Latest framework with signals
+- **TypeScript 5.8** - Full type safety
+- **ng-packagr** - Library packaging
+- **ngx-markdown** - Markdown rendering
+- **RxJS** - Only for streaming (Angular 2025 pattern)
+- **SCSS** - Modern styling with nesting
+
+## 🏗️ Angular 2025 Features
+
+✅ **Zoneless Change Detection** - No ZoneJS overhead  
+✅ **Signals** - Reactive state management  
+✅ **Standalone Components** - No NgModules  
+✅ **Modern File Structure** - Separated TS/HTML/SCSS  
+✅ **inject() DI** - Modern dependency injection  
+✅ **Async/Await** - Instead of Observable where appropriate  
+✅ **Computed Properties** - Derived state  
+
+## 🎨 Examples
+
+### Basic Usage
+
+```typescript
+<openwebui-chat
+  [endpoint]="'https://ai.example.com'"
+  [modelId]="'llama3'"
+  [apiKey]="'sk-abc123'">
+</openwebui-chat>
+```
+
+### With Controls
+
+```typescript
+import { Component, ViewChild } from '@angular/core';
+import { OpenwebuiChatComponent } from 'ngx-open-web-ui-chat';
+
+@Component({
+  template: `
+    <button (click)="clearChat()">Clear</button>
+    <button (click)="sendGreeting()">Say Hi</button>
+    
+    <openwebui-chat
+      #chat
+      [endpoint]="endpoint"
+      [modelId]="modelId"
+      [apiKey]="apiKey"
+      (messagesChanged)="onMessageCount($event)">
+    </openwebui-chat>
+    
+    <p>Messages: {{ messageCount }}</p>
+  `
+})
+export class AppComponent {
+  @ViewChild('chat') chat?: OpenwebuiChatComponent;
+  messageCount = 0;
+  
+  clearChat() {
+    this.chat?.clearChat();
+  }
+  
+  sendGreeting() {
+    this.chat?.sendMessage('Hello!');
+  }
+  
+  onMessageCount(count: number) {
+    this.messageCount = count;
+  }
+}
+```
+
+### Multi-language
+
+```typescript
+<openwebui-chat
+  [endpoint]="endpoint"
+  [modelId]="modelId"
+  [apiKey]="apiKey"
+  [language]="'ru'">  <!-- Russian UI -->
+</openwebui-chat>
+```
+
+**Supported languages:** `en`, `zh`, `hi`, `es`, `ar`, `fr`, `pt`, `ru`, `bn`, `ja`
+
+## 🚀 Publishing
+
+```bash
+# 1. Build
+cd projects/ngx-open-web-ui-chat
+npm run build
+
+# 2. Publish
+cd dist
+npm publish --access public
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make changes
+4. Test thoroughly
+5. Submit pull request
+
+## 📝 License
+
+MIT License - see LICENSE file for details
+
+## 🎓 Best Practices Implemented
+
+- ✅ **Angular 2025 Architecture** - Zoneless, signals, modern patterns
+- ✅ **Separation of Concerns** - TS/HTML/SCSS files
+- ✅ **Type Safety** - Full TypeScript strict mode
+- ✅ **SCSS Features** - Nesting, variables, modern CSS
+- ✅ **Conversation Context** - Full history maintained
+- ✅ **Event-Driven** - Reactive communication
+- ✅ **Responsive Design** - Mobile-friendly
+- ✅ **Clean Code** - Following Angular style guide
+
+## 🔮 Roadmap
+
+- [ ] File upload support
+- [ ] Export chat history
+- [ ] Voice input
+- [ ] Custom themes
+
+---
+
+**Status:** Production-ready v1.0.0  
+**Angular Version:** 20.x  
+**Node Required:** >=20.19.0  
+
+Made with ❤️ using Angular 2025 architecture
