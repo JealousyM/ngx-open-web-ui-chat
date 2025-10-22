@@ -2,11 +2,12 @@ import { Component, ViewChild, OnInit, AfterViewInit, signal, computed } from '@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OpenwebuiChatComponent } from 'ngx-open-web-ui-chat';
+import { DemoBannerComponent } from './demo-banner.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [OpenwebuiChatComponent, CommonModule, FormsModule],
+  imports: [OpenwebuiChatComponent, CommonModule, FormsModule, DemoBannerComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
