@@ -5,7 +5,7 @@
   "types": "./dist/index.d.ts",
   "description": "Angular component library for embedding OpenWebUI chat in applications",
   "private": false,
-  "homepage": "https://github.com/JealousyM/ngx-open-web-ui-chat",
+  "homepage": "https://jealousym.github.io/ngx-open-web-ui-chat/",
   "keywords": [
     "angular",
     "openwebui",
