@@ -9,7 +9,8 @@ export interface OpenWebUIChatConfig {
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
-  timestamp?: Date;
+  id?: string;
+  timestamp?: number | Date;
 }
 
 export interface ChatSession {
@@ -23,6 +24,38 @@ export interface ChatCompletionRequest {
   model: string;
   messages: Array<{ role: string; content: string }>;
   stream?: boolean;
+  chat_id?: string;
+  id?: string; // message_id
+  session_id?: string;
+  params?: {
+    stream_delta_chunk_size?: number;
+    reasoning_tags?: any;
+    function_calling?: 'native' | 'default';
+    [key: string]: any;
+  };
+  tool_servers?: any[];
+  features?: {
+    image_generation?: boolean;
+    code_interpreter?: boolean;
+    web_search?: boolean;
+    [key: string]: any;
+  };
+  variables?: Record<string, any>;
+  model_item?: any;
+  background_tasks?: {
+    title_generation?: boolean;
+    tags_generation?: boolean;
+    follow_up_generation?: boolean;
+    [key: string]: any;
+  };
+  tool_ids?: string[];
+  filter_ids?: string[];
+  files?: any;
+}
+
+export interface TaskResponse {
+  status: boolean;
+  task_id: string;
 }
 
 export interface ChatCompletionResponse {

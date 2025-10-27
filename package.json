@@ -1,6 +1,6 @@
 {
   "name": "ngx-open-web-ui-chat-workspace",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "build:lib": "cd projects/ngx-open-web-ui-chat && npm run build",

@@ -53,6 +53,22 @@ Create a new chat session. This will:
 this.chatComponent.createNewChat();
 ```
 
+#### `stopGeneration(): Promise<void>`
+
+Stop the current AI response generation. This will:
+- Abort the ongoing stream request using AbortController
+- Get active tasks from `/api/tasks/chat/{chat_id}`
+- Stop the running task via `/api/tasks/stop/{task_id}`
+- Save the partial response as a complete message
+- Reset loading state
+
+**Example:**
+```typescript
+await this.chatComponent.stopGeneration();
+```
+
+**Note:** The stop button is automatically shown in the UI during generation, replacing the send button.
+
 #### `clearChat(): void`
 
 Clear the current chat completely. This will:
@@ -128,6 +144,7 @@ import { OpenwebuiChatComponent } from 'openwebui-embedded';
   template: `
     <div class="controls">
       <button (click)="sendGreeting()">Send Greeting</button>
+      <button (click)="stopResponse()">Stop Response</button>
       <button (click)="startNew()">New Chat</button>
       <button (click)="clear()">Clear</button>
     </div>
@@ -149,6 +166,10 @@ export class AppComponent {
 
   sendGreeting() {
     this.chatComponent?.sendMessage('Hello, how can you help me?');
+  }
+
+  stopResponse() {
+    this.chatComponent?.stopGeneration();
   }
 
   startNew() {
@@ -266,6 +287,8 @@ interface OpenWebUIChatConfig {
 }
 ```
 
+**Note:** The library automatically uses Socket.IO for real-time streaming. WebSocket connection is established on component initialization.
+
 ## Conversation History
 
 The component **automatically maintains conversation context**. Each API request includes the complete conversation history:
@@ -288,33 +311,60 @@ This enables the AI to:
 - Maintain context across the entire conversation
 - Provide coherent responses based on conversation history
 
+## Architecture
+
+### Socket.IO Integration
+
+The library uses **Socket.IO** for real-time bidirectional communication with OpenWebUI:
+
+- **WebSocket Connection** - Persistent connection to `/ws/socket.io` for instant message delivery
+- **Event-Driven Architecture** - Handles `chat:completion`, `status`, and `message` events
+- **Automatic Reconnection** - Resilient connection with configurable retry logic
+- **Task Management** - Tracks message generation via task IDs
+- **Smart Completion Detection** - Handles multiple finish signal types (`finish_reason: "stop"`, `status: complete`)
+
+### Message Flow
+
+1. **Socket.IO Connection** - Established on component initialization
+2. **Session Creation** - `POST /api/v1/chats/new` creates chat session
+3. **Message Sending** - `POST /api/chat/completions` with `session_id`, `chat_id`, and full conversation history
+4. **Real-time Streaming** - Server sends incremental content via Socket.IO `events` channel
+5. **Content Accumulation** - Delta content is accumulated and rendered in real-time
+6. **Completion Detection** - Detects finish signals and saves complete conversation via `POST /api/chat/completed`
+
 ## Lifecycle
 
 1. **Component Initialization** (`ngOnInit`)
    - Configuration is applied
    - OpenWebUI service is configured
-   - Initial chat session is created
+   - **Socket.IO connection is established** to `/ws/socket.io`
+   - Initial chat session is created via REST API
    - `chatInitialized` event is emitted
 
 2. **Message Sending**
    - User types message or `sendMessage()` is called
    - Message is added to display
    - **Full conversation history** is collected (all previous user and assistant messages)
-   - Request is sent to OpenWebUI API with complete conversation context
-   - Response is streamed back in real-time
-   - Response is rendered (with markdown if enabled)
+   - Request is sent to OpenWebUI API with `session_id`, `chat_id`, and complete conversation context
+   - **Response is streamed back in real-time via Socket.IO events**
+   - Content is accumulated and rendered incrementally (with markdown if enabled)
+   - **Stop button** replaces send button during generation
+   - User can stop generation at any time with partial response saved
+   - On completion, conversation is saved to server via `/api/chat/completed`
 
 3. **Chat Management**
    - `createNewChat()` - Creates new server session and clears history
-   - `clearChat()` - Clears local state and history
+   - `clearChat()` - Clears local state and history (keeps Socket.IO connection)
 
 ## Error Handling
 
 The component includes built-in error handling:
 
-- Network errors are logged to console (when `debug=true`)
-- Failed requests don't crash the UI
-- Loading states are properly managed
+- **Socket.IO reconnection** - Automatic retry on connection loss (up to 3 attempts)
+- **Network errors** - Logged to console (when `debug=true`)
+- **Failed requests** - Don't crash the UI, gracefully handled
+- **Loading states** - Properly managed across all operations
+- **Abort handling** - Clean cancellation of ongoing requests
 
 ## Best Practices
 
@@ -352,10 +402,12 @@ The component includes built-in error handling:
 
 ## Performance Tips
 
-1. Use `clearChat()` instead of `createNewChat()` if you don't need a new server session
-2. Disable markdown if not needed: `[enableMarkdown]="false"`
-3. Monitor message count and implement pagination for long conversations
-4. Use `OnPush` change detection strategy in parent components
+1. **Socket.IO Connection** - Persistent connection is reused across messages (efficient)
+2. Use `clearChat()` instead of `createNewChat()` if you don't need a new server session
+3. Disable markdown if not needed: `[enableMarkdown]="false"`
+4. Monitor message count and implement pagination for long conversations
+5. Use `OnPush` change detection strategy in parent components
+6. **Delta Streaming** - Content is rendered incrementally for better perceived performance
 
 ## Browser Support
 

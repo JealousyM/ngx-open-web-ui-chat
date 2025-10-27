@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { ChatSession, ChatCompletionRequest, OpenWebUIChatConfig, TaskResponse } from '../models/chat.model';
 
@@ -15,7 +15,7 @@ export interface ChatEvent {
 @Injectable({ providedIn: 'root' })
 export class OpenWebUIService {
   private config = signal<OpenWebUIChatConfig | undefined>(undefined);
-  private messageStream$?: ReplaySubject<string>;
+  private messageStream$?: Subject<string>;
   private abortController?: AbortController;
   private currentChatId?: string;
   private currentSessionId?: string;
@@ -25,12 +25,6 @@ export class OpenWebUIService {
   private socket?: Socket;
   private socketConnected = signal<boolean>(false);
   private maxReconnectAttempts = 3;
-  
-  private lastContent: string = '';
-  
-  private currentMessages: Array<{ role: string; content: string; id?: string; timestamp?: number }> = [];
-  
-  private finishSignalReceived: boolean = false;
 
   private generateUUID(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -98,8 +92,7 @@ export class OpenWebUIService {
           reject(error);
         });
 
-        this.socket.on('events', (event: ChatEvent) => {
-          this.debugLog('📨 Socket.IO "events" received');
+        this.socket.on('chat-events', (event: ChatEvent) => {
           this.handleChatEvent(event);
         });
 
@@ -111,179 +104,83 @@ export class OpenWebUIService {
   }
 
   private handleChatEvent(event: ChatEvent): void {
-    this.debugLog('=== Chat event received ===');
-    this.debugLog('Event chat_id:', event.chat_id, 'Current chat_id:', this.currentChatId);
-    this.debugLog('Event message_id:', event.message_id, 'Current message_id:', this.currentMessageId);
-    this.debugLog('Event data:', JSON.stringify(event.data, null, 2));
+    this.debugLog('Chat event received:', event);
 
-    if (event.chat_id && this.currentChatId && event.chat_id !== this.currentChatId) {
-      this.debugLog('⚠️ Event for different chat, ignoring');
+    if (event.chat_id !== this.currentChatId) {
+      this.debugLog('Event for different chat, ignoring');
       return;
     }
 
-    if (event.message_id && this.currentMessageId && 
-        event.message_id !== this.currentMessageId) {
-      this.debugLog('⚠️ Event message_id mismatch but processing anyway');
+    if (event.message_id !== this.currentMessageId) {
+      this.debugLog('Event for different message, ignoring');
+      return;
     }
 
     const type = event.data?.type;
     const data = event.data?.data;
 
-    this.debugLog('✅ Processing event type:', type);
+    this.debugLog('Processing event type:', type);
 
     switch (type) {
       case 'chat:completion':
-        this.debugLog('→ Handling chat:completion');
         this.handleCompletionEvent(data);
         break;
 
       case 'chat:message:delta':
       case 'message':
-        this.debugLog('→ Ignoring message event (using chat:completion instead)');
+        if (data?.content) {
+          this.messageStream$?.next(data.content);
+        }
         break;
 
       case 'chat:message':
       case 'replace':
-        this.debugLog('→ Handling message replace, content length:', data?.content?.length);
         if (data?.content) {
-          this.debugLog('→ Emitting content to stream:', data.content);
           this.messageStream$?.next(data.content);
         }
         break;
 
       case 'status':
-        this.debugLog('→ Status update:', data?.status, data?.description);
-        if (data?.done && data?.status === 'complete') {
-          this.debugLog('→ Status indicates completion - finalizing stream');
-          this.finalizeCompletion();
-        }
+        this.debugLog('Status update:', data);
         break;
 
       default:
-        this.debugLog('❌ Unknown event type:', type);
-        this.debugLog('Full data:', data);
-        break;
+        this.debugLog('Unknown event type:', type, data);
     }
   }
 
   private handleCompletionEvent(data: any): void {
-    this.debugLog('→→ handleCompletionEvent called with data:', JSON.stringify(data, null, 2));
-    
     const { done, choices, content, error, usage } = data;
 
     if (error) {
-      this.debugLog('❌ Completion error:', error);
+      this.debugLog('Completion error:', error);
       this.messageStream$?.error(new Error(error));
       return;
     }
 
     if (choices && choices[0]?.delta?.content) {
-      const deltaContent = choices[0].delta.content;
-      this.debugLog('→→ Emitting delta content:', deltaContent);
-      this.messageStream$?.next(deltaContent);
-      this.lastContent += deltaContent;
+      this.messageStream$?.next(choices[0].delta.content);
     }
 
-    if (content && typeof content === 'string') {
-      const delta = content.substring(this.lastContent.length);
-      if (delta) {
-        this.debugLog('→→ Content delta:', delta, '(was:', this.lastContent.length, 'now:', content.length, ')');
-        this.messageStream$?.next(delta);
-        this.lastContent = content;
-      } else {
-        this.debugLog('→→ No new content (length same:', content.length, ')');
-      }
+    if (content) {
+      this.messageStream$?.next(content);
     }
 
-    const isFinished = done || (choices && choices[0]?.finish_reason === 'stop');
-    
-    if (isFinished) {
+    if (done) {
+      this.debugLog('Chat completion done');
       if (usage) {
         this.debugLog('Token usage:', usage);
       }
-      
-      if (!this.finishSignalReceived) {
-        this.debugLog('🔔 First finish signal received (content length:', this.lastContent.length, ')');
-        this.finishSignalReceived = true;
-      } else {
-        this.debugLog('✅ Second finish signal received - completing stream');
-        this.finalizeCompletion();
-      }
-    }
-  }
-
-  private finalizeCompletion(): void {
-    this.debugLog('✅ Finalizing completion (content length:', this.lastContent.length, ')');
-    
-    if (this.lastContent) {
-      this.currentMessages.push({
-        id: this.currentMessageId,
-        role: 'assistant',
-        content: this.lastContent,
-        timestamp: Math.floor(Date.now() / 1000)
-      });
-      
-      this.debugLog('Added assistant message to history, total messages:', this.currentMessages.length);
-    } else {
-      this.debugLog('⚠️ No content to save!');
-    }
-    
-    this.completeChatMessage()
-      .then(() => {
-        this.debugLog('✅ Chat completion sent successfully');
-      })
-      .catch(error => {
-        this.debugLog('Failed to send chat completion:', error);
-      });
-    
-    this.currentTaskId = undefined;
-    
-    this.messageStream$?.complete();
-    this.debugLog('Stream completed');
-  }
-
-  private async completeChatMessage(): Promise<void> {
-    if (!this.currentChatId || !this.currentMessageId || this.currentMessages.length === 0) {
-      this.debugLog('Skipping chat completion: missing required data');
-      return;
-    }
-
-    const url = `${this.config()?.endpoint?.replace(/\/$/, '')}/api/chat/completed`;
-    
-    const payload = {
-      model: this.config()?.modelId,
-      messages: this.currentMessages,
-      chat_id: this.currentChatId,
-      session_id: this.socket?.id || this.currentSessionId,
-      id: this.currentMessageId
-    };
-
-    this.debugLog('Sending chat completion:', payload);
-
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.config()?.apiKey}`
-        },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        this.debugLog('Chat completion response error:', response.status);
-      } else {
-        this.debugLog('✅ Chat completion sent successfully');
-      }
-    } catch (error) {
-      this.debugLog('Error sending chat completion:', error);
+      this.messageStream$?.complete();
+      this.currentTaskId = undefined;
+      this.currentMessageId = undefined;
     }
   }
 
   private disconnectSocketIO(): void {
     if (this.socket) {
       this.debugLog('Disconnecting Socket.IO');
-      this.socket.off('events');
+      this.socket.off('chat-events');
       this.socket.disconnect();
       this.socket = undefined;
       this.socketConnected.set(false);
@@ -340,43 +237,16 @@ export class OpenWebUIService {
     });
   }
 
-  sendMessage(message: string, chatId?: string, conversationHistory?: Array<{ role: string; content: string; id?: string; timestamp?: number }>): Observable<string> {
-    this.debugLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    this.debugLog('📤 Sending message:', message);
-    this.debugLog('Current chat_id:', chatId);
-    this.debugLog('Socket.IO connected:', this.socketConnected());
-    this.debugLog('Socket.IO session_id:', this.socket?.id);
+  sendMessage(message: string, chatId?: string, conversationHistory?: Array<{ role: string; content: string }>): Observable<string> {
+    this.debugLog('Sending message:', message);
     
     this.abortController = new AbortController();
     this.currentChatId = chatId;
     this.currentMessageId = this.generateUUID();
-    this.lastContent = '';
-    this.finishSignalReceived = false;
     
-    this.debugLog('Generated message_id for response:', this.currentMessageId);
-    
-    this.messageStream$ = new ReplaySubject<string>(1000);
-    this.debugLog('Created new messageStream$ ReplaySubject');
+    this.messageStream$ = new Subject<string>();
     
     const url = `${this.config()?.endpoint?.replace(/\/$/, '')}/api/chat/completions`;
-    
-    const currentTimestamp = Math.floor(Date.now() / 1000);
-    const userMessageId = this.generateUUID();
-    
-    this.currentMessages = conversationHistory && conversationHistory.length > 0 
-      ? conversationHistory.map(msg => ({
-          ...msg,
-          id: msg.id || this.generateUUID(),
-          timestamp: msg.timestamp || currentTimestamp
-        }))
-      : [];
-    
-    this.currentMessages.push({
-      id: userMessageId,
-      role: 'user',
-      content: message,
-      timestamp: currentTimestamp
-    });
     
     const messages = conversationHistory && conversationHistory.length > 0 
       ? [...conversationHistory, { role: 'user', content: message }]
@@ -478,7 +348,7 @@ export class OpenWebUIService {
 
   getMessageStream(): Observable<string> {
     if (!this.messageStream$) {
-      this.messageStream$ = new ReplaySubject<string>(1000);
+      this.messageStream$ = new Subject<string>();
     }
     return this.messageStream$.asObservable();
   }
@@ -516,8 +386,8 @@ export class OpenWebUIService {
       }
     }
     
-    this.lastContent = '';
-    this.finishSignalReceived = false;
+    this.currentChatId = undefined;
+    this.currentMessageId = undefined;
     
     if (this.messageStream$) {
       this.messageStream$.complete();
@@ -556,9 +426,6 @@ export class OpenWebUIService {
     this.currentSessionId = undefined;
     this.currentTaskId = undefined;
     this.currentMessageId = undefined;
-    this.lastContent = '';
-    this.currentMessages = [];
-    this.finishSignalReceived = false;
     if (this.abortController) {
       this.abortController.abort();
       this.abortController = undefined;

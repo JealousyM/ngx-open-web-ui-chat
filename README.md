@@ -22,6 +22,7 @@ Interactive demo showcasing all features:
 - 📝 **Markdown Support** - Rich text rendering with ngx-markdown
 - ⚡ **Signals & Zoneless** - Latest Angular reactive patterns
 - 📡 **Streaming Responses** - Real-time chat with typing indicator
+- ⏹️ **Stop Generation** - Cancel AI response at any time
 - 🌍 **Multi-language** - 10 languages supported
 - 🎨 **Customizable** - SCSS with modern features
 - 🔧 **TypeScript** - Full type safety
@@ -171,6 +172,7 @@ openwebui-ts-embedded-sdk/
 | Method | Description |
 |--------|-------------|
 | `sendMessage(message: string)` | Send a message programmatically |
+| `stopGeneration()` | Stop current AI response generation |
 | `clearChat()` | Clear all messages |
 | `createNewChat()` | Create new chat session |
 | `changeModel(modelId: string)` | Switch to different model |
@@ -340,7 +342,7 @@ MIT License - see LICENSE file for details
 
 ---
 
-**Status:** Production-ready v1.0.0  
+**Status:** Production-ready v1.0.4  
 **Angular Version:** 20.x  
 **Node Required:** >=20.19.0  
 
