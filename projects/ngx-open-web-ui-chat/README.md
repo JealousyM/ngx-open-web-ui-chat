@@ -1,6 +1,6 @@
 # ngx-open-web-ui-chat
 
-Angular 20 component library for embedding OpenWebUI chat with conversation history and markdown support.
+Angular 20 component library for embedding OpenWebUI chat with Socket.IO streaming, conversation history and markdown support.
 
 [![Angular](https://img.shields.io/badge/Angular-20-red)](https://angular.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
@@ -15,11 +15,12 @@ Angular 20 component library for embedding OpenWebUI chat with conversation hist
 ✨ **Conversation History** - AI remembers all previous messages  
 📝 **Markdown Support** - Rich text rendering with ngx-markdown  
 🚀 **Angular 2025** - Zoneless, Signals, Modern architecture  
-⚡ **Streaming Responses** - Real-time chat with typing indicator  
+⚡ **Socket.IO Streaming** - Real-time WebSocket chat with instant responses  
 🌍 **10 Languages** - Multi-language UI support  
 🎨 **SCSS Styling** - Modern CSS with nesting  
 🔧 **TypeScript** - Full type safety  
-📱 **Responsive** - Mobile-friendly design
+📱 **Responsive** - Mobile-friendly design  
+⏹️ **Stop Generation** - Cancel AI response anytime
 
 ## Installation
 
@@ -27,22 +28,19 @@ Angular 20 component library for embedding OpenWebUI chat with conversation hist
 npm install ngx-open-web-ui-chat
 ```
 
-### Peer Dependencies
+## ⚠️ IMPORTANT: Required Setup
 
-```json
-{
-  "@angular/common": "^20.0.0",
-  "@angular/core": "^20.0.0",
-  "ngx-markdown": "^20.1.0",
-  "marked": "^16.4.1"
-}
+**🐛 Having issues? → [TROUBLESHOOTING GUIDE](../../TROUBLESHOOTING.md)**
+
+### Step 1: Install peer dependencies (if not already installed)
+
+```bash
+npm install ngx-markdown marked socket.io-client
 ```
 
-## Quick Start
+### Step 2: Configure providers in `main.ts`
 
-### 1. Configure Bootstrap
-
-Add to your `main.ts`:
+**THIS IS REQUIRED!** Add these providers or the component won't work:
 
 ```typescript
 import { bootstrapApplication } from '@angular/platform-browser';
@@ -53,11 +51,19 @@ import { AppComponent } from './app/app.component';
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideZonelessChangeDetection(),
-    provideHttpClient(withInterceptorsFromDi()),
-    provideMarkdown()
+    provideZonelessChangeDetection(),           // Required for zoneless mode
+    provideHttpClient(withInterceptorsFromDi()), // Required for HTTP
+    provideMarkdown()                            // Required for markdown rendering
   ]
 }).catch((err) => console.error(err));
+```
+
+### Step 3: Remove zone.js from angular.json
+
+```json
+{
+  "polyfills": []  // Must be empty, no "zone.js"!
+}
 ```
 
 ### 2. Use Component
@@ -392,9 +398,31 @@ Full documentation available in the repository:
 - **[Markdown Guide](../../docs/MARKDOWN.md)** - Markdown features
 - **[I18N Guide](../../docs/I18N.md)** - Multi-language setup
 
+## Architecture
+
+### Socket.IO Integration
+
+The library uses **Socket.IO** for real-time bidirectional communication with OpenWebUI:
+
+- **WebSocket Connection** - Persistent connection for instant message delivery
+- **Event-Driven** - Handles `chat:completion`, `status`, and other events
+- **Automatic Reconnection** - Resilient connection with retry logic  
+- **Task Management** - Tracks message generation via task IDs
+- **Completion Detection** - Smart handling of finish signals
+
+### How It Works
+
+1. **Initial Connection** - Socket.IO connects to `/ws/socket.io` on configure
+2. **Chat Creation** - Creates new chat session via REST API
+3. **Message Sending** - POST to `/api/chat/completions` with `session_id` and `chat_id`
+4. **Real-time Streaming** - Server sends incremental content via Socket.IO events
+5. **Completion** - Detects finish signals and saves conversation to server
+
 ## Version History
 
-### 1.0.0 (Current)
+### 1.0.4+ (Current)
+- ✅ **Socket.IO Streaming** - Real-time WebSocket communication
+- ✅ **Smart Completion Detection** - Handles multiple finish signal types
 - ✅ **Conversation History** - Full context maintained
 - ✅ **Angular 2025** - Zoneless, signals, modern architecture
 - ✅ **File Separation** - TS/HTML/SCSS split
@@ -433,6 +461,7 @@ MIT License
 
 Built with:
 - [Angular 20](https://angular.dev)
+- [Socket.IO Client](https://socket.io/)
 - [ngx-markdown](https://www.npmjs.com/package/ngx-markdown)
 - [marked](https://marked.js.org/)
 

@@ -32,9 +32,15 @@
       [disabled]="isLoading()"
       [placeholder]="t.placeholder"
     />
-    <button (click)="sendMessageInternal()" [disabled]="isLoading() || !inputMessage.trim()">
-      {{ t.send }}
-    </button>
+    @if (isLoading()) {
+      <button (click)="stopGeneration()" class="stop-button">
+        {{ t.stop }}
+      </button>
+    } @else {
+      <button (click)="sendMessageInternal()" [disabled]="!inputMessage.trim()">
+        {{ t.send }}
+      </button>
+    }
   </div>
 </div>
 

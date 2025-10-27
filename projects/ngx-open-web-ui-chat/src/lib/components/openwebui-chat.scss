@@ -203,6 +203,14 @@
       background: #ccc;
       cursor: not-allowed;
     }
+
+    &.stop-button {
+      background: #dc3545;
+
+      &:hover {
+        background: #c82333;
+      }
+    }
   }
 }
 

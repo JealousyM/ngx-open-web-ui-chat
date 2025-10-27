@@ -131,6 +131,27 @@ export class OpenwebuiChatComponent implements OnInit {
     });
   }
 
+  async stopGeneration(): Promise<void> {
+    await this.openWebUIService.stopGeneration();
+    const partialResponse = this.currentResponse();
+    if (partialResponse) {
+      this.messages.update(msgs => {
+        const updated: ChatMessage[] = [...msgs, { 
+          role: 'assistant' as const, 
+          content: partialResponse, 
+          timestamp: new Date() 
+        }];
+        this.messagesChanged.emit(updated.length);
+        return updated;
+      });
+    }
+    this.isLoading.set(false);
+    this.currentResponse.set('');
+    if (this.debug) {
+      console.log('[OpenWebUI] Generation stopped');
+    }
+  }
+
   clearChat(): void {
     this.messages.set([]);
     this.messagesChanged.emit(0);

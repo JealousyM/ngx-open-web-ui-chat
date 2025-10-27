@@ -243,7 +243,7 @@ apiKey = 'your-default-key';
 
 - [Library API Documentation](../projects/ngx-open-web-ui-chat/API.md)
 - [Angular 2025 Architecture](../ANGULAR_2025_ARCHITECTURE.md)
-- [Changelog](../CHANGELOG.md)
+- [Changelog](../docs/CHANGELOG.md)
 
 ---
 

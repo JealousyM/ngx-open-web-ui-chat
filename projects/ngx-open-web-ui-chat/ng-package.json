@@ -6,7 +6,8 @@
   },
   "allowedNonPeerDependencies": [
     "marked",
-    "ngx-markdown"
+    "ngx-markdown",
+    "socket.io-client"
   ]
 }
 
