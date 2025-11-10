@@ -16,6 +16,7 @@ Angular 20 component library for embedding OpenWebUI chat with Socket.IO streami
 📝 **Markdown Support** - Rich text rendering with ngx-markdown  
 🚀 **Angular 2025** - Zoneless, Signals, Modern architecture  
 ⚡ **Socket.IO Streaming** - Real-time WebSocket chat with instant responses  
+📎 **File Upload** - Attach files to messages (documents, images, etc.)  
 🌍 **10 Languages** - Multi-language UI support  
 🎨 **SCSS Styling** - Modern CSS with nesting  
 🔧 **TypeScript** - Full type safety  
@@ -420,10 +421,17 @@ The library uses **Socket.IO** for real-time bidirectional communication with Op
 
 ## Version History
 
-### 1.0.4+ (Current)
+### 1.0.4 (Current)
+- ✅ **File Upload Support** - Attach files to messages with UI
 - ✅ **Socket.IO Streaming** - Real-time WebSocket communication
 - ✅ **Smart Completion Detection** - Handles multiple finish signal types
-- ✅ **Conversation History** - Full context maintained
+- ✅ **Conversation History** -
+- ✅ **Chat History Persistence** - Full conversation saved to OpenWebUI server
+- ✅ **Completion Finalization** - Proper `/api/chat/completed` endpoint integration
+- ✅ **Duplicate Prevention** - Fixed duplicate API calls and messages
+- ✅ **Correct API Flow** - Proper sequence: update chat → completions → update chat → completed
+- ✅ **Message Structure** - Correct parentId/childrenIds relationships
+- ✅ **Model Item Support** - Full model metadata in requests
 - ✅ **Angular 2025** - Zoneless, signals, modern architecture
 - ✅ **File Separation** - TS/HTML/SCSS split
 - ✅ **messagesChanged Event** - Track message count
@@ -437,10 +445,28 @@ The library uses **Socket.IO** for real-time bidirectional communication with Op
 - ✅ Streaming responses
 - ✅ Multi-language support
 
+## File Upload
+
+The component supports file attachments:
+
+```typescript
+// Files are automatically uploaded when selected
+// They appear in the UI with filename and size
+// Click × to remove before sending
+```
+
+**Supported workflow:**
+1. Click 📎 button in input area
+2. Select "Upload Files" from menu
+3. Choose file to upload
+4. File appears in preview area
+5. Send message - file is attached automatically
+
+Files are sent to OpenWebUI API and processed according to the model capabilities.
+
 ## Roadmap
 
-- [ ] File upload support
-- [ ] Dark mode theme
+- [x] File upload support
 - [ ] Export chat history
 - [ ] Voice input
 

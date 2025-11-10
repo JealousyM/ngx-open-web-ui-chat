@@ -18,6 +18,7 @@
 |------|------|---------|-------------|
 | `enableMarkdown` | `boolean` | `true` | Enable/disable markdown rendering for messages |
 | `debug` | `boolean` | `false` | Enable debug logging to console |
+| `language` | `string` | `'en'` | UI language code (en, ru, zh, etc.) |
 | `style` | `Partial<CSSStyleDeclaration>` | `undefined` | Custom inline styles for the component |
 
 ### Outputs (Events)
@@ -263,6 +264,36 @@ export class AppComponent {
 }
 ```
 
+## File Upload
+
+The component supports file attachments with the following features:
+
+### Upload Flow
+
+1. Click the 📎 (paperclip) button in the input area
+2. Select "Upload Files" from the popup menu
+3. Choose a file from your system
+4. File is automatically uploaded to `/api/v1/files/`
+5. File preview appears above the input field
+6. Click × on file to remove before sending
+7. Send message - files are automatically attached
+
+### File Display
+
+- **In preview area**: Shows filename, size, and remove button
+- **In messages**: Files appear as badges with icon, name, and size
+- **File formats**: Supported formats depend on OpenWebUI server configuration
+
+### API Methods
+
+```typescript
+// Upload a file
+async uploadFile(file: File): Promise<UploadedFile>
+
+// Check file processing status
+async checkFileStatus(fileId: string, stream?: boolean): Promise<FileProcessStatus>
+```
+
 ## TypeScript Interfaces
 
 ### ChatMessage
@@ -272,6 +303,43 @@ interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: Date;
+  files?: UploadedFile[];
+}
+```
+
+### UploadedFile
+
+```typescript
+interface UploadedFile {
+  id: string;
+  filename: string;
+  user_id: string;
+  hash?: string | null;
+  data?: {
+    status?: string;
+    [key: string]: any;
+  };
+  meta?: {
+    name: string;
+    content_type: string;
+    size: number;
+    data?: Record<string, any>;
+  };
+  created_at?: number;
+  updated_at?: number;
+  status?: boolean;
+  path?: string;
+  access_control?: any;
+}
+```
+
+### FileProcessStatus
+
+```typescript
+interface FileProcessStatus {
+  status: 'pending' | 'processing' | 'completed' | 'error';
+  message?: string;
+  error?: string;
 }
 ```
 
@@ -409,12 +477,22 @@ The component includes built-in error handling:
 5. Use `OnPush` change detection strategy in parent components
 6. **Delta Streaming** - Content is rendered incrementally for better perceived performance
 
+## File Upload Best Practices
+
+1. **File Size Limits**: Check your OpenWebUI server configuration for max file size
+2. **File Types**: Ensure the model supports the file type you're uploading
+3. **Multiple Files**: Currently single file per upload, select multiple times if needed
+4. **Error Handling**: File upload errors are logged when `debug=true`
+5. **Preview Before Send**: Review uploaded files before sending the message
+
 ## Browser Support
 
 - Chrome/Edge: ✅ v90+
 - Firefox: ✅ v88+
 - Safari: ✅ v14+
 - Mobile browsers: ✅ iOS Safari 14+, Chrome Mobile
+
+**File Upload**: Supported on all modern browsers with File API support
 
 ## License
 

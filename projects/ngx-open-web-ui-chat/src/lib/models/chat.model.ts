@@ -11,6 +11,35 @@ export interface ChatMessage {
   content: string;
   id?: string;
   timestamp?: number | Date;
+  files?: UploadedFile[];
+}
+
+export interface UploadedFile {
+  id: string;
+  filename: string;
+  user_id: string;
+  hash?: string | null;
+  data?: {
+    status?: string;
+    [key: string]: any;
+  };
+  meta?: {
+    name: string;
+    content_type: string;
+    size: number;
+    data?: Record<string, any>;
+  };
+  created_at?: number;
+  updated_at?: number;
+  status?: boolean;
+  path?: string;
+  access_control?: any;
+}
+
+export interface FileProcessStatus {
+  status: 'pending' | 'processing' | 'completed' | 'error';
+  message?: string;
+  error?: string;
 }
 
 export interface ChatSession {
@@ -87,5 +116,22 @@ export interface StreamChunk {
     finish_reason: string | null;
   }>;
 }
+
+export interface Model {
+  id: string;
+  name: string;
+  object: string;
+  created: number;
+  owned_by: string;
+  pipe: {
+    type: string;
+  };
+  has_user_valves: boolean;
+  actions: any[];
+  filters: any[];
+  tags: string[];
+}
+
+
 
 

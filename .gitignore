@@ -6,6 +6,8 @@ dist/
 .idea/
 .playwright-mcp/
 test-results/
+.vscode/
+.kiro/
 playwright-report/
 playwright/.cache/
 
