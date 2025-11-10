@@ -1,7 +1,7 @@
 {
   "name": "ngx-open-web-ui-chat",
   "version": "1.0.4",
-  "description": "Angular component library for embedding OpenWebUI chat with Socket.IO streaming and conversation history",
+  "description": "Angular component library for embedding OpenWebUI chat with Socket.IO streaming, file attachments, and conversation history",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "private": false,

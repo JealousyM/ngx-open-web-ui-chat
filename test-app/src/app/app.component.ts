@@ -14,8 +14,8 @@ import { DemoBannerComponent } from './demo-banner.component';
 export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('chatComponent') chatComponent?: OpenwebuiChatComponent;
 
-  hostUrl = signal<string>('');
-  apiKey = signal<string>('');
+  hostUrl = signal<string>('http://localhost:8080');
+  apiKey = signal<string>('sk-ad234105e73f437ba4d262dcc1b81852');
   
   models = signal<any[]>([]);
   selectedModelId = signal<string>('');
@@ -74,7 +74,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
 
       const data = await response.json();
-      console.log('Models response:', data);
       
       if (data.data && Array.isArray(data.data)) {
         this.models.set(data.data);

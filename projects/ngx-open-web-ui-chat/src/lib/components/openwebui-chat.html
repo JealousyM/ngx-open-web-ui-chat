@@ -2,6 +2,17 @@
   <div class="chat-messages">
     @for (msg of messages(); track $index) {
       <div class="message" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+        @if (msg.files && msg.files.length > 0) {
+          <div class="message-files">
+            @for (file of msg.files; track file.id) {
+              <div class="file-badge">
+                <span class="file-icon">📄</span>
+                <span class="file-name">{{ file.filename }}</span>
+                <span class="file-size">{{ formatFileSize(file.meta?.size || 0) }}</span>
+              </div>
+            }
+          </div>
+        }
         <div class="message-content">
           @if (enableMarkdown) {
             <markdown [data]="msg.content"></markdown>
@@ -24,23 +35,65 @@
       </div>
     }
   </div>
-  <div class="chat-input">
-    <input
-      type="text"
-      [(ngModel)]="inputMessage"
-      (keyup.enter)="sendMessageInternal()"
-      [disabled]="isLoading()"
-      [placeholder]="t.placeholder"
-    />
-    @if (isLoading()) {
-      <button (click)="stopGeneration()" class="stop-button">
-        {{ t.stop }}
-      </button>
-    } @else {
-      <button (click)="sendMessageInternal()" [disabled]="!inputMessage.trim()">
-        {{ t.send }}
-      </button>
+  
+  <div class="chat-input-container">
+    @if (uploadedFiles().length > 0) {
+      <div class="uploaded-files-preview">
+        @for (file of uploadedFiles(); track file.id) {
+          <div class="file-preview">
+            <span class="file-icon">📄</span>
+            <div class="file-info">
+              <span class="file-name">{{ file.filename }}</span>
+              <span class="file-size">{{ formatFileSize(file.meta?.size || 0) }}</span>
+            </div>
+            <button class="remove-file-btn" (click)="removeFile(file.id)" type="button">×</button>
+          </div>
+        }
+      </div>
     }
+    
+    <div class="chat-input">
+      <div class="input-actions">
+        <button class="attach-btn" (click)="toggleFileMenu()" type="button" [disabled]="isLoading()">
+          📎
+        </button>
+        
+        @if (showFileMenu()) {
+          <div class="file-menu">
+            <button class="menu-item" (click)="triggerFileUpload()" type="button">
+              <span class="menu-icon">📁</span>
+              <span class="menu-text">Upload Files</span>
+            </button>
+          </div>
+        }
+        
+        <input
+          #fileInput
+          type="file"
+          (change)="onFileSelected($event)"
+          style="display: none"
+        />
+      </div>
+      
+      <input
+        type="text"
+        [(ngModel)]="inputMessage"
+        (keyup.enter)="sendMessageInternal()"
+        [disabled]="isLoading()"
+        [placeholder]="t.placeholder"
+        class="message-input"
+      />
+      
+      @if (isLoading()) {
+        <button (click)="stopGeneration()" class="stop-button">
+          {{ t.stop }}
+        </button>
+      } @else {
+        <button (click)="sendMessageInternal()" [disabled]="!inputMessage.trim()" class="send-button">
+          {{ t.send }}
+        </button>
+      }
+    </div>
   </div>
 </div>
 
