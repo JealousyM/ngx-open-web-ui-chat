@@ -9,6 +9,4 @@ test-results/
 .vscode/
 .kiro/
 playwright-report/
-playwright/.cache/
-
-
+playwright/.cache
