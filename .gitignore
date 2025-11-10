@@ -10,5 +10,4 @@ test-results/
 .kiro/
 playwright-report/
 playwright/.cache/
-
-
+package-lock.json
