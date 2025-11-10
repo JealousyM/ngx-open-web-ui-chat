@@ -1,9 +1,7 @@
 {
   "name": "ngx-open-web-ui-chat",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Angular component library for embedding OpenWebUI chat with Socket.IO streaming, file attachments, and conversation history",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "private": false,
   "homepage": "https://jealousym.github.io/ngx-open-web-ui-chat/",
   "keywords": [

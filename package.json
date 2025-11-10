@@ -11,5 +11,8 @@
   "workspaces": [
     "projects/ngx-open-web-ui-chat",
     "test-app"
-  ]
+  ],
+  "dependencies": {
+    "ngx-open-web-ui-chat": "^1.0.5"
+  }
 }
