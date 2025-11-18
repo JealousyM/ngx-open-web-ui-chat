@@ -27,6 +27,8 @@ Interactive demo showcasing all features:
 - 🎨 **Customizable** - SCSS with modern features
 - 🔧 **TypeScript** - Full type safety
 - 📱 **Responsive** - Mobile-friendly design
+- ⭐ **Response Actions** - Continue, regenerate, and rate responses
+- 👍 **Rating System** - Comprehensive feedback with good/bad ratings
 
 ## 🚀 Quick Start
 
@@ -127,11 +129,19 @@ openwebui-ts-embedded-sdk/
 │       │   ├── components/
 │       │   │   ├── openwebui-chat.ts
 │       │   │   ├── openwebui-chat.html
-│       │   │   └── openwebui-chat.scss
+│       │   │   ├── openwebui-chat.scss
+│       │   │   ├── chat-input/
+│       │   │   ├── chat-message/
+│       │   │   ├── error-banner/
+│       │   │   ├── message-actions/
+│       │   │   ├── rating-form/
+│       │   │   └── regenerate-menu/
 │       │   ├── services/
 │       │   │   └── openwebui-api.ts
 │       │   ├── models/
+│       │   │   └── chat.model.ts
 │       │   └── i18n/
+│       │       └── translations.ts
 │       └── dist/                 # Built package
 ├── test-app/                     # Test application
 │   ├── src/app/
@@ -143,6 +153,7 @@ openwebui-ts-embedded-sdk/
 │   ├── API.md
 │   ├── I18N.md
 │   ├── MARKDOWN.md
+│   └── CHANGELOG.md
 ├── README.md                     # This file
 └── package.json
 ```
@@ -292,7 +303,7 @@ export class AppComponent {
   [endpoint]="endpoint"
   [modelId]="modelId"
   [apiKey]="apiKey"
-  [language]="'ru'">  <!-- Russian UI -->
+  [language]="'en'">
 </openwebui-chat>
 ```
 
@@ -335,14 +346,16 @@ MIT License - see LICENSE file for details
 
 ## 🔮 Roadmap
 
-- [ ] File upload support
+- [x] File upload support
+- [x] Response interaction controls (continue, regenerate, rate)
+- [x] Comprehensive rating system
 - [ ] Export chat history
 - [ ] Voice input
 - [ ] Custom themes
 
 ---
 
-**Status:** Production-ready v1.0.4  
+**Status:** Production-ready v1.0.7  
 **Angular Version:** 20.x  
 **Node Required:** >=20.19.0  
 

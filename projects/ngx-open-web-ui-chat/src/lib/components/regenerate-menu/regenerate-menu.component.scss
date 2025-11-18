@@ -1,0 +1,87 @@
+.regenerate-menu {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 8px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 280px;
+  z-index: 100;
+  overflow: hidden;
+  
+  .menu-option {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    &:hover {
+      background: #f5f5f5;
+    }
+    
+    &.input-option {
+      padding: 8px;
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid #e0e0e0;
+      
+      &:hover {
+        background: white;
+      }
+      
+      .regenerate-input {
+        flex: 1;
+        padding: 8px 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        font-size: 14px;
+        outline: none;
+        
+        &:focus {
+          border-color: #2196f3;
+        }
+        
+        &:disabled {
+          background: #f5f5f5;
+          cursor: not-allowed;
+        }
+      }
+      
+      .send-btn {
+        padding: 8px 12px;
+        background: #2196f3;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s;
+        
+        &:hover:not(:disabled) {
+          background: #1976d2;
+        }
+        
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+        
+        svg {
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+    
+    .option-text {
+      font-size: 14px;
+      color: #333;
+    }
+  }
+}

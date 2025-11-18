@@ -1,38 +1,38 @@
 # OpenWebUI Chat Test Application
 
-Современное тестовое приложение для демонстрации библиотеки `ngx-open-web-ui-chat`.
+Modern test application for demonstrating the `ngx-open-web-ui-chat` library.
 
 ## 🎨 Features
 
 ### 1. **Dynamic Configuration**
-- Ввод Host URL и API Key в реальном времени
-- Безопасное хранение API ключа (input type="password")
-- Блокировка изменений после подключения
+- Real-time Host URL and API Key input
+- Secure API key storage (input type="password")
+- Lock changes after connection
 
 ### 2. **Smart Model Loading**
-- Кнопка "Show Models" активна только при наличии Host и API Key
-- Автоматическая загрузка списка доступных моделей
-- Индикатор загрузки
+- "Show Models" button active only when Host and API Key are provided
+- Automatic loading of available models list
+- Loading indicator
 
 ### 3. **Progressive Connection Flow**
-1. ✅ Ввод Host URL и API Key
-2. ✅ Загрузка моделей (Show Models)
-3. ✅ Выбор модели из списка
-4. ✅ Подключение к чату (Connect Chat)
+1. ✅ Enter Host URL and API Key
+2. ✅ Load models (Show Models)
+3. ✅ Select model from list
+4. ✅ Connect to chat (Connect Chat)
 
 ### 4. **Conditional UI**
-- **Чат доступен** только после выбора модели и подключения
-- **Clear Chat** активен только когда есть сообщения
-- **Disconnect** для сброса всех настроек
+- **Chat available** only after model selection and connection
+- **Clear Chat** active only when there are messages
+- **Disconnect** to reset all settings
 
 ### 5. **Modern Layout**
-- **Sidebar** (левая панель): Конфигурация, модели, управление
-- **Chat Area** (правая панель): Интерфейс чата
-- **Placeholder**: Красивый гайд для пользователя
+- **Sidebar** (left panel): Configuration, models, controls
+- **Chat Area** (right panel): Chat interface
+- **Placeholder**: Beautiful user guide
 
 ### 6. **Responsive Design**
-- Адаптивная верстка для мобильных устройств
-- SCSS с modern features (nesting, variables)
+- Adaptive layout for mobile devices
+- SCSS with modern features (nesting, variables)
 
 ## 🏗️ Architecture
 
@@ -46,7 +46,7 @@ test-app/src/app/
 
 ### State Management
 ```typescript
-// Signals для reactive state
+// Signals for reactive state
 hostUrl = '';
 apiKey = '';
 models = signal<any[]>([]);
@@ -54,17 +54,17 @@ selectedModelId = signal<string>('');
 chatConnected = signal<boolean>(false);
 messageCount = signal<number>(0);
 
-// Computed для условной логики
+// Computed for conditional logic
 canLoadModels = computed(() => {...});
 hasMessages = computed(() => {...});
 ```
 
 ### Component Communication
 ```typescript
-// Event от чата → App
+// Event from chat → App
 (messagesChanged)="onMessagesChanged($event)"
 
-// App отслеживает количество сообщений
+// App tracks message count
 onMessagesChanged(count: number): void {
   this.messageCount.set(count);
 }
@@ -158,7 +158,7 @@ onMessagesChanged(count: number): void {
 ### API Key Protection
 ```typescript
 <input 
-  type="password"  // Скрыт визуально
+  type="password"  // Visually hidden
   [(ngModel)]="apiKey"
   [disabled]="chatConnected()" // Locked after connect
 />

@@ -5,6 +5,61 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.7] - 2025-11-18
+
+### Added
+
+- ⭐ **Response Interaction Controls** - Interactive action buttons for every assistant message
+  - **Continue Response** - Extend incomplete or truncated responses
+  - **Regenerate Response** - Generate alternative responses with multiple options:
+    - Custom input with text field
+    - Try Again (resend previous prompt)
+    - More Concise
+    - Add Details
+  - Action buttons visibility:
+    - Latest message: Always visible
+    - Previous messages: Visible on hover
+- 👍 **Comprehensive Rating System** - Detailed feedback mechanism for responses
+  - **Good Rating (👍)** with 7 positive feedback tags:
+    - Accurate information
+    - Followed instructions perfectly
+    - Showcased creativity
+    - Positive attitude
+    - Attention to detail
+    - Thorough explanation
+    - Other
+  - **Bad Rating (👎)** with 8 negative feedback tags:
+    - Don't like the style
+    - Too verbose
+    - Not helpful
+    - Not factually correct
+    - Didn't fully follow instructions
+    - Refused when it shouldn't have
+    - Being lazy
+    - Other
+  - **Detailed Rating Scale** - 1-10 numeric rating with tags and comments
+  - **Rating Pre-population** - Edit existing ratings by clicking rating button again
+  - **Confirmation Message** - "Thank you for your feedback" appears after submission
+  - **Auto-dismiss** - Confirmation message disappears after 3 seconds
+  - **Persistence** - Ratings saved to OpenWebUI server with full context
+- 🌍 **Multi-language Rating Support** - All rating features translated to 10 languages
+  - Added `ratingTagDontLikeStyle`, `ratingTagTooVerbose`, `ratingTagNotHelpful`, `ratingTagNotFactual`, `ratingTagDidntFollow`, `ratingTagRefused`, `ratingTagLazy`, `ratingFeedbackThankYou` translation keys
+  - Translations for: English, Chinese, Hindi, Spanish, Arabic, French, Portuguese, Russian, Bengali, Japanese
+
+### Changed
+- Rating form now displays different tag options based on rating type (good vs bad)
+- Rating form pre-populates with existing data when editing ratings
+- Enhanced rating API integration with comment field persistence
+
+### Technical Details
+- Added `showRatingConfirmation` signal for confirmation message display
+- Added `ratingConfirmationTimeout` for auto-dismiss functionality
+- Enhanced `openRatingForm()` to check for existing ratings and pre-populate form
+- Updated `updateRating()` service method to include comment in API payload
+- Updated `updateChatSessionWithRating()` to save comment to chat session annotation
+- Added rating confirmation styling with slide-down animation
+- Rating form component now conditionally displays tags based on `initialRating` input
+
 ## [1.0.4] - 2025-11-11
 
 ### Added
@@ -102,12 +157,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **1.0.7** - Response interaction controls (continue, regenerate, rate) and comprehensive rating system
 - **1.0.4** - Stop generation feature, upload files, chat history persistence and completion finalization fixes
 - **1.0.3** - Package entry points fix
 - **1.0.2** - NPM distribution fix
 - **1.0.1** - Initial release
 
 ## Migration Guides
+
+### Upgrading to 1.0.7
+
+No breaking changes. Simply update:
+
+```bash
+npm update ngx-open-web-ui-chat
+```
+
+**What's new:**
+- Response action buttons automatically appear on all assistant messages
+- Rating system is fully integrated and ready to use
+- All features work out of the box with no configuration needed
+
+**No code changes required** - all new features are automatically available.
 
 ### Upgrading to 1.0.4
 

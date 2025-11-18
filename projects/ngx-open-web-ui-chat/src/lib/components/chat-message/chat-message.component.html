@@ -1,0 +1,57 @@
+<div class="message" [class.user]="message().role === 'user'" [class.assistant]="message().role === 'assistant'">
+  @if (message().files && message().files!.length > 0) {
+    <div class="message-files">
+      @for (file of message().files; track file.id) {
+        <div class="file-badge">
+          <span class="file-icon">📄</span>
+          <span class="file-name">{{ file.filename }}</span>
+          <span class="file-size">{{ formatFileSize(file.meta?.size || 0) }}</span>
+        </div>
+      }
+    </div>
+  }
+  
+  <div class="message-content">
+    @if (enableMarkdown()) {
+      <markdown [data]="message().content"></markdown>
+    } @else {
+      {{ message().content }}
+    }
+  </div>
+  
+  @if (message().role === 'assistant') {
+    <openwebui-message-actions
+      [isLoading]="isLoading()"
+      [isLatest]="isLatest()"
+      [ratingValue]="message().rating?.rating"
+      [translations]="translations()"
+      (continue)="onContinue()"
+      (regenerate)="onToggleRegenerateMenu()"
+      (rateGood)="onOpenRatingForm(1)"
+      (rateBad)="onOpenRatingForm(-1)"
+    />
+    
+    @if (showRegenerateMenu()) {
+      <openwebui-regenerate-menu
+        [isLoading]="isLoading()"
+        [translations]="translations()"
+        (customRegenerate)="onCustomRegenerate($event)"
+        (tryAgain)="onTryAgain()"
+        (moreConcise)="onMoreConcise()"
+        (addDetails)="onAddDetails()"
+      />
+    }
+  }
+</div>
+
+@if (message().role === 'assistant' && showRatingForm()) {
+  <openwebui-rating-form
+    [translations]="translations()"
+    [initialRating]="initialRatingType()"
+    [currentRating]="message().rating?.details?.rating || (initialRatingType() === 1 ? 8 : 2)"
+    [currentTags]="message().rating?.tags || []"
+    [currentComment]="message().rating?.comment || ''"
+    (close)="onCloseRatingForm()"
+    (submit)="onSubmitRating($event)"
+  />
+}

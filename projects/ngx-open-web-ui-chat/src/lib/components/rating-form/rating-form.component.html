@@ -1,0 +1,56 @@
+<div class="rating-form">
+  <div class="rating-header">
+    <h4>{{ translations().ratingTitle ?? 'How would you rate this response?' }}</h4>
+    <button class="close-btn" (click)="onClose()" type="button">×</button>
+  </div>
+  
+  <div class="rating-scale">
+    @for (num of ratingNumbers; track num) {
+      <button 
+        class="rating-number" 
+        [class.selected]="ratingValue() === num"
+        [class.bad]="num <= 4"
+        [class.neutral]="num === 5"
+        [class.good]="num >= 6"
+        [disabled]="isRatingDisabled(num)"
+        (click)="setRating(num)"
+        type="button">
+        {{ num }}
+      </button>
+    }
+  </div>
+  
+  <div class="rating-labels">
+    <span class="label-left">1 - {{ translations().ratingAwful ?? 'Awful' }}</span>
+    <span class="label-right">10 - {{ translations().ratingAmazing ?? 'Amazing' }}</span>
+  </div>
+  
+  <div class="rating-section">
+    <h5>{{ translations().ratingWhy ?? 'Why?' }}</h5>
+    <div class="rating-tags">
+      @for (tag of ratingTags; track tag) {
+        <button 
+          class="tag-btn" 
+          [class.selected]="isTagSelected(tag)"
+          (click)="toggleTag(tag)"
+          type="button">
+          {{ tag }}
+        </button>
+      }
+    </div>
+  </div>
+  
+  <div class="rating-section">
+    <textarea 
+      class="rating-comment"
+      [(ngModel)]="comment"
+      [placeholder]="translations().ratingCommentPlaceholder ?? 'Feel free to add specific details'"
+      rows="3"></textarea>
+  </div>
+  
+  <div class="rating-actions">
+    <button class="save-btn" (click)="onSubmit()" type="button">
+      {{ translations().save ?? 'Save' }}
+    </button>
+  </div>
+</div>
