@@ -190,7 +190,6 @@ export class OpenWebUIService {
   }
 
   private finalizeCompletion(): void {
-    // ИСПРАВЛЕНИЕ: Проверяем флаг чтобы избежать повторных вызовов
     if (this.isCompletionFinalized) {
       this.debugLog('⚠️ Completion already finalized, skipping duplicate call');
       return;
@@ -461,13 +460,13 @@ export class OpenWebUIService {
     this.currentChatId = chatId;
     this.currentMessageId = this.generateUUID();
     this.lastContent = '';
-    this.isCompletionFinalized = false; // ИСПРАВЛЕНИЕ: Сбрасываем флаг для нового сообщения
+    this.isCompletionFinalized = false;
     
     (this as any).streamTimeout = setTimeout(() => {
       if (this.messageStream$ && !this.messageStream$.closed) {
         this.finalizeCompletion();
       }
-    }, 60000); // 60 секунд таймаут
+    }, 60000);
     
     this.debugLog('Generated message_id for response:', this.currentMessageId);
     
@@ -661,15 +660,14 @@ export class OpenWebUIService {
     if (this.currentTaskId) {
       try {
         const endpoint = this.config()?.endpoint?.replace(/\/$/, '') || '';
-        const stopUrl = `${endpoint}/api/tasks/${this.currentTaskId}/cancel`;
+        const stopUrl = `${endpoint}/api/tasks/stop/${this.currentTaskId}`;
         this.debugLog('Stopping task via API:', stopUrl);
         
         const stopResponse = await fetch(stopUrl, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${this.config()?.apiKey}`,
-            'Content-Type': 'application/json',
-            'Cookie': `token=${this.config()?.apiKey}`
+            'Content-Type': 'application/json'
           }
         });
         
@@ -748,6 +746,40 @@ export class OpenWebUIService {
     } catch (error) {
       this.debugLog('Error fetching model:', error);
       return { id: modelId, name: modelId };
+    }
+  }
+
+  public async getChatById(chatId: string): Promise<any> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Fetching chat by id:', chatId);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/chats/${chatId}`;
+    
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        }
+      });
+      
+      if (!response.ok) {
+        this.debugLog('Chat not found');
+        return null;
+      }
+      
+      const data = await response.json();
+      this.debugLog('Chat fetched');
+      return data;
+    } catch (error) {
+      this.debugLog('Error fetching chat:', error);
+      return null;
     }
   }
 
@@ -890,5 +922,587 @@ export class OpenWebUIService {
 
   public getSessionId(): string | undefined {
     return this.socket?.id;
+  }
+
+  public getCurrentMessageId(): string | undefined {
+    return this.currentMessageId;
+  }
+
+  public continueResponse(messageId: string, currentContent: string, chatId?: string, conversationHistory?: Array<{ role: string; content: string; id?: string; timestamp?: number }>): Observable<string> {
+    this.debugLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    this.debugLog('📤 Continuing response for message:', messageId);
+    this.debugLog('Current content length:', currentContent.length);
+    this.debugLog('Socket.IO connected:', this.socketConnected());
+    
+    this.abortController = new AbortController();
+    this.currentChatId = chatId;
+    this.currentMessageId = messageId;
+    this.lastContent = '';
+    this.isCompletionFinalized = false;
+    
+    (this as any).streamTimeout = setTimeout(() => {
+      if (this.messageStream$ && !this.messageStream$.closed) {
+        this.finalizeCompletion();
+      }
+    }, 60000);
+    
+    this.debugLog('Reusing message_id for continuation:', this.currentMessageId);
+    
+    this.messageStream$ = new ReplaySubject<string>(1000);
+    
+    if (this.socket && this.socketConnected()) {
+      this.socket.emit('user-join', {
+        auth: {
+          token: this.config()?.apiKey
+        }
+      });
+    }
+    
+    const endpoint = this.config()?.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/chat/completions`;
+    
+    const currentTimestamp = Math.floor(Date.now() / 1000);
+    
+    this.currentMessages = conversationHistory && conversationHistory.length > 0 
+      ? conversationHistory.map(msg => ({
+          ...msg,
+          id: msg.id || this.generateUUID(),
+          timestamp: msg.timestamp || currentTimestamp
+        }))
+      : [];
+    
+    const messages = conversationHistory && conversationHistory.length > 0 
+      ? conversationHistory.map(msg => ({
+          role: msg.role,
+          content: msg.content
+        }))
+      : [];
+    
+    const sessionId = this.socket?.id || this.currentSessionId;
+    
+    const request: any = {
+      stream: true,
+      model: this.config()!.modelId,
+      messages,
+      params: {},
+      tool_servers: [],
+      features: {
+        image_generation: false,
+        code_interpreter: false,
+        web_search: false
+      },
+      variables: this.getCurrentDateTime()
+    };
+
+    if (chatId && sessionId) {
+      request.session_id = sessionId;
+      request.chat_id = chatId;
+      request.id = this.currentMessageId;
+      request.background_tasks = {};
+      
+      this.debugLog('Request with Socket.IO session:', sessionId);
+
+      if (!this.socket || !this.socketConnected()) {
+        this.debugLog('Socket.IO not connected, trying to connect...');
+        this.connectSocketIO().catch(error => {
+          this.debugLog('Failed to connect Socket.IO:', error);
+        });
+      }
+    }
+
+    this.sendCompletionRequest(url, request);
+    
+    return this.messageStream$.asObservable();
+  }
+
+  public async sendInitialRating(
+    messageId: string,
+    rating: 1 | -1,
+    chatId?: string,
+    messages?: Array<{ role: string; content: string; id?: string; timestamp?: number | Date; rating?: any }>
+  ): Promise<string | null> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    if (!chatId) {
+      this.debugLog('No chat ID provided for initial rating');
+      return null;
+    }
+
+    this.debugLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    this.debugLog('⭐ Sending initial rating for message:', messageId);
+    this.debugLog('Rating value:', rating);
+    this.debugLog('Chat ID:', chatId);
+
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const feedbackUrl = `${endpoint}/api/v1/evaluations/feedback`;
+
+    let chatSnapshot: any;
+    try {
+      chatSnapshot = await this.getChatById(chatId);
+    } catch (error) {
+      this.debugLog('Could not fetch chat for snapshot:', error);
+      chatSnapshot = null;
+    }
+
+    const messageIndex = messages?.findIndex(m => m.id === messageId) ?? -1;
+
+    let modelItem: any;
+    try {
+      modelItem = await this.getModelById(cfg.modelId);
+    } catch (error) {
+      this.debugLog('Could not fetch model_item for rating:', error);
+      modelItem = null;
+    }
+
+    const ratingPayload = {
+      type: 'rating',
+      data: {
+        rating: rating,
+        model_id: cfg.modelId
+      },
+      meta: {
+        model_id: cfg.modelId,
+        message_id: messageId,
+        message_index: messageIndex,
+        chat_id: chatId,
+        base_models: modelItem ? { [cfg.modelId]: modelItem } : { [cfg.modelId]: null }
+      },
+      snapshot: chatSnapshot ? { chat: chatSnapshot } : {
+        messages: messages || [],
+        model: cfg.modelId
+      }
+    };
+
+    this.debugLog('Initial rating payload:', JSON.stringify(ratingPayload, null, 2).substring(0, 500));
+
+    try {
+      const response = await fetch(feedbackUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Cookie': `token=${cfg.apiKey}`
+        },
+        body: JSON.stringify(ratingPayload)
+      });
+
+      if (!response.ok) {
+        this.debugLog('Initial rating submission failed:', response.status);
+        const errorText = await response.text();
+        this.debugLog('Error details:', errorText);
+        return null;
+      }
+
+      this.debugLog('✅ Initial rating submitted successfully');
+      const responseData = await response.json();
+      this.debugLog('Initial rating response:', responseData);
+
+      const feedbackId = responseData.id;
+
+      await this.updateChatSessionWithRating(chatId, messages, messageId, rating, [], '', rating === 1 ? 8 : 2);
+
+      return feedbackId;
+    } catch (error) {
+      this.debugLog('Error sending initial rating:', error);
+      return null;
+    }
+  }
+
+  public async getSuggestedTags(
+    messageId: string,
+    chatId?: string
+  ): Promise<string[] | null> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    if (!chatId) {
+      this.debugLog('No chat ID provided for tags');
+      return null;
+    }
+
+    this.debugLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    this.debugLog('🏷️ Getting suggested tags for message:', messageId);
+
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const tagsUrl = `${endpoint}/api/v1/tasks/tags/completions`;
+
+    try {
+      const response = await fetch(tagsUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Cookie': `token=${cfg.apiKey}`
+        },
+        body: JSON.stringify({
+          message_id: messageId,
+          chat_id: chatId
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        
+        if (errorData?.detail === 'Tags generation is disabled') {
+          this.debugLog('⚠️ Tags generation is disabled');
+          return [];
+        }
+        
+        this.debugLog('Tags request failed:', response.status);
+        return [];
+      }
+
+      const data = await response.json();
+      this.debugLog('✅ Suggested tags received:', data);
+
+      const tags = data.tags || [];
+      return tags;
+    } catch (error) {
+      this.debugLog('Error getting suggested tags:', error);
+      return [];
+    }
+  }
+
+  public async updateRating(
+    feedbackId: string | undefined,
+    rating: 1 | -1,
+    chatId?: string,
+    messages?: Array<{ role: string; content: string; id?: string; timestamp?: number | Date; rating?: any }>,
+    tags?: string[],
+    comment?: string,
+    detailedRating?: number,
+    messageId?: string
+  ): Promise<boolean> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    if (!chatId) {
+      this.debugLog('No chat ID provided for rating update');
+      return false;
+    }
+
+    this.debugLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    this.debugLog('⭐ Updating rating with feedback ID:', feedbackId);
+    this.debugLog('Message ID:', messageId);
+    this.debugLog('Rating value:', rating);
+    this.debugLog('Detailed rating:', detailedRating);
+    this.debugLog('Tags:', tags);
+    this.debugLog('Comment:', comment);
+
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const feedbackUrl = `${endpoint}/api/v1/evaluations/feedback/${feedbackId}`;
+
+    let chatSnapshot: any;
+    try {
+      chatSnapshot = await this.getChatById(chatId);
+    } catch (error) {
+      this.debugLog('Could not fetch chat for snapshot:', error);
+      chatSnapshot = null;
+    }
+
+    const searchId = messageId || feedbackId;
+    const messageIndex = messages?.findIndex(m => m.id === searchId) ?? -1;
+
+    let modelItem: any;
+    try {
+      modelItem = await this.getModelById(cfg.modelId);
+    } catch (error) {
+      this.debugLog('Could not fetch model_item for rating:', error);
+      modelItem = null;
+    }
+
+    const ratingPayload = {
+      type: 'rating',
+      data: {
+        rating: rating,
+        tags: tags || [],
+        reason: tags ? tags.join(', ') : '',
+        comment: comment || '',
+        details: {
+          rating: detailedRating !== undefined ? detailedRating : rating
+        },
+        model_id: cfg.modelId
+      },
+      meta: {
+        model_id: cfg.modelId,
+        message_id: searchId,
+        message_index: messageIndex,
+        chat_id: chatId,
+        base_models: modelItem ? { [cfg.modelId]: modelItem } : { [cfg.modelId]: null }
+      },
+      snapshot: chatSnapshot ? { chat: chatSnapshot } : {
+        messages: messages || [],
+        model: cfg.modelId
+      }
+    };
+
+    this.debugLog('Rating update payload:', JSON.stringify(ratingPayload, null, 2).substring(0, 500));
+
+    try {
+      const response = await fetch(feedbackUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Cookie': `token=${cfg.apiKey}`
+        },
+        body: JSON.stringify(ratingPayload)
+      });
+
+      if (!response.ok) {
+        this.debugLog('Rating update failed:', response.status);
+        const errorText = await response.text();
+        this.debugLog('Error details:', errorText);
+        return false;
+      }
+
+      this.debugLog('✅ Rating updated successfully');
+      const responseData = await response.json();
+      this.debugLog('Rating update response:', responseData);
+
+      await this.updateChatSessionWithRating(chatId, messages, searchId, rating, tags, comment, detailedRating);
+
+      return true;
+    } catch (error) {
+      this.debugLog('Error updating rating:', error);
+      return false;
+    }
+  }
+
+  public async rateResponse(
+    messageId: string,
+    rating: 1 | -1,
+    chatId?: string,
+    messages?: Array<{ role: string; content: string; id?: string; timestamp?: number | Date; rating?: any }>,
+    tags?: string[],
+    comment?: string,
+    detailedRating?: number
+  ): Promise<boolean> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    if (!chatId) {
+      this.debugLog('No chat ID provided for rating');
+      return false;
+    }
+
+    this.debugLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    this.debugLog('⭐ Submitting rating for message:', messageId);
+    this.debugLog('Rating value:', rating);
+    this.debugLog('Detailed rating:', detailedRating);
+    this.debugLog('Chat ID:', chatId);
+
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const feedbackUrl = `${endpoint}/api/v1/evaluations/feedback/${messageId}`;
+
+    let chatSnapshot: any;
+    try {
+      chatSnapshot = await this.getChatById(chatId);
+    } catch (error) {
+      this.debugLog('Could not fetch chat for snapshot:', error);
+      chatSnapshot = null;
+    }
+
+    const messageIndex = messages?.findIndex(m => m.id === messageId) ?? -1;
+
+    let modelItem: any;
+    try {
+      modelItem = await this.getModelById(cfg.modelId);
+    } catch (error) {
+      this.debugLog('Could not fetch model_item for rating:', error);
+      modelItem = { id: cfg.modelId, name: cfg.modelId };
+    }
+
+    const ratingPayload = {
+      type: 'rating',
+      data: {
+        rating: rating,
+        tags: tags || [],
+        reason: tags ? tags.join(', ') : '',
+        comment: comment || '',
+        details: {
+          rating: detailedRating !== undefined ? detailedRating : rating
+        },
+        model_id: cfg.modelId
+      },
+      meta: {
+        model_id: cfg.modelId,
+        message_id: messageId,
+        message_index: messageIndex,
+        chat_id: chatId,
+        base_models: modelItem ? { [cfg.modelId]: modelItem } : {}
+      },
+      snapshot: chatSnapshot ? { chat: chatSnapshot } : {
+        messages: messages || [],
+        model: cfg.modelId
+      }
+    };
+
+    this.debugLog('Rating payload:', JSON.stringify(ratingPayload, null, 2).substring(0, 500));
+
+    try {
+      const response = await fetch(feedbackUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Cookie': `token=${cfg.apiKey}`
+        },
+        body: JSON.stringify(ratingPayload)
+      });
+
+      if (!response.ok) {
+        this.debugLog('Rating submission failed:', response.status);
+        const errorText = await response.text();
+        this.debugLog('Error details:', errorText);
+        return false;
+      }
+
+      this.debugLog('✅ Rating submitted successfully');
+      const responseData = await response.json();
+      this.debugLog('Rating response:', responseData);
+
+      await this.updateChatSessionWithRating(chatId, messages, messageId, rating, tags, comment, detailedRating);
+
+      return true;
+    } catch (error) {
+      this.debugLog('Error submitting rating:', error);
+      return false;
+    }
+  }
+
+  private async updateChatSessionWithRating(
+    chatId: string,
+    messages: Array<{ role: string; content: string; id?: string; timestamp?: number | Date; rating?: any }> | undefined,
+    ratedMessageId: string,
+    rating: 1 | -1,
+    tags?: string[],
+    comment?: string,
+    detailedRating?: number
+  ): Promise<void> {
+    if (!chatId || !messages) {
+      this.debugLog('Missing chat ID or messages for rating update');
+      return;
+    }
+
+    const cfg = this.config();
+    if (!cfg) {
+      return;
+    }
+
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/chats/${chatId}`;
+
+    const uniqueMessages = messages.filter((msg, index, self) => 
+      index === self.findIndex(m => m.id === msg.id)
+    );
+
+    const messagesData: any[] = [];
+    const historyMessages: any = {};
+
+    let currentParentId: string | null = null;
+
+    for (let i = 0; i < uniqueMessages.length; i++) {
+      const msg = uniqueMessages[i];
+      const messageId = msg.id || this.generateUUID();
+      const nextMessageId = i < uniqueMessages.length - 1 
+        ? (uniqueMessages[i + 1].id || this.generateUUID()) 
+        : null;
+
+      const timestamp = msg.timestamp 
+        ? (typeof msg.timestamp === 'number' ? msg.timestamp : Math.floor(msg.timestamp.getTime() / 1000))
+        : Math.floor(Date.now() / 1000);
+
+      const messageData: any = {
+        id: messageId,
+        parentId: currentParentId,
+        childrenIds: nextMessageId ? [nextMessageId] : [],
+        role: msg.role,
+        content: msg.content,
+        timestamp: timestamp
+      };
+
+      if (messageId === ratedMessageId) {
+        messageData.annotation = {
+          rating: rating,
+          tags: tags || [],
+          reason: tags ? tags.join(', ') : '',
+          comment: comment || '',
+          details: {
+            rating: detailedRating !== undefined ? detailedRating : rating
+          }
+        };
+      } else if (msg.rating) {
+        messageData.annotation = {
+          rating: msg.rating.rating,
+          tags: msg.rating.tags || [],
+          reason: msg.rating.reason || '',
+          comment: msg.rating.comment || '',
+          details: msg.rating.details || { rating: msg.rating.rating }
+        };
+      }
+
+      if (msg.role === 'user') {
+        messageData.models = [cfg.modelId];
+      } else if (msg.role === 'assistant') {
+        messageData.model = cfg.modelId;
+        messageData.modelName = cfg.modelId;
+        messageData.modelIdx = 0;
+        messageData.done = true;
+      }
+
+      messagesData.push(messageData);
+      historyMessages[messageId] = { ...messageData };
+      currentParentId = messageId;
+    }
+
+    const payload = {
+      chat: {
+        models: [cfg.modelId],
+        messages: messagesData,
+        history: {
+          messages: historyMessages,
+          currentId: messagesData.length > 0 ? messagesData[messagesData.length - 1].id : null
+        },
+        params: {},
+        files: []
+      }
+    };
+
+    this.debugLog('Updating chat session with rating annotation');
+    this.debugLog('Payload:', JSON.stringify(payload, null, 2).substring(0, 500));
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Cookie': `token=${cfg.apiKey}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        this.debugLog('Chat update with rating failed:', response.status);
+        const errorText = await response.text();
+        this.debugLog('Error details:', errorText);
+      } else {
+        this.debugLog('✅ Chat session updated with rating annotation');
+        const data = await response.json();
+        this.debugLog('Updated chat:', data);
+      }
+    } catch (error) {
+      this.debugLog('Error updating chat session with rating:', error);
+    }
   }
 }

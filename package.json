@@ -13,6 +13,6 @@
     "test-app"
   ],
   "dependencies": {
-    "ngx-open-web-ui-chat": "^1.0.5"
+    "ngx-open-web-ui-chat": "^1.0.7"
   }
 }

@@ -1,0 +1,83 @@
+:host {
+  display: block;
+  position: relative;
+}
+
+.message {
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  max-width: 80%;
+  position: relative;
+  overflow: visible;
+
+  &.user {
+    background: #007bff;
+    color: white;
+    margin-left: auto;
+  }
+
+  &.assistant {
+    background: white;
+    border: 1px solid #e0e0e0;
+    overflow: visible;
+    
+    &:hover ::ng-deep openwebui-message-actions .message-actions.hover-visible {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  .message-files {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+
+    .file-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 6px;
+      font-size: 12px;
+
+      .file-icon {
+        font-size: 16px;
+      }
+
+      .file-name {
+        font-weight: 500;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .file-size {
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 11px;
+      }
+    }
+  }
+
+  .message-content {
+    word-wrap: break-word;
+    line-height: 1.5;
+  }
+}
+
+// Ensure child components are positioned relative to the message
+::ng-deep {
+  openwebui-message-actions {
+    display: block;
+    position: relative;
+  }
+  
+  openwebui-regenerate-menu,
+  openwebui-rating-form {
+    display: block;
+    position: relative;
+  }
+}

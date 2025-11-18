@@ -7,6 +7,9 @@ Angular 20 component library for embedding OpenWebUI chat with Socket.IO streami
 [![Zoneless](https://img.shields.io/badge/Zoneless-✓-green)]()
 [![Signals](https://img.shields.io/badge/Signals-✓-blue)]()
 [![Demo](https://img.shields.io/badge/Demo-Live-blue)](https://jealousym.github.io/ngx-open-web-ui-chat/)
+![NPM Downloads](https://img.shields.io/npm/d18m/ngx-open-web-ui-chat.svg)
+
+
 
 ## 🌐 [Live Demo](https://jealousym.github.io/ngx-open-web-ui-chat/)
 
@@ -21,7 +24,9 @@ Angular 20 component library for embedding OpenWebUI chat with Socket.IO streami
 🎨 **SCSS Styling** - Modern CSS with nesting  
 🔧 **TypeScript** - Full type safety  
 📱 **Responsive** - Mobile-friendly design  
-⏹️ **Stop Generation** - Cancel AI response anytime
+⏹️ **Stop Generation** - Cancel AI response anytime  
+⭐ **Response Actions** - Continue, regenerate, and rate responses  
+👍 **Rating System** - Comprehensive feedback with good/bad ratings
 
 ## Installation
 
@@ -208,7 +213,7 @@ export class AppComponent {
   [endpoint]="endpoint"
   [modelId]="modelId"
   [apiKey]="apiKey"
-  [language]="'ru'">  <!-- Russian -->
+  [language]="'en'">
 </openwebui-chat>
 ```
 
@@ -300,13 +305,26 @@ Reactive, efficient, modern.
 ### File Structure
 
 ```
-components/
-├── openwebui-chat.ts       ← Logic
-├── openwebui-chat.html     ← Template
-└── openwebui-chat.scss     ← Styles
+src/lib/
+├── components/
+│   ├── openwebui-chat.ts           ← Main component logic
+│   ├── openwebui-chat.html         ← Main template
+│   ├── openwebui-chat.scss         ← Main styles
+│   ├── chat-input/                 ← Input component
+│   ├── chat-message/               ← Message display component
+│   ├── error-banner/               ← Error display component
+│   ├── message-actions/            ← Action buttons component
+│   ├── rating-form/                ← Rating form component
+│   └── regenerate-menu/            ← Regenerate menu component
+├── services/
+│   └── openwebui-api.ts            ← API service
+├── models/
+│   └── chat.model.ts               ← Type definitions
+└── i18n/
+    └── translations.ts             ← Multi-language support
 ```
 
-Clean separation of concerns.
+Clean separation of concerns with modular component architecture.
 
 ### inject() DI
 
@@ -421,11 +439,15 @@ The library uses **Socket.IO** for real-time bidirectional communication with Op
 
 ## Version History
 
-### 1.0.4 (Current)
+### 1.0.7 (Current)
+- ✅ **Response Actions** - Continue, regenerate, and rate responses
+- ✅ **Rating System** - Comprehensive feedback with good/bad ratings
+
+### 1.0.4
 - ✅ **File Upload Support** - Attach files to messages with UI
 - ✅ **Socket.IO Streaming** - Real-time WebSocket communication
 - ✅ **Smart Completion Detection** - Handles multiple finish signal types
-- ✅ **Conversation History** -
+- ✅ **Conversation History** - AI remembers all previous messages
 - ✅ **Chat History Persistence** - Full conversation saved to OpenWebUI server
 - ✅ **Completion Finalization** - Proper `/api/chat/completed` endpoint integration
 - ✅ **Duplicate Prevention** - Fixed duplicate API calls and messages
@@ -456,7 +478,7 @@ The component supports file attachments:
 ```
 
 **Supported workflow:**
-1. Click 📎 button in input area
+1. Click + button in input area
 2. Select "Upload Files" from menu
 3. Choose file to upload
 4. File appears in preview area
@@ -464,9 +486,84 @@ The component supports file attachments:
 
 Files are sent to OpenWebUI API and processed according to the model capabilities.
 
+## Response Interaction Controls
+
+The component provides interactive controls for each assistant response:
+
+### Action Buttons
+
+Every assistant message displays action buttons:
+
+- **Continue** - Extend incomplete responses
+- **Regenerate** - Generate alternative responses with options:
+  - Custom input with text field
+  - Try Again (resend previous prompt)
+  - More Concise
+  - Add Details
+- **Rate Good** 👍 - Provide positive feedback
+- **Rate Bad** 👎 - Provide negative feedback
+
+**Visibility:**
+- Latest message: Always visible
+- Previous messages: Visible on hover
+
+### Rating System
+
+Comprehensive feedback system with two rating types:
+
+#### Good Rating (👍)
+When rating a response as good, you can select from:
+- Accurate information
+- Followed instructions perfectly
+- Showcased creativity
+- Positive attitude
+- Attention to detail
+- Thorough explanation
+- Other
+
+#### Bad Rating (👎)
+When rating a response as bad, you can select from:
+- Don't like the style
+- Too verbose
+- Not helpful
+- Not factually correct
+- Didn't fully follow instructions
+- Refused when it shouldn't have
+- Being lazy
+- Other
+
+**Features:**
+- **Detailed Ratings** - 1-10 scale with tags and comments
+- **Pre-population** - Edit existing ratings by clicking the rating button again
+- **Confirmation** - "Thank you for your feedback" message after submission
+- **Persistence** - Ratings saved to OpenWebUI server with full context
+
+### Continue Response
+
+Extend incomplete or truncated responses:
+
+```typescript
+// Automatically continues from where the response stopped
+// Maintains conversation context
+// Updates the same message with additional content
+```
+
+### Regenerate Response
+
+Generate alternative responses with multiple options:
+
+```typescript
+// Try Again - Resend the same prompt for a different response
+// More Concise - Request a shorter version
+// Add Details - Request more comprehensive information
+// Custom Input - Provide specific instructions for regeneration
+```
+
 ## Roadmap
 
 - [x] File upload support
+- [x] Response interaction controls (continue, regenerate, rate)
+- [x] Comprehensive rating system
 - [ ] Export chat history
 - [ ] Voice input
 
