@@ -12,6 +12,39 @@ export interface ChatMessage {
   id?: string;
   timestamp?: number | Date;
   files?: UploadedFile[];
+  rating?: MessageRating;
+}
+
+export interface MessageRating {
+  rating: 1 | -1;
+  tags: string[];
+  reason: string;
+  comment: string;
+  details: {
+    rating: number;
+  };
+}
+
+export interface RatingRequest {
+  type: 'rating';
+  data: {
+    rating: 1 | -1;
+    tags: string[];
+    reason: string;
+    comment: string;
+    details: {
+      rating: number;
+    };
+    model_id: string;
+  };
+  meta: {
+    model_id: string;
+    message_id: string;
+    message_index: number;
+    chat_id: string;
+    base_models: Record<string, any>;
+  };
+  snapshot: any;
 }
 
 export interface UploadedFile {
