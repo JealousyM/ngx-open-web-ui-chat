@@ -18,7 +18,7 @@
   
   <div class="chat-input">
     <div class="input-actions">
-      <button class="attach-btn" (click)="toggleFileMenu()" type="button" [disabled]="isLoading()">
+      <button class="attach-btn" (click)="toggleFileMenu()" type="button" [disabled]="isLoading() || isTranscribing()">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5.5"><path d="M6 12H12M18 12H12M12 12V6M12 12V18" stroke-linecap="round" stroke-linejoin="round"></path></svg>
       </button>
       
@@ -43,19 +43,74 @@
       type="text"
       [(ngModel)]="inputMessage"
       (keyup.enter)="onKeyEnter()"
-      [disabled]="isLoading()"
+      [disabled]="isLoading() || isTranscribing()"
       [placeholder]="translations().placeholder"
       class="message-input"
     />
+    
+    @if (!isRecording()) {
+      <button 
+        class="voice-input-btn" 
+        (click)="onStartVoiceRecording()"
+        [disabled]="isLoading() || isTranscribing()"
+        type="button"
+        title="Record voice message">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+          <path d="M7 4a3 3 0 016 0v6a3 3 0 11-6 0V4z"></path>
+          <path d="M5.5 9.643a.75.75 0 00-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 000 1.5h4.5a.75.75 0 000-1.5h-1.5v-1.546A6.001 6.001 0 0016 10v-.357a.75.75 0 00-1.5 0V10a4.5 4.5 0 01-9 0v-.357z"></path>
+        </svg>
+      </button>
+    } @else {
+      <button 
+        class="stop-recording-btn" 
+        (click)="onStopVoiceRecording()"
+        type="button"
+        title="Stop recording">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+          <rect x="4" y="4" width="12" height="12" rx="2"></rect>
+        </svg>
+      </button>
+    }
     
     @if (isLoading()) {
       <button (click)="onStopGeneration()" class="stop-button">
         {{ translations().stop }}
       </button>
     } @else {
-      <button (click)="onSendMessage()" [disabled]="!inputMessage().trim()" class="send-button">
+      <button (click)="onSendMessage()" [disabled]="!inputMessage().trim() || isTranscribing()" class="send-button">
         {{ translations().send }}
       </button>
     }
   </div>
+  
+  @if (isTranscribing()) {
+    <div class="transcribing-indicator">
+      <div class="spinner"></div>
+      <span class="transcribing-text">{{ translations().transcribing ?? 'Transcribing audio...' }}</span>
+    </div>
+  }
+  
+  @if (isRecording()) {
+    <div class="spectrogram-container">
+      <canvas #spectrogramCanvas class="spectrogram-canvas"></canvas>
+    </div>
+  }
+  
+  @if (recordingError()) {
+    <div class="error-message recording-error">
+      <span class="error-text">{{ recordingError() }}</span>
+      <button class="dismiss-btn" (click)="onClearRecordingError()" type="button">
+        {{ translations().dismiss ?? 'Dismiss' }}
+      </button>
+    </div>
+  }
+  
+  @if (transcriptionError()) {
+    <div class="error-message transcription-error">
+      <span class="error-text">{{ transcriptionError() }}</span>
+      <button class="retry-btn" (click)="onRetryTranscription()" type="button">
+        {{ translations().retry ?? 'Retry' }}
+      </button>
+    </div>
+  }
 </div>

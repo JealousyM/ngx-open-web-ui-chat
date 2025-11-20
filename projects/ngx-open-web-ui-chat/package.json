@@ -1,14 +1,17 @@
 {
   "name": "ngx-open-web-ui-chat",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "description": "Angular component library for embedding OpenWebUI chat with Socket.IO streaming, file attachments, and conversation history",
   "private": false,
   "homepage": "https://jealousym.github.io/ngx-open-web-ui-chat/",
   "keywords": [
     "angular",
     "openwebui",
+    "openwebui-chat",
+    "openweb",
     "chat",
-    "embedded"
+    "embedded",
+    "ai"
   ],
   "author": "Mikhail Perevertkin <perevertkinma@gmail.com>",
   "license": "MIT",
@@ -32,10 +35,24 @@
     "@angular/compiler-cli": "^20.0.0",
     "@angular/core": "^20.0.0",
     "@angular/forms": "^20.0.0",
+    "@types/jasmine": "^5.1.13",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.10.1",
+    "fast-check": "^4.3.0",
+    "jasmine-core": "^5.12.1",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-preset-angular": "^15.0.3",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-jasmine": "^5.1.0",
+    "karma-jasmine-html-reporter": "^2.1.0",
     "ng-packagr": "^20.0.0",
     "typescript": "~5.8.0"
   },
   "scripts": {
-    "build": "ng-packagr -p ng-package.json"
+    "build": "ng-packagr -p ng-package.json",
+    "test": "jest",
+    "test:watch": "jest --watch"
   }
 }

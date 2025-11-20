@@ -20,6 +20,7 @@ Angular 20 component library for embedding OpenWebUI chat with Socket.IO streami
 🚀 **Angular 2025** - Zoneless, Signals, Modern architecture  
 ⚡ **Socket.IO Streaming** - Real-time WebSocket chat with instant responses  
 📎 **File Upload** - Attach files to messages (documents, images, etc.)  
+🎤 **Voice Input** - Record audio messages with automatic transcription  
 🌍 **10 Languages** - Multi-language UI support  
 🎨 **SCSS Styling** - Modern CSS with nesting  
 🔧 **TypeScript** - Full type safety  
@@ -439,7 +440,12 @@ The library uses **Socket.IO** for real-time bidirectional communication with Op
 
 ## Version History
 
-### 1.0.7 (Current)
+### 1.0.9 (Current)
+- ✅ **Voice Input** - Record audio messages with automatic transcription
+- ✅ **Real-time Spectrogram** - Visual feedback during recording
+- ✅ **Multi-language Transcription** - Support for multiple languages
+
+### 1.0.7
 - ✅ **Response Actions** - Continue, regenerate, and rate responses
 - ✅ **Rating System** - Comprehensive feedback with good/bad ratings
 
@@ -559,13 +565,60 @@ Generate alternative responses with multiple options:
 // Custom Input - Provide specific instructions for regeneration
 ```
 
+## Voice Input
+
+The component supports voice recording with automatic transcription:
+
+### Features
+
+- **🎤 Voice Recording** - Click microphone button to start recording
+- **📊 Real-time Spectrogram** - Visual feedback showing audio frequency during recording
+- **🔴 Stop Recording** - Click stop button to end recording
+- **✍️ Auto-transcription** - Audio automatically transcribed to text via OpenWebUI API
+- **✏️ Editable Text** - Review and edit transcribed text before sending
+- **🌐 Multi-language** - Transcription supports multiple languages
+- **⚠️ Error Handling** - Clear error messages for permission issues or failures
+
+### How It Works
+
+1. **Click microphone button** near the send button
+2. **Grant microphone permission** when prompted by browser
+3. **See spectrogram visualization** showing your voice in real-time
+4. **Click stop button** when finished recording
+5. **Wait for transcription** - audio is sent to OpenWebUI API
+6. **Review transcribed text** in the input field
+7. **Edit if needed** and send your message
+
+### Browser Support
+
+Voice input requires:
+- Modern browser with Web Audio API support (Chrome, Firefox, Safari, Edge)
+- Microphone permission granted by user
+- HTTPS connection (required for microphone access)
+
+### Error Messages
+
+The component handles various error scenarios:
+- **Browser not supported** - "Your browser doesn't support voice recording"
+- **Permission denied** - "Microphone permission denied. Please enable it in your browser settings"
+- **Recording failed** - "Failed to record audio. Please try again"
+- **Transcription failed** - "Failed to transcribe audio. Please try again" with retry button
+
+### Technical Details
+
+- **Audio Format**: WebM with Opus codec
+- **Sample Rate**: 48kHz (Web Audio API standard)
+- **API Endpoint**: `/api/v1/audio/transcriptions`
+- **Visualization**: Real-time FFT analysis with frequency bars
+- **Cleanup**: Automatic microphone release after recording
+
 ## Roadmap
 
 - [x] File upload support
 - [x] Response interaction controls (continue, regenerate, rate)
 - [x] Comprehensive rating system
+- [x] Voice input with transcription
 - [ ] Export chat history
-- [ ] Voice input
 
 ## Contributing
 

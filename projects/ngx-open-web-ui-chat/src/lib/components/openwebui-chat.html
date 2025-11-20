@@ -53,10 +53,21 @@
     [isLoading]="isLoading()"
     [uploadedFiles]="uploadedFiles()"
     [translations]="t"
+    [isRecording]="isRecording()"
+    [isTranscribing]="isTranscribing()"
+    [recordingError]="recordingError()"
+    [transcriptionError]="transcriptionError()"
+    [messageText]="inputMessage"
     (sendMessage)="sendMessage($event)"
     (stopGeneration)="stopGeneration()"
     (fileSelected)="onFileSelected($event)"
     (removeFile)="removeFile($event)"
+    (startVoiceRecording)="startVoiceRecording()"
+    (stopVoiceRecording)="stopVoiceRecording()"
+    (retryTranscription)="retryTranscription()"
+    (clearRecordingError)="clearRecordingError()"
+    (clearTranscriptionError)="clearTranscriptionError()"
+    (spectrogramCanvasReady)="onSpectrogramCanvasReady($event)"
   />
 </div>
 

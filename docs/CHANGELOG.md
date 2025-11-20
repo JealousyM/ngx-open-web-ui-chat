@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.9] - 2025-11-20
+
+### Added
+
+- 🎤 **Voice Input** - Record audio messages with automatic transcription
+  - **Voice Recording Button** - Microphone icon button near send button
+  - **Real-time Spectrogram** - Visual frequency visualization during recording
+  - **Stop Recording** - Dedicated stop button replaces voice button during recording
+  - **Audio Transcription** - Automatic conversion of audio to text via OpenWebUI API
+  - **Editable Transcription** - Review and edit transcribed text before sending
+  - **Error Handling** - Comprehensive error messages for:
+    - Browser not supporting audio recording
+    - Microphone permission denied
+    - Recording failures
+    - Transcription API failures
+  - **Retry Mechanism** - Retry button for failed transcriptions
+  - **Audio Cleanup** - Automatic microphone release and resource cleanup
+- 🌍 **Voice Input Translations** - Multi-language support for voice features
+  - Added `retry`, `dismiss`, `transcribing` translation keys
+  - Translations for all 10 supported languages: English, Chinese, Hindi, Spanish, Arabic, French, Portuguese, Russian, Bengali, Japanese
+- 🎨 **Voice Input Styling** - Consistent UI design
+  - Microphone button with hover states
+  - Stop button with distinct red styling
+  - Spectrogram canvas with visual separation
+  - Error message banners with dismiss/retry buttons
+- 🔧 **AudioRecorder Utility** - Web Audio API integration
+  - MediaRecorder API for audio capture
+  - AudioContext and AnalyserNode for frequency analysis
+  - WebM format with Opus codec
+  - 48kHz sample rate
+
+### Technical Details
+- Added `isRecording`, `recordingError`, `isTranscribing`, `transcriptionError` signals
+- Added `AudioRecorder` utility class for managing Web Audio API
+- Added `transcribeAudio()` method to OpenWebUIService
+- Integrated with `/api/v1/audio/transcriptions` endpoint
+- Real-time spectrogram rendering using canvas 2D context and requestAnimationFrame
+- Proper audio context initialization and cleanup
+- Browser compatibility checks for getUserMedia support
+
 ## [1.0.7] - 2025-11-18
 
 ### Added
@@ -157,6 +197,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **1.0.9** - Voice input with automatic transcription
 - **1.0.7** - Response interaction controls (continue, regenerate, rate) and comprehensive rating system
 - **1.0.4** - Stop generation feature, upload files, chat history persistence and completion finalization fixes
 - **1.0.3** - Package entry points fix
@@ -164,6 +205,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **1.0.1** - Initial release
 
 ## Migration Guides
+
+### Upgrading to 1.0.9
+
+No breaking changes. Simply update:
+
+```bash
+npm update ngx-open-web-ui-chat
+```
+
+**What's new:**
+- Voice input button automatically appears near the send button
+- Click to record, see real-time spectrogram, and get automatic transcription
+- All features work out of the box with no configuration needed
+- Requires HTTPS for microphone access (browser security requirement)
+
+**Browser Requirements:**
+- Modern browser with Web Audio API support (Chrome, Firefox, Safari, Edge)
+- Microphone permission must be granted by user
+- HTTPS connection (required for `getUserMedia` API)
+
+**No code changes required** - voice input is automatically available.
 
 ### Upgrading to 1.0.7
 

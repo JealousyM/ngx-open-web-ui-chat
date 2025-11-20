@@ -23,6 +23,7 @@ Interactive demo showcasing all features:
 - ⚡ **Signals & Zoneless** - Latest Angular reactive patterns
 - 📡 **Streaming Responses** - Real-time chat with typing indicator
 - ⏹️ **Stop Generation** - Cancel AI response at any time
+- 🎤 **Voice Input** - Record audio messages with automatic transcription
 - 🌍 **Multi-language** - 10 languages supported
 - 🎨 **Customizable** - SCSS with modern features
 - 🔧 **TypeScript** - Full type safety
@@ -349,13 +350,29 @@ MIT License - see LICENSE file for details
 - [x] File upload support
 - [x] Response interaction controls (continue, regenerate, rate)
 - [x] Comprehensive rating system
+- [x] Voice input with transcription
 - [ ] Export chat history
-- [ ] Voice input
 - [ ] Custom themes
+
+## 🎤 Voice Input
+
+The component includes voice recording with automatic transcription:
+
+### Features
+- Click microphone button to start recording
+- Real-time spectrogram visualization
+- Automatic transcription via OpenWebUI API
+- Editable transcribed text
+- Error handling with retry mechanism
+
+### Requirements
+- Modern browser with Web Audio API
+- Microphone permission
+- HTTPS connection (browser security requirement)
 
 ---
 
-**Status:** Production-ready v1.0.7  
+**Status:** Production-ready v1.0.9
 **Angular Version:** 20.x  
 **Node Required:** >=20.19.0  
 

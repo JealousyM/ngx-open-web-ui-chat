@@ -1,4 +1,4 @@
-import { Component, signal, Input, OnInit, Output, EventEmitter, inject, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, signal, Input, OnInit, Output, EventEmitter, inject, HostListener, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { ChatMessage, OpenWebUIChatConfig, UploadedFile } from '../models/chat.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,6 +8,7 @@ import { getTranslation, Translation } from '../i18n/translations';
 import { ErrorBannerComponent } from './error-banner/error-banner.component';
 import { ChatMessageComponent } from './chat-message/chat-message.component';
 import { ChatInputComponent } from './chat-input/chat-input.component';
+import { AudioRecorder } from '../utils/audio-recorder';
 
 @Component({
   selector: 'openwebui-chat',
@@ -23,7 +24,7 @@ import { ChatInputComponent } from './chat-input/chat-input.component';
   templateUrl: './openwebui-chat.html',
   styleUrls: ['./openwebui-chat.scss']
 })
-export class OpenwebuiChatComponent implements OnInit {
+export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   @Input({ required: true }) modelId!: string;
   @Input({ required: true }) apiKey!: string;
   @Input({ required: true }) endpoint!: string;
@@ -41,6 +42,15 @@ export class OpenwebuiChatComponent implements OnInit {
   public inputMessage = '';
   public uploadedFiles = signal<UploadedFile[]>([]);
   public isUploadingFile = signal(false);
+  
+  public isRecording = signal(false);
+  public recordingError = signal<string | null>(null);
+  public isTranscribing = signal(false);
+  public transcriptionError = signal<string | null>(null);
+  
+  private audioRecorder?: AudioRecorder;
+  private lastAudioBlob?: Blob;
+  private animationFrameId?: number;
   
   public showRegenerateMenu = signal(false);
   public regenerateMenuTarget = signal<ChatMessage | null>(null);
@@ -95,6 +105,13 @@ export class OpenwebuiChatComponent implements OnInit {
         }
       }
     });
+  }
+
+  public ngOnDestroy(): void {
+    if (this.audioRecorder) {
+      this.audioRecorder.destroy();
+      this.audioRecorder = undefined;
+    }
   }
 
   private generateUUID(): string {
@@ -207,6 +224,31 @@ export class OpenwebuiChatComponent implements OnInit {
     this.inputMessage = '';
     this.currentResponse.set('');
     this.isLoading.set(false);
+  }
+
+  /**
+   * Initialize audio recorder on first use
+   */
+  private initializeAudioRecorder(): void {
+    if (!this.audioRecorder) {
+      this.audioRecorder = new AudioRecorder();
+    }
+  }
+
+  /**
+   * Get the audio context for spectrogram visualization
+   */
+  public getAudioContext(): AudioContext | undefined {
+    this.initializeAudioRecorder();
+    return this.audioRecorder?.getAudioContext();
+  }
+
+  /**
+   * Get the analyser node for frequency analysis
+   */
+  public getAnalyser(): AnalyserNode | undefined {
+    this.initializeAudioRecorder();
+    return this.audioRecorder?.getAnalyser();
   }
 
   public changeModel(newModelId: string): void {
@@ -1165,5 +1207,253 @@ export class OpenwebuiChatComponent implements OnInit {
     this.ratingFormComment = event.comment;
     
     this.submitRating(event.message);
+  }
+
+  /**
+   * Handle spectrogram canvas ready event
+   */
+  public onSpectrogramCanvasReady(canvas: HTMLCanvasElement): void {
+    this.startSpectrogramVisualization(canvas);
+  }
+
+  /**
+   * Start spectrogram visualization
+   */
+  public startSpectrogramVisualization(canvas: HTMLCanvasElement): void {
+    const analyser = this.getAnalyser();
+    if (!analyser) {
+      if (this.debug) {
+        console.error('[OpenWebUI] Analyser not available for spectrogram');
+      }
+      return;
+    }
+
+    const canvasContext = canvas.getContext('2d');
+    if (!canvasContext) {
+      if (this.debug) {
+        console.error('[OpenWebUI] Canvas context not available');
+      }
+      return;
+    }
+
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    const renderFrame = () => {
+      if (!this.isRecording()) {
+        return;
+      }
+
+      this.animationFrameId = requestAnimationFrame(renderFrame);
+
+      analyser.getByteFrequencyData(dataArray);
+
+      const width = canvas.width;
+      const height = canvas.height;
+
+      canvasContext.fillStyle = 'rgb(26, 26, 46)';
+      canvasContext.fillRect(0, 0, width, height);
+
+      const barWidth = (width / bufferLength) * 2.5;
+      let barHeight;
+      let x = 0;
+
+      for (let i = 0; i < bufferLength; i++) {
+        barHeight = (dataArray[i] / 255) * height;
+
+        const red = Math.floor((dataArray[i] / 255) * 255);
+        const green = Math.floor(100 + (dataArray[i] / 255) * 155);
+        const blue = Math.floor(200 - (dataArray[i] / 255) * 100);
+
+        canvasContext.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+        canvasContext.fillRect(x, height - barHeight, barWidth, barHeight);
+
+        x += barWidth + 1;
+      }
+    };
+
+    renderFrame();
+  }
+
+  /**
+   * Stop spectrogram visualization
+   */
+  public stopSpectrogramVisualization(): void {
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = undefined;
+    }
+  }
+
+  /**
+   * Start voice recording
+   */
+  public async startVoiceRecording(): Promise<void> {
+    if (!AudioRecorder.isSupported()) {
+      this.recordingError.set('Your browser does not support audio recording');
+      if (this.debug) {
+        console.error('[OpenWebUI] Browser does not support getUserMedia');
+      }
+      return;
+    }
+
+    this.recordingError.set(null);
+
+    try {
+      this.initializeAudioRecorder();
+
+      if (!this.audioRecorder) {
+        throw new Error('Failed to initialize audio recorder');
+      }
+
+      await this.audioRecorder.startRecording();
+
+      this.isRecording.set(true);
+
+      if (this.debug) {
+        console.log('[OpenWebUI] Voice recording started');
+      }
+    } catch (error) {
+      if (this.debug) {
+        console.error('[OpenWebUI] Failed to start recording:', error);
+      }
+
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
+      if (errorMessage.includes('Microphone permission denied')) {
+        this.recordingError.set('Microphone permission denied. Please enable it in your browser settings.');
+      } else if (errorMessage.includes('No microphone found')) {
+        this.recordingError.set('No microphone found. Please connect a microphone and try again.');
+      } else if (errorMessage.includes('does not support audio recording')) {
+        this.recordingError.set('Your browser does not support audio recording');
+      } else if (errorMessage.includes('audio context') || errorMessage.includes('AudioContext')) {
+        this.recordingError.set('Unable to initialize audio recording');
+      } else if (errorMessage.includes('initialize')) {
+        this.recordingError.set('Unable to initialize audio recording');
+      } else {
+        this.recordingError.set('Failed to record audio. Please try again');
+      }
+
+      this.isRecording.set(false);
+    }
+  }
+
+  /**
+   * Stop voice recording
+   */
+  public async stopVoiceRecording(): Promise<void> {
+    this.stopSpectrogramVisualization();
+    
+    this.isRecording.set(false);
+
+    if (!this.audioRecorder) {
+      if (this.debug) {
+        console.error('[OpenWebUI] Audio recorder not initialized');
+      }
+      this.recordingError.set('Recording not started. Please try again.');
+      return;
+    }
+
+    try {
+      const audioBlob = await this.audioRecorder.stopRecording();
+
+      if (!audioBlob || audioBlob.size === 0) {
+        throw new Error('No audio data recorded');
+      }
+
+      this.lastAudioBlob = audioBlob;
+
+      if (this.debug) {
+        console.log('[OpenWebUI] Voice recording stopped, audio blob size:', audioBlob.size);
+      }
+
+      await this.transcribeAudio(audioBlob);
+
+    } catch (error) {
+      if (this.debug) {
+        console.error('[OpenWebUI] Failed to stop recording:', error);
+      }
+
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
+      if (errorMessage.includes('Recording not started')) {
+        this.recordingError.set('Recording not started. Please try again.');
+      } else if (errorMessage.includes('No audio data')) {
+        this.recordingError.set('No audio was recorded. Please try again.');
+      } else if (errorMessage.includes('Recording error')) {
+        this.recordingError.set('Failed to record audio. Please try again.');
+      } else {
+        this.recordingError.set('Failed to record audio. Please try again.');
+      }
+    }
+  }
+
+  /**
+   * Clear recording error
+   */
+  public clearRecordingError(): void {
+    this.recordingError.set(null);
+  }
+
+  /**
+   * Clear transcription error
+   */
+  public clearTranscriptionError(): void {
+    this.transcriptionError.set(null);
+  }
+
+  /**
+   * Retry transcription with last audio blob
+   */
+  public async retryTranscription(): Promise<void> {
+    if (!this.lastAudioBlob) {
+      this.transcriptionError.set('No audio available to retry');
+      return;
+    }
+
+    this.transcriptionError.set(null);
+    await this.transcribeAudio(this.lastAudioBlob);
+  }
+
+  /**
+   * Transcribe audio blob to text
+   */
+  private async transcribeAudio(audioBlob: Blob): Promise<void> {
+    this.isTranscribing.set(true);
+    this.transcriptionError.set(null);
+
+    try {
+      if (this.debug) {
+        console.log('[OpenWebUI] Starting transcription...');
+      }
+
+      const transcribedText = await this.openWebUIService.transcribeAudio(audioBlob);
+
+      if (this.debug) {
+        console.log('[OpenWebUI] Transcription completed:', transcribedText);
+      }
+
+      this.inputMessage = transcribedText;
+      this.cdr.detectChanges();
+
+    } catch (error) {
+      if (this.debug) {
+        console.error('[OpenWebUI] Transcription failed:', error);
+      }
+
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
+      if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
+        this.transcriptionError.set('Network error. Please check your connection and try again.');
+      } else if (errorMessage.includes('timeout')) {
+        this.transcriptionError.set('Transcription timed out. Please try again.');
+      } else if (errorMessage.includes('404')) {
+        this.transcriptionError.set('Transcription service not available. Please contact support.');
+      } else {
+        this.transcriptionError.set('Failed to transcribe audio. Please try again.');
+      }
+    } finally {
+      this.isTranscribing.set(false);
+    }
   }
 }

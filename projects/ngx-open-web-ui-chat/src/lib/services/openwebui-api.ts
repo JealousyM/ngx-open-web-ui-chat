@@ -1267,7 +1267,9 @@ export class OpenWebUIService {
       const responseData = await response.json();
       this.debugLog('Rating update response:', responseData);
 
-      await this.updateChatSessionWithRating(chatId, messages, searchId, rating, tags, comment, detailedRating);
+      if (searchId) {
+        await this.updateChatSessionWithRating(chatId, messages, searchId, rating, tags, comment, detailedRating);
+      }
 
       return true;
     } catch (error) {
@@ -1503,6 +1505,60 @@ export class OpenWebUIService {
       }
     } catch (error) {
       this.debugLog('Error updating chat session with rating:', error);
+    }
+  }
+
+  public async transcribeAudio(audioBlob: Blob): Promise<string> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    this.debugLog('🎤 Transcribing audio');
+    this.debugLog('Audio blob size:', audioBlob.size, 'bytes');
+    this.debugLog('Audio blob type:', audioBlob.type);
+
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/audio/transcriptions`;
+
+    const formData = new FormData();
+    const timestamp = Date.now();
+    const filename = `Recording-${timestamp}.webm`;
+    
+    formData.append('file', audioBlob, filename);
+
+    this.debugLog('Sending transcription request to:', url);
+    this.debugLog('Filename:', filename);
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Cookie': `token=${cfg.apiKey}`
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        this.debugLog('Transcription request failed:', response.status);
+        const errorText = await response.text();
+        this.debugLog('Error details:', errorText);
+        throw new Error(`Transcription failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+      this.debugLog('✅ Transcription successful');
+      this.debugLog('Response data:', data);
+
+      const transcribedText = data.text || '';
+      this.debugLog('Transcribed text:', transcribedText);
+
+      return transcribedText;
+    } catch (error) {
+      this.debugLog('Error transcribing audio:', error);
+      throw error;
     }
   }
 }
