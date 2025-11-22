@@ -1,0 +1,120 @@
+.export-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    background: transparent;
+}
+
+.export-menu-content {
+    position: fixed;
+    background: var(--background-secondary, #ffffff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1),
+        0 4px 10px rgba(0, 0, 0, 0.08);
+    padding: 6px;
+    min-width: 160px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    animation: slideIn 0.15s ease-out;
+
+    @media (prefers-color-scheme: dark) {
+        background: var(--background-secondary, #1f2937);
+        border-color: var(--border-color, #374151);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4),
+            0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+}
+
+.format-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: var(--text-primary, #1f2937);
+    font-size: 14px;
+    font-weight: 500;
+
+    &:hover {
+        background: var(--hover-bg, #f3f4f6);
+
+        @media (prefers-color-scheme: dark) {
+            background: var(--hover-bg, #374151);
+        }
+    }
+
+    &.selected {
+        background: var(--primary-color, #3b82f6);
+        color: white;
+
+        .format-icon svg {
+            stroke: white;
+        }
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    @media (prefers-color-scheme: dark) {
+        color: var(--text-primary, #f9fafb);
+    }
+}
+
+.format-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg {
+        stroke: var(--text-secondary, #6b7280);
+        transition: stroke 0.15s ease;
+
+        @media (prefers-color-scheme: dark) {
+            stroke: var(--text-secondary, #9ca3af);
+        }
+    }
+}
+
+.format-text {
+    flex: 1;
+    text-align: left;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: 0.3px;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .export-menu-content {
+        animation: none;
+    }
+
+    .format-option {
+        transition: none;
+
+        &:active {
+            transform: none;
+        }
+    }
+}

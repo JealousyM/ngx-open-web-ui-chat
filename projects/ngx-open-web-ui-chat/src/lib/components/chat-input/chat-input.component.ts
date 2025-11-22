@@ -1,4 +1,4 @@
-import { Component, input, output, signal, ViewChild, ElementRef, AfterViewChecked, effect } from '@angular/core';
+import { Component, input, output, signal, ViewChild, ElementRef, AfterViewChecked, effect, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Translation } from '../../i18n/translations';
@@ -22,17 +22,28 @@ export class ChatInputComponent implements AfterViewChecked {
   public transcriptionError = input<string | null>(null);
   public messageText = input<string>('');
   
-  public inputMessage = signal('');
+  private _inputMessage = signal('');
   public showFileMenu = signal(false);
   
+  public get inputMessage(): string {
+    return this._inputMessage();
+  }
+  
+  public set inputMessage(value: string) {
+    this._inputMessage.set(value);
+  }
+
   constructor() {
     effect(() => {
       const text = this.messageText();
-      if (text !== this.inputMessage()) {
-        this.inputMessage.set(text);
-      }
+      untracked(() => {
+        if (text !== this._inputMessage()) {
+          this._inputMessage.set(text);
+        }
+      });
     });
   }
+
   
   @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
   @ViewChild('spectrogramCanvas') spectrogramCanvas?: ElementRef<HTMLCanvasElement>;
@@ -74,10 +85,10 @@ export class ChatInputComponent implements AfterViewChecked {
   }
   
   public onSendMessage(): void {
-    const message = this.inputMessage().trim();
+    const message = this._inputMessage().trim();
     if (message) {
       this.sendMessage.emit(message);
-      this.inputMessage.set('');
+      this._inputMessage.set('');
     }
   }
   

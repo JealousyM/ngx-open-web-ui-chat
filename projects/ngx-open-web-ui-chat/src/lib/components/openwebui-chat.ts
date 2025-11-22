@@ -1,5 +1,5 @@
 import { Component, signal, Input, OnInit, Output, EventEmitter, inject, HostListener, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { ChatMessage, OpenWebUIChatConfig, UploadedFile } from '../models/chat.model';
+import { ChatMessage, OpenWebUIChatConfig, UploadedFile, ChatHistoryItem, ChatContextAction } from '../models/chat.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OpenWebUIService } from '../services/openwebui-api';
@@ -9,6 +9,8 @@ import { ErrorBannerComponent } from './error-banner/error-banner.component';
 import { ChatMessageComponent } from './chat-message/chat-message.component';
 import { ChatInputComponent } from './chat-input/chat-input.component';
 import { AudioRecorder } from '../utils/audio-recorder';
+import { ChatHistorySidebarComponent } from './chat-history-sidebar/sidebar/chat-history-sidebar.component';
+import { ChatSearchModalComponent } from './chat-search-modal/chat-search-modal.component';
 
 @Component({
   selector: 'openwebui-chat',
@@ -19,7 +21,9 @@ import { AudioRecorder } from '../utils/audio-recorder';
     MarkdownModule,
     ErrorBannerComponent,
     ChatMessageComponent,
-    ChatInputComponent
+    ChatInputComponent,
+    ChatHistorySidebarComponent,
+    ChatSearchModalComponent
   ],
   templateUrl: './openwebui-chat.html',
   styleUrls: ['./openwebui-chat.scss']
@@ -32,9 +36,11 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   @Input() debug = false;
   @Input() enableMarkdown = true;
   @Input() language = 'en';
+  @Input() history = false;
 
   @Output() chatInitialized = new EventEmitter<void>();
   @Output() messagesChanged = new EventEmitter<number>();
+  @Output() newChatCreated = new EventEmitter<string>();
 
   public messages = signal<ChatMessage[]>([]);
   public isLoading = signal(false);
@@ -75,7 +81,14 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   private activeRegenerations = signal<Set<string>>(new Set());
   private activeContinuations = signal<Set<string>>(new Set());
   
-  private chatId?: string;
+  public showSidebar = signal(false);
+  public chatList = signal<ChatHistoryItem[]>([]);
+  public currentPage = signal(1);
+  public hasMoreChats = signal(true);
+  public isLoadingChats = signal(false);
+  public showSearchModal = signal(false);
+  
+  public chatId?: string;
   private openWebUIService = inject(OpenWebUIService);
   private cdr = inject(ChangeDetectorRef);
   
@@ -105,6 +118,10 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
         }
       }
     });
+
+    if (this.history) {
+      this.loadChatList();
+    }
   }
 
   public ngOnDestroy(): void {
@@ -145,6 +162,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
     this.isLoading.set(true);
     this.currentResponse.set('');
     this.uploadedFiles.set([]);
+    this.inputMessage = '';
 
     this.openWebUIService.sendMessage(message, this.chatId, history, currentFiles.length > 0 ? currentFiles : undefined).subscribe({
       next: (chunk) => {
@@ -191,13 +209,41 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
     this.openWebUIService.createNewChat().subscribe({
       next: (session) => {
         this.chatId = session.id;
-        this.messages.set([]);      },
+        this.messages.set([]);
+        this.messagesChanged.emit(0);
+        this.newChatCreated.emit(session.id);
+        
+        if (this.history) {
+          const newChat: ChatHistoryItem = {
+            id: session.id,
+            title: session.title || this.t.newChat || 'New Chat',
+            created_at: session.created_at || Math.floor(Date.now() / 1000),
+            updated_at: session.updated_at || Math.floor(Date.now() / 1000),
+            pinned: false,
+            preview: ''
+          };
+          
+          this.chatList.update(chats => [newChat, ...chats]);
+        }
+        
+        if (this.debug) {
+          console.log('[OpenWebUI] New chat created:', session.id);
+        }
+      },
       error: (error) => {
         if (this.debug) {
           console.error('[OpenWebUI] Failed to create new chat:', error);
         }
       }
     });
+  }
+
+  /**
+   * Handle new chat request from sidebar
+   * Creates a new empty chat, sets it as active, and clears the conversation area
+   */
+  public handleNewChatRequest(): void {
+    this.createNewChat();
   }
 
   public async stopGeneration(): Promise<void> {
@@ -1455,5 +1501,181 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
     } finally {
       this.isTranscribing.set(false);
     }
+  }
+
+  /**
+   * Toggle sidebar visibility
+   */
+  public toggleSidebar(): void {
+    const newState = !this.showSidebar();
+    this.showSidebar.set(newState);
+    
+    if (newState && this.chatList().length === 0 && !this.isLoadingChats()) {
+      this.loadChatList();
+    }
+    
+    if (newState) {
+      this.openWebUIService.getPinnedChats().subscribe({
+        next: (pinnedChats) => {
+          if (this.debug) {
+            console.log('[OpenWebUI] Pinned chats loaded:', pinnedChats);
+          }
+          const pinnedChatsWithFlag = pinnedChats.map(chat => ({
+            ...chat,
+            pinned: true
+          }));
+          
+          const currentChats = this.chatList();
+          const pinnedChatIds = new Set(pinnedChatsWithFlag.map(c => c.id));
+          const unpinnedChats = currentChats.filter(c => !pinnedChatIds.has(c.id));
+          const updatedChats = [...pinnedChatsWithFlag, ...unpinnedChats];
+          this.chatList.set(updatedChats);
+        },
+        error: (error) => {
+          if (this.debug) {
+            console.error('[OpenWebUI] Failed to load pinned chats:', error);
+          }
+        }
+      });
+    }
+  }
+
+  /**
+   * Load chat list from API
+   */
+  public loadChatList(): void {
+    if (!this.history) {
+      return;
+    }
+
+    this.isLoadingChats.set(true);
+    const page = this.currentPage();
+
+    this.openWebUIService.getChats(page).subscribe({
+      next: (response) => {
+        let chats = response.chats;
+        
+        if (page === 1) {
+          chats = this.sortChats(chats);
+          this.chatList.set(chats);
+        } else {
+          this.chatList.update(existingChats => {
+            const combined = [...existingChats, ...chats];
+            return this.sortChats(combined);
+          });
+        }
+        this.hasMoreChats.set(response.hasMore);
+        this.isLoadingChats.set(false);
+
+        if (this.debug) {
+          console.log('[OpenWebUI] Chat list loaded:', response.chats.length, 'chats');
+        }
+      },
+      error: (error) => {
+        this.isLoadingChats.set(false);
+        if (this.debug) {
+          console.error('[OpenWebUI] Failed to load chat list:', error);
+        }
+        this.showErrorMessage(this.t.errorLoadChatsFailed ?? 'Failed to load chat history. Please try again.');
+      }
+    });
+  }
+
+  /**
+   * Sort chats: pinned first, then by updated_at descending
+   */
+  private sortChats(chats: ChatHistoryItem[]): ChatHistoryItem[] {
+    const pinnedChats = chats.filter(c => c.pinned);
+    const unpinnedChats = chats.filter(c => !c.pinned);
+    
+    unpinnedChats.sort((a, b) => b.updated_at - a.updated_at);
+    
+    return [...pinnedChats, ...unpinnedChats];
+  }
+
+  /**
+   * Load more chats (pagination)
+   */
+  public loadMoreChats(): void {
+    if (!this.hasMoreChats() || this.isLoadingChats()) {
+      return;
+    }
+
+    this.currentPage.update(page => page + 1);
+    this.loadChatList();
+  }
+
+  /**
+   * Handle chat selection from sidebar
+   */
+  public handleChatSelected(chatId: string): void {
+    if (!chatId) {
+      // Empty string signals to clear the active chat
+      this.clearChat();
+      return;
+    }
+
+    this.openWebUIService.loadChatById(chatId).subscribe({
+      next: (chatSession) => {
+        this.chatId = chatSession.id;
+        this.inputMessage = '';
+        
+        // Load the chat messages
+        if (chatSession.messages) {
+          const messages: ChatMessage[] = chatSession.messages.map((msg: any) => ({
+            role: msg.role,
+            content: msg.content,
+            id: msg.id,
+            timestamp: msg.timestamp,
+            rating: msg.annotation
+          }));
+          this.messages.set(messages);
+          this.messagesChanged.emit(messages.length);
+        } else {
+          this.messages.set([]);
+          this.messagesChanged.emit(0);
+        }
+
+        if (this.debug) {
+          console.log('[OpenWebUI] Chat loaded:', chatId);
+        }
+      },
+      error: (error) => {
+        if (this.debug) {
+          console.error('[OpenWebUI] Failed to load chat:', error);
+        }
+        this.showErrorMessage(this.t.errorLoadChatFailed ?? 'Failed to load chat. Please try again.');
+      }
+    });
+  }
+
+  /**
+   * Handle search modal open request
+   */
+  public handleSearchRequested(): void {
+    this.showSearchModal.set(true);
+  }
+
+  /**
+   * Handle search modal close
+   */
+  public handleSearchModalClosed(): void {
+    this.showSearchModal.set(false);
+  }
+
+  /**
+   * Handle context menu actions from sidebar
+   */
+  public handleContextMenuAction(action: ChatContextAction): void {
+    if (this.debug) {
+      console.log('[OpenWebUI] Context menu action:', action);
+    }
+  }
+
+  /**
+   * Handle chat list updates from sidebar
+   */
+  public handleChatsUpdated(updatedChats: ChatHistoryItem[]): void {
+    this.chatList.set(updatedChats);
   }
 }

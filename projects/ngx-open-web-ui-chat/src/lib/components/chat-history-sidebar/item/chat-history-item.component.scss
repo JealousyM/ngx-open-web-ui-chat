@@ -1,0 +1,256 @@
+.chat-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background-color: #3b82f6;
+    transform: scaleY(0);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: translateX(2px);
+
+    &::before {
+      transform: scaleY(0.3);
+    }
+  }
+
+  &:active {
+    transform: translateX(1px) scale(0.99);
+  }
+
+  &.active {
+    background-color: rgba(59, 130, 246, 0.1);
+    
+    &::before {
+      transform: scaleY(1);
+    }
+
+    .chat-title {
+      color: #3b82f6;
+      font-weight: 600;
+    }
+  }
+
+  &.pinned {
+    background-color: rgba(251, 191, 36, 0.05);
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 6px;
+      height: 6px;
+      background-color: #f59e0b;
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+.chat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chat-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+  line-height: 1.4;
+}
+
+.chat-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #6b7280;
+  transition: color 0.2s ease;
+}
+
+.pin-indicator {
+  font-size: 12px;
+  line-height: 1;
+  animation: fadeIn 0.2s ease-in;
+  color: #f59e0b;
+}
+
+.chat-date {
+  font-size: 11px;
+  color: #9ca3af;
+  transition: color 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.rename-input {
+  width: 100%;
+  padding: 4px 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2937;
+  border: 2px solid #3b82f6;
+  border-radius: 4px;
+  outline: none;
+  background-color: #ffffff;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  animation: slideIn 0.2s ease-out;
+
+  &:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-item.renaming {
+  background-color: rgba(59, 130, 246, 0.05);
+  cursor: default;
+  transform: none;
+
+  &:hover {
+    background-color: rgba(59, 130, 246, 0.05);
+    transform: none;
+  }
+
+  &::before {
+    transform: scaleY(0);
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .chat-item {
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    &.active {
+      background-color: rgba(59, 130, 246, 0.2);
+    }
+
+    &.pinned {
+      background-color: rgba(251, 191, 36, 0.1);
+    }
+  }
+
+  .chat-title {
+    color: #f9fafb;
+  }
+
+  .chat-meta {
+    color: #9ca3af;
+  }
+
+  .chat-date {
+    color: #6b7280;
+  }
+
+  .rename-input {
+    background-color: #374151;
+    color: #f9fafb;
+    border-color: #60a5fa;
+
+    &:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+    }
+  }
+
+  .chat-item.renaming {
+    background-color: rgba(59, 130, 246, 0.15);
+
+    &:hover {
+      background-color: rgba(59, 130, 246, 0.15);
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .chat-item,
+  .rename-input,
+  .pin-indicator,
+  .chat-title,
+  .chat-meta,
+  .chat-date {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .chat-item {
+    &:hover,
+    &:active {
+      transform: none !important;
+    }
+
+    &::before,
+    &::after {
+      transition: none !important;
+    }
+  }
+}
+
+// Focus visible styles for keyboard navigation
+.chat-item:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .chat-item:focus-visible {
+    outline-color: #60a5fa;
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.2);
+  }
+}

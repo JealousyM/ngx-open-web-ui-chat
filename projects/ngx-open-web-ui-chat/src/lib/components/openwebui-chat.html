@@ -1,4 +1,39 @@
 <div class="openwebui-chat-container">
+  @if (history) {
+    <button 
+      class="sidebar-toggle-btn" 
+      (click)="toggleSidebar()"
+      [attr.aria-label]="t.toggleSidebar ?? 'Toggle chat history sidebar'"
+      [attr.aria-expanded]="showSidebar()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="18" rx="2" />
+        <rect x="14" y="3" width="7" height="18" rx="2" />
+      </svg>
+    </button>
+
+    <app-chat-history-sidebar
+      [isOpen]="showSidebar()"
+      [chats]="chatList()"
+      [currentChatId]="chatId"
+      [isLoading]="isLoadingChats()"
+      [translations]="t"
+      (chatSelected)="handleChatSelected($event)"
+      (newChatRequested)="handleNewChatRequest()"
+      (searchRequested)="handleSearchRequested()"
+      (loadMoreRequested)="loadMoreChats()"
+      (contextMenuAction)="handleContextMenuAction($event)"
+      (toggleSidebar)="toggleSidebar()"
+      (chatsUpdated)="handleChatsUpdated($event)"
+    />
+
+    <app-chat-search-modal
+      [isOpen]="showSearchModal()"
+      [translations]="t"
+      (closed)="handleSearchModalClosed()"
+      (chatSelected)="handleChatSelected($event)"
+    />
+  }
+
   @if (showError()) {
     <openwebui-error-banner
       [message]="errorMessage()"

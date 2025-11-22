@@ -77,7 +77,7 @@
         {{ translations().stop }}
       </button>
     } @else {
-      <button (click)="onSendMessage()" [disabled]="!inputMessage().trim() || isTranscribing()" class="send-button">
+      <button (click)="onSendMessage()" [disabled]="!inputMessage.trim() || isTranscribing()" class="send-button">
         {{ translations().send }}
       </button>
     }

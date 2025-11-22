@@ -30,6 +30,8 @@ Interactive demo showcasing all features:
 - 📱 **Responsive** - Mobile-friendly design
 - ⭐ **Response Actions** - Continue, regenerate, and rate responses
 - 👍 **Rating System** - Comprehensive feedback with good/bad ratings
+- 📤 **Chat Export** - Download conversations as PDF, TXT, or JSON
+- 🛡️ **Safe Deletion** - Prevents accidental deletion of active chats
 
 ## 🚀 Quick Start
 
@@ -133,7 +135,11 @@ openwebui-ts-embedded-sdk/
 │       │   │   ├── openwebui-chat.scss
 │       │   │   ├── chat-input/
 │       │   │   ├── chat-message/
+│       │   │   ├── chat-history-sidebar/
+│       │   │   ├── chat-search-modal/
+│       │   │   ├── confirm-dialog/
 │       │   │   ├── error-banner/
+│       │   │   ├── export-format-menu/
 │       │   │   ├── message-actions/
 │       │   │   ├── rating-form/
 │       │   │   └── regenerate-menu/
@@ -141,6 +147,9 @@ openwebui-ts-embedded-sdk/
 │       │   │   └── openwebui-api.ts
 │       │   ├── models/
 │       │   │   └── chat.model.ts
+│       │   ├── utils/
+│       │   │   ├── audio-recorder.ts
+│       │   │   └── date-formatter.ts
 │       │   └── i18n/
 │       │       └── translations.ts
 │       └── dist/                 # Built package
@@ -171,6 +180,7 @@ openwebui-ts-embedded-sdk/
 | `enableMarkdown` | `boolean` | ❌ | `true` | Enable markdown |
 | `debug` | `boolean` | ❌ | `false` | Debug logging |
 | `language` | `string` | ❌ | `'en'` | UI language |
+| `history` | `boolean` | ❌ | `false` | Enable chat history sidebar |
 
 ### Outputs
 
@@ -351,7 +361,7 @@ MIT License - see LICENSE file for details
 - [x] Response interaction controls (continue, regenerate, rate)
 - [x] Comprehensive rating system
 - [x] Voice input with transcription
-- [ ] Export chat history
+- [x] Export chat history
 - [ ] Custom themes
 
 ## 🎤 Voice Input
@@ -372,7 +382,7 @@ The component includes voice recording with automatic transcription:
 
 ---
 
-**Status:** Production-ready v1.0.9
+**Status:** Production-ready v1.0.10
 **Angular Version:** 20.x  
 **Node Required:** >=20.19.0  
 

@@ -144,20 +144,6 @@ onMessagesChanged(count: number): void {
 ### Main Area
 
 #### Placeholder (before connection)
-- Welcome message
-- Step-by-step guide
-- Visual indicators
-
-#### Chat (after connection)
-- Full `openwebui-chat` component
-- Real-time messaging
-- Markdown support
-
-## 🔒 Security
-
-### API Key Protection
-```typescript
-<input 
   type="password"  // Visually hidden
   [(ngModel)]="apiKey"
   [disabled]="chatConnected()" // Locked after connect

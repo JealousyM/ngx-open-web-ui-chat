@@ -1,0 +1,69 @@
+<div class="chat-list-container" 
+     #scrollContainer
+     role="list"
+     [attr.aria-label]="translations?.chatList || 'Chat list'"
+     (keydown)="onKeyDown($event)">
+  @if (chats.length === 0) {
+    <div class="empty-state" role="status">
+      <p class="empty-message">{{ translations?.noChatsYet || 'No chats yet' }}</p>
+      <p class="empty-hint">{{ translations?.newChat || 'Start a new conversation' }}</p>
+    </div>
+  } @else {
+    <div class="chat-list">
+      @if (pinnedChats.length > 0) {
+        <div class="pinned-section" role="group" [attr.aria-label]="translations?.pinnedChats || 'Pinned chats'">
+          <div class="section-label" aria-hidden="true">{{ translations?.pinned || 'Pinned' }}</div>
+          @for (chat of pinnedChats; track chat.id; let i = $index) {
+            <app-chat-history-item
+              [chat]="chat"
+              [isActive]="chat.id === currentChatId"
+              [isPinned]="true"
+              [isRenaming]="isRenaming(chat.id)"
+              [translations]="translations"
+              [tabindex]="getTabIndex(i, true)"
+              (selected)="onChatClick(chat.id)"
+              (contextMenu)="onChatContextMenu($event, chat)"
+              (rename)="onChatRename(chat.id, $event)"
+              (cancelRename)="onCancelRename()">
+            </app-chat-history-item>
+          }
+        </div>
+      }
+
+      @if (unpinnedChats.length > 0) {
+        <div class="unpinned-section" role="group" [attr.aria-label]="translations?.allChats || 'All chats'">
+          @if (pinnedChats.length > 0) {
+            <div class="section-label" aria-hidden="true">{{ translations?.allChats || 'All Chats' }}</div>
+          }
+          @for (chat of unpinnedChats; track chat.id; let i = $index) {
+            <app-chat-history-item
+              [chat]="chat"
+              [isActive]="chat.id === currentChatId"
+              [isPinned]="false"
+              [isRenaming]="isRenaming(chat.id)"
+              [translations]="translations"
+              [tabindex]="getTabIndex(i + pinnedChats.length, false)"
+              (selected)="onChatClick(chat.id)"
+              (contextMenu)="onChatContextMenu($event, chat)"
+              (rename)="onChatRename(chat.id, $event)"
+              (cancelRename)="onCancelRename()">
+            </app-chat-history-item>
+          }
+        </div>
+      }
+
+      <div class="load-more-trigger" #loadMoreTrigger aria-hidden="true"></div>
+
+      @if (isLoading) {
+        <div class="loading-indicator" role="status" aria-live="polite">
+          <div class="spinner" aria-hidden="true"></div>
+          <span class="loading-text">{{ translations?.loadingChats || 'Loading more chats...' }}</span>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+  {{ screenReaderAnnouncement }}
+</div>

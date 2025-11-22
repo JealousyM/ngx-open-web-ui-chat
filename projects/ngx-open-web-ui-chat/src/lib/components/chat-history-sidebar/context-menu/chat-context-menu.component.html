@@ -1,0 +1,65 @@
+<div class="context-menu" 
+     [style.left.px]="position.x" 
+     [style.top.px]="position.y"
+     role="menu"
+     [attr.aria-label]="translations?.chatActions || 'Chat actions'"
+     (keydown)="onKeyDown($event)">
+  @if (!isPinned) {
+    <button class="menu-item" 
+            (click)="emitAction('pin')" 
+            type="button"
+            role="menuitem"
+            [attr.aria-label]="pinText">
+      <svg class="menu-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M9.5 1.5L14.5 6.5L10 11L11.5 14.5L10.5 15.5L8 11.5L4.5 15L3.5 14L7 10.5L3 8L4 7L7.5 8.5L12 4L9.5 1.5Z" fill="currentColor"/>
+      </svg>
+      <span>{{ pinText }}</span>
+    </button>
+  } @else {
+    <button class="menu-item" 
+            (click)="emitAction('unpin')" 
+            type="button"
+            role="menuitem"
+            [attr.aria-label]="unpinText">
+      <svg class="menu-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M9.5 1.5L14.5 6.5L10 11L11.5 14.5L10.5 15.5L8 11.5L4.5 15L3.5 14L7 10.5L3 8L4 7L7.5 8.5L12 4L9.5 1.5Z" fill="currentColor" opacity="0.5"/>
+      </svg>
+      <span>{{ unpinText }}</span>
+    </button>
+  }
+  
+  <button class="menu-item" 
+          (click)="emitAction('rename')" 
+          type="button"
+          role="menuitem"
+          [attr.aria-label]="renameText">
+    <svg class="menu-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M11.5 1.5L14.5 4.5L5 14H2V11L11.5 1.5ZM12.5 2.5L13.5 3.5L12 5L11 4L12.5 2.5Z" fill="currentColor"/>
+    </svg>
+    <span>{{ renameText }}</span>
+  </button>
+  
+  <button class="menu-item" 
+          (click)="emitAction('export')" 
+          type="button"
+          role="menuitem"
+          [attr.aria-label]="exportText">
+    <svg class="menu-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M8 1L11 4H9V9H7V4H5L8 1ZM2 11V14H14V11H15V15H1V11H2Z" fill="currentColor"/>
+    </svg>
+    <span>{{ exportText }}</span>
+  </button>
+  
+  <button class="menu-item danger" 
+          (click)="emitAction('delete')" 
+          type="button"
+          role="menuitem"
+          [disabled]="isActive"
+          [attr.aria-label]="deleteText"
+          [title]="isActive ? (translations?.cannotDeleteActiveChat || 'Cannot delete active chat') : ''">
+    <svg class="menu-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M5 2V1H11V2H14V3H13V14H3V3H2V2H5ZM4 3V13H12V3H4ZM6 5H7V11H6V5ZM9 5H10V11H9V5Z" fill="currentColor"/>
+    </svg>
+    <span>{{ deleteText }}</span>
+  </button>
+</div>

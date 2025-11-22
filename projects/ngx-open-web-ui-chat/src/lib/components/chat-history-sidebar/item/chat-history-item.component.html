@@ -1,0 +1,35 @@
+<div 
+  class="chat-item" 
+  [class.active]="isActive"
+  [class.pinned]="isPinned"
+  [class.renaming]="isRenaming"
+  role="listitem"
+  [attr.tabindex]="tabindex"
+  [attr.aria-label]="getAriaLabel()"
+  [attr.aria-current]="isActive ? 'page' : null"
+  (click)="onChatClick()"
+  (contextmenu)="onContextMenu($event)"
+  (keydown)="onKeyDown($event)">
+  <div class="chat-content">
+    @if (isRenaming) {
+      <input 
+        type="text" 
+        class="rename-input"
+        [(ngModel)]="renameValue"
+        (keydown)="onRenameKeydown($event)"
+        (blur)="onRenameBlur()"
+        [attr.maxlength]="100"
+        [attr.aria-label]="translations?.renameChat || 'Rename chat'"
+        autofocus
+      />
+    } @else {
+      <div class="chat-title">{{ chat.title }}</div>
+    }
+    <div class="chat-meta" aria-hidden="true">
+      @if (isPinned) {
+        <span class="pin-indicator">📌</span>
+      }
+      <span class="chat-date">{{ formatDate(chat.updated_at) }}</span>
+    </div>
+  </div>
+</div>

@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.10] - 2025-11-22
+
+### Added
+
+- 📤 **Chat Export** - Export full conversation history
+  - **Multiple Formats** - Support for PDF, TXT, and JSON exports
+  - **PDF Export** - Generates formatted PDF with markdown rendering
+  - **TXT Export** - Plain text format with role labels
+  - **JSON Export** - Raw data export for backup/portability
+  - **Context Menu Integration** - Accessible via right-click on chat history item
+- 🛡️ **Active Chat Protection** - Prevent accidental deletion
+  - **Disabled Delete Button** - "Delete Chat" is disabled for the currently active chat
+  - **Visual Feedback** - Disabled state styling (grayed out, no hover effect)
+  - **Tooltip** - Explanatory tooltip "Cannot delete active chat"
+- 🌍 **Localization Updates**
+  - Added missing Russian translations for sidebar sections ("Pinned", "All Chats")
+  - Added translations for export formats and delete protection messages
+
+### Fixed
+
+- 🐛 **Chat List Updates** - Fixed issue where new chats wouldn't appear immediately in the sidebar
+- 🐛 **Markdown Rendering** - Fixed indentation for lists and block elements in chat messages
+- 🐛 **Search Preview** - Fixed TypeScript error in search result preview generation
+- 🐛 **Modal Dimensions** - Fixed search modal size to be consistent (900x600px)
+- 🐛 **Sidebar Localization** - Fixed missing translation keys for sidebar headers
+
+### Technical Details
+- Added `isActive` input to `ChatContextMenuComponent`
+- Implemented `jspdf` integration for client-side PDF generation
+- Improved `createNewChat` logic to manually update local state
+- Added global SCSS styles for markdown list indentation
+- Updated `chat-search-modal` styles for fixed dimensions
+
 ## [1.0.9] - 2025-11-20
 
 ### Added

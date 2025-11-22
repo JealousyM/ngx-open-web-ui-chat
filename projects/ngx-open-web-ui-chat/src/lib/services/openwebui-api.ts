@@ -1,7 +1,8 @@
 import { Injectable, signal } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
-import { ChatSession, OpenWebUIChatConfig, Model } from '../models/chat.model';
+import { lexer } from 'marked';
+import { ChatSession, OpenWebUIChatConfig, Model, ChatHistoryItem, ChatListResponse } from '../models/chat.model';
 
 export interface ChatEvent {
   chat_id: string;
@@ -1560,5 +1561,504 @@ export class OpenWebUIService {
       this.debugLog('Error transcribing audio:', error);
       throw error;
     }
+  }
+
+  // Chat History API Methods
+
+  public getChats(page: number = 1): Observable<ChatListResponse> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Fetching chat list, page:', page);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/chats?page=${page}`;
+
+    return new Observable<ChatListResponse>(observer => {
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          this.debugLog('Chat list fetched:', data);
+          const chats: ChatHistoryItem[] = Array.isArray(data) ? data : [];
+          const response: ChatListResponse = {
+            chats,
+            page,
+            total: chats.length,
+            hasMore: chats.length > 0
+          };
+          observer.next(response);
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Get chats error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  public getPinnedChats(): Observable<ChatHistoryItem[]> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Fetching pinned chats');
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/chats/pinned`;
+
+    return new Observable<ChatHistoryItem[]>(observer => {
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          this.debugLog('Pinned chats fetched:', data);
+          const chats: ChatHistoryItem[] = Array.isArray(data) ? data : [];
+          observer.next(chats);
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Get pinned chats error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  public searchChats(query: string): Observable<ChatHistoryItem[]> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Searching chats with query:', query);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/chats/search?text=${encodeURIComponent(query)}`;
+
+    return new Observable<ChatHistoryItem[]>(observer => {
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          this.debugLog('Search results:', data);
+          const results: ChatHistoryItem[] = Array.isArray(data) ? data : [];
+          observer.next(results);
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Search chats error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  public pinChat(chatId: string): Observable<void> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Pinning chat:', chatId);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/chats/${chatId}/pin`;
+
+    return new Observable<void>(observer => {
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          this.debugLog('Chat pinned successfully');
+          observer.next();
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Pin chat error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  public unpinChat(chatId: string): Observable<void> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Unpinning chat:', chatId);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/chats/${chatId}/pin`;
+
+    return new Observable<void>(observer => {
+      fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          this.debugLog('Chat unpinned successfully');
+          observer.next();
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Unpin chat error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  public deleteChat(chatId: string): Observable<void> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Deleting chat:', chatId);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/chats/${chatId}`;
+
+    return new Observable<void>(observer => {
+      fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          this.debugLog('Chat deleted successfully');
+          observer.next();
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Delete chat error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  public renameChat(chatId: string, newTitle: string): Observable<void> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Renaming chat:', chatId, 'to:', newTitle);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/chats/${chatId}`;
+
+    return new Observable<void>(observer => {
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        },
+        body: JSON.stringify({
+          chat: {
+            title: newTitle
+          }
+        })
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          this.debugLog('Chat renamed successfully');
+          observer.next();
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Rename chat error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  public loadChatById(chatId: string): Observable<ChatSession> {
+    return new Observable<ChatSession>(observer => {
+      this.getChatById(chatId)
+        .then(data => {
+          if (!data) {
+            throw new Error('Chat not found');
+          }
+          
+          const chatSession: ChatSession = {
+            id: data.id,
+            title: data.title,
+            created_at: data.created_at,
+            updated_at: data.updated_at
+          };
+          
+          if (data.chat?.history?.messages) {
+            const messagesObj = data.chat.history.messages;
+            const messagesArray = Object.values(messagesObj);
+            (chatSession as any).messages = messagesArray;
+          }
+          
+          observer.next(chatSession);
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Load chat error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  public async exportChatAsJson(chatId: string): Promise<Blob> {
+    const chat = await this.getChatById(chatId);
+    if (!chat) {
+      throw new Error('Chat not found');
+    }
+    const jsonString = JSON.stringify(chat, null, 2);
+    return new Blob([jsonString], { type: 'application/json' });
+  }
+
+  public async exportChatAsTxt(chatId: string): Promise<Blob> {
+    const chat = await this.getChatById(chatId);
+    if (!chat) {
+      throw new Error('Chat not found');
+    }
+    
+    let textContent = `Chat: ${chat.title || 'Untitled'}\n`;
+    textContent += `Created: ${new Date(chat.created_at * 1000).toLocaleString()}\n\n`;
+    
+    if (chat.chat?.messages && Array.isArray(chat.chat.messages)) {
+      const messages = chat.chat.messages;
+      for (const msg of messages as any[]) {
+        textContent += `${msg.role.toUpperCase()}: ${msg.content}\n\n`;
+      }
+    } else {
+      console.warn('[Export] No messages found in chat.chat.messages');
+    }
+    
+    return new Blob([textContent], { type: 'text/plain' });
+  }
+
+  public async exportChatAsPdf(chatId: string): Promise<Blob> {
+    const chat = await this.getChatById(chatId);
+    if (!chat) {
+      throw new Error('Chat not found');
+    }
+    
+    const { jsPDF } = await import('jspdf');
+    const doc = new jsPDF();
+    
+    try {
+      const fonts = [
+        { url: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf', name: 'Roboto-Regular.ttf', style: 'normal' },
+        { url: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf', name: 'Roboto-Medium.ttf', style: 'bold' }
+      ];
+
+      for (const font of fonts) {
+        const response = await fetch(font.url);
+        if (response.ok) {
+          const blob = await response.blob();
+          const reader = new FileReader();
+          await new Promise((resolve, reject) => {
+            reader.onloadend = () => {
+              const base64data = reader.result as string;
+              const base64 = base64data.split(',')[1] || base64data;
+              doc.addFileToVFS(font.name, base64);
+              doc.addFont(font.name, 'Roboto', font.style);
+              resolve(null);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+        }
+      }
+      doc.setFont('Roboto', 'normal');
+    } catch (e) {
+      console.error('Error loading fonts:', e);
+    }
+    
+    doc.setFontSize(16);
+    doc.setFont('Roboto', 'bold');
+    doc.text(chat.title || 'Untitled Chat', 10, 10);
+    
+    doc.setFontSize(10);
+    doc.setFontSize(10);
+    doc.setFont('Roboto', 'normal');
+    doc.text(`Created: ${new Date(chat.created_at * 1000).toLocaleString()}`, 10, 20);
+    
+    const pageHeight = doc.internal.pageSize.height;
+    const pageWidth = doc.internal.pageSize.width;
+    const margin = 10;
+    const maxWidth = pageWidth - 2 * margin;
+    let yPosition = 30;
+
+    const checkPageBreak = (height: number) => {
+      if (yPosition + height > pageHeight - 10) {
+        doc.addPage();
+        yPosition = 20;
+        return true;
+      }
+      return false;
+    };
+
+    const renderMarkdown = (text: string) => {
+      const tokens = lexer(text);
+      
+      for (const token of tokens) {
+        if (token.type === 'heading') {
+          const fontSize = 16 - (token.depth - 1) * 2;
+          doc.setFontSize(Math.max(10, fontSize));
+          doc.setFont('Roboto', 'bold');
+          
+          const lines = doc.splitTextToSize(token.text, maxWidth);
+          checkPageBreak(lines.length * fontSize * 0.5 + 5);
+          
+          for (const line of lines) {
+            doc.text(line, margin, yPosition);
+            yPosition += fontSize * 0.5;
+          }
+          yPosition += 5;
+        } 
+        else if (token.type === 'paragraph' || token.type === 'text') {
+          doc.setFontSize(10);
+          
+          if (token.tokens) {
+            let x = margin;
+            const lineHeight = 5;
+            
+            for (const inline of token.tokens) {
+               if (inline.type === 'strong') {
+                 doc.setFont('Roboto', 'bold');
+               } else {
+                 doc.setFont('Roboto', 'normal');
+               }
+               
+               const text = 'text' in inline ? (inline as any).text : '';
+               if (!text) continue;
+
+               const words = text.split(/(\s+)/);
+               
+               for (const word of words) {
+                 const wordWidth = doc.getTextWidth(word);
+                 
+                 if (x + wordWidth > margin + maxWidth) {
+                   yPosition += lineHeight;
+                   x = margin;
+                   checkPageBreak(lineHeight);
+                 }
+                 
+                 doc.text(word, x, yPosition);
+                 x += wordWidth;
+               }
+            }
+            yPosition += lineHeight * 1.5;
+            checkPageBreak(lineHeight);
+            x = margin;
+          } else {
+             doc.setFont('Roboto', 'normal');
+             const lines = doc.splitTextToSize(token.text, maxWidth);
+             checkPageBreak(lines.length * 5 + 5);
+             doc.text(lines, margin, yPosition);
+             yPosition += lines.length * 5 + 5;
+          }
+        }
+        else if (token.type === 'list') {
+           doc.setFontSize(10);
+           doc.setFont('Roboto', 'normal');
+           
+           for (const item of token.items) {
+             const bullet = '• ';
+             const bulletWidth = doc.getTextWidth(bullet);
+             
+             const lines = doc.splitTextToSize(item.text, maxWidth - bulletWidth);
+             checkPageBreak(lines.length * 5 + 2);
+             
+             doc.text(bullet, margin, yPosition);
+             doc.text(lines, margin + bulletWidth, yPosition);
+             yPosition += lines.length * 5 + 2;
+           }
+           yPosition += 3;
+        }
+        else if (token.type === 'code') {
+           doc.setFontSize(9);
+           doc.setFont('Courier', 'normal'); // Use Courier for code
+           const lines = doc.splitTextToSize(token.text, maxWidth);
+           checkPageBreak(lines.length * 4 + 5);
+           
+           for (const line of lines) {
+             doc.text(line, margin, yPosition);
+             yPosition += 4;
+           }
+           yPosition += 5;
+           doc.setFont('Roboto', 'normal'); // Reset font
+        }
+      }
+    };
+    
+    if (chat.chat?.messages && Array.isArray(chat.chat.messages)) {
+      const messages = chat.chat.messages;
+      for (const msg of messages as any[]) {
+        checkPageBreak(20);
+        
+        doc.setFontSize(12);
+        doc.setFont('Roboto', 'bold');
+        doc.text(`${msg.role.toUpperCase()}:`, margin, yPosition);
+        yPosition += 7;
+        
+        renderMarkdown(msg.content);
+        
+        yPosition += 5;
+      }
+    }
+    
+    return doc.output('blob');
   }
 }

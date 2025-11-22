@@ -50,6 +50,58 @@ export interface Translation {
   ratingFeedbackThankYou?: string;
   save?: string;
   uploadFiles?: string;
+  newChat?: string;
+  searchChats?: string;
+  pinChat?: string;
+  unpinChat?: string;
+  renameChat?: string;
+  exportChat?: string;
+  deleteChat?: string;
+  confirmDeleteChat?: string;
+  deleteError?: string;
+  renameTooLong?: string;
+  renameError?: string;
+  selectExportFormat?: string;
+  invalidExportFormat?: string;
+  exportError?: string;
+  searchPlaceholder?: string;
+  noSearchResults?: string;
+  noPreview?: string;
+  openChat?: string;
+  noChatsYet?: string;
+  loadingChats?: string;
+  justNow?: string;
+  minuteAgo?: string;
+  minutesAgo?: string;
+  hourAgo?: string;
+  hoursAgo?: string;
+  dayAgo?: string;
+  daysAgo?: string;
+  weekAgo?: string;
+  weeksAgo?: string;
+  monthAgo?: string;
+  monthsAgo?: string;
+  yearAgo?: string;
+  yearsAgo?: string;
+  // Accessibility
+  chatHistory?: string;
+  chatList?: string;
+  pinnedChats?: string;
+  allChats?: string;
+  pinned?: string;
+  active?: string;
+  chatSelected?: string;
+  chatActions?: string;
+  chatPreview?: string;
+  messages?: string;
+  searching?: string;
+  oneResult?: string;
+  resultsFound?: string;
+  searchResults?: string;
+  toggleSidebar?: string;
+  errorLoadChatsFailed?: string;
+  errorLoadChatFailed?: string;
+  cannotDeleteActiveChat?: string;
 }
 
 export interface Translations {
@@ -108,7 +160,59 @@ export const translations: Translations = {
     ratingCommentPlaceholder: 'Feel free to add specific details',
     ratingFeedbackThankYou: 'Thank you for your feedback',
     save: 'Save',
-    uploadFiles: 'Upload Files'
+    uploadFiles: 'Upload Files',
+    newChat: 'New Chat',
+    searchChats: 'Search',
+    pinChat: 'Pin Chat',
+    unpinChat: 'Unpin Chat',
+    renameChat: 'Rename Chat',
+    exportChat: 'Export Chat',
+    deleteChat: 'Delete Chat',
+    confirmDeleteChat: 'Are you sure you want to delete this chat? This action cannot be undone.',
+    deleteError: 'Failed to delete chat. Please try again.',
+    renameTooLong: 'Chat title is too long. Please use a shorter title.',
+    renameError: 'Failed to rename chat. Please try again.',
+    selectExportFormat: 'Select export format: JSON, TXT, or PDF',
+    invalidExportFormat: 'Invalid export format selected.',
+    exportError: 'Failed to export chat. Please try again.',
+    searchPlaceholder: 'Search chats...',
+    noSearchResults: 'No results found',
+    noPreview: 'No messages to preview',
+    openChat: 'Open Chat',
+    noChatsYet: 'No chats yet',
+    loadingChats: 'Loading chats...',
+    justNow: 'Just now',
+    minuteAgo: '1 minute ago',
+    minutesAgo: '{count} minutes ago',
+    hourAgo: '1 hour ago',
+    hoursAgo: '{count} hours ago',
+    dayAgo: '1 day ago',
+    daysAgo: '{count} days ago',
+    weekAgo: '1 week ago',
+    weeksAgo: '{count} weeks ago',
+    monthAgo: '1 month ago',
+    monthsAgo: '{count} months ago',
+    yearAgo: '1 year ago',
+    yearsAgo: '{count} years ago',
+    // Accessibility
+    chatHistory: 'Chat history',
+    chatList: 'Chat list',
+    pinnedChats: 'Pinned chats',
+    allChats: 'All chats',
+    pinned: 'Pinned',
+    active: 'Active',
+    chatSelected: 'Chat selected',
+    chatActions: 'Chat actions',
+    chatPreview: 'Chat preview',
+    messages: 'Messages',
+    searching: 'Searching...',
+    oneResult: '1 result found',
+    resultsFound: 'results found',
+    searchResults: 'Search results',
+    toggleSidebar: 'Toggle chat history sidebar',
+    errorLoadChatsFailed: 'Failed to load chats. Please try again.',
+    errorLoadChatFailed: 'Failed to load chat. Please try again.',
+    cannotDeleteActiveChat: 'Cannot delete active chat'
   },
   zh: {
     send: '发送',
@@ -148,7 +252,40 @@ export const translations: Translations = {
     ratingCommentPlaceholder: '可以添加具体细节',
     ratingFeedbackThankYou: '感谢您的反馈',
     save: '保存',
-    uploadFiles: '上传文件'
+    uploadFiles: '上传文件',
+    newChat: '新对话',
+    searchChats: '搜索',
+    pinChat: '置顶对话',
+    unpinChat: '取消置顶',
+    renameChat: '重命名对话',
+    exportChat: '导出对话',
+    deleteChat: '删除对话',
+    confirmDeleteChat: '确定要删除此对话吗？此操作无法撤销。',
+    deleteError: '删除对话失败。请重试。',
+    renameTooLong: '对话标题太长。请使用较短的标题。',
+    renameError: '重命名对话失败。请重试。',
+    selectExportFormat: '选择导出格式：JSON、TXT 或 PDF',
+    invalidExportFormat: '选择的导出格式无效。',
+    exportError: '导出对话失败。请重试。',
+    searchPlaceholder: '搜索对话...',
+    noSearchResults: '未找到结果',
+    noPreview: '没有消息可预览',
+    openChat: '打开对话',
+    noChatsYet: '还没有对话',
+    loadingChats: '加载对话中...',
+    justNow: '刚刚',
+    minuteAgo: '1 分钟前',
+    minutesAgo: '{count} 分钟前',
+    hourAgo: '1 小时前',
+    hoursAgo: '{count} 小时前',
+    dayAgo: '1 天前',
+    daysAgo: '{count} 天前',
+    weekAgo: '1 周前',
+    weeksAgo: '{count} 周前',
+    monthAgo: '1 个月前',
+    monthsAgo: '{count} 个月前',
+    yearAgo: '1 年前',
+    yearsAgo: '{count} 年前'
   },
   hi: {
     send: 'भेजें',
@@ -188,7 +325,40 @@ export const translations: Translations = {
     ratingCommentPlaceholder: 'विशिष्ट विवरण जोड़ने के लिए स्वतंत्र महसूस करें',
     ratingFeedbackThankYou: 'आपकी प्रतिक्रिया के लिए धन्यवाद',
     save: 'सहेजें',
-    uploadFiles: 'फ़ाइलें अपलोड करें'
+    uploadFiles: 'फ़ाइलें अपलोड करें',
+    newChat: 'नई चैट',
+    searchChats: 'खोजें',
+    pinChat: 'चैट पिन करें',
+    unpinChat: 'चैट अनपिन करें',
+    renameChat: 'चैट का नाम बदलें',
+    exportChat: 'चैट निर्यात करें',
+    deleteChat: 'चैट हटाएं',
+    confirmDeleteChat: 'क्या आप वाकई इस चैट को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।',
+    deleteError: 'चैट हटाने में विफल। कृपया पुनः प्रयास करें।',
+    renameTooLong: 'चैट शीर्षक बहुत लंबा है। कृपया एक छोटा शीर्षक उपयोग करें।',
+    renameError: 'चैट का नाम बदलने में विफल। कृपया पुनः प्रयास करें।',
+    selectExportFormat: 'निर्यात प्रारूप चुनें: JSON, TXT, या PDF',
+    invalidExportFormat: 'अमान्य निर्यात प्रारूप चुना गया।',
+    exportError: 'चैट निर्यात करने में विफल। कृपया पुनः प्रयास करें।',
+    searchPlaceholder: 'चैट खोजें...',
+    noSearchResults: 'कोई परिणाम नहीं मिला',
+    noPreview: 'पूर्वावलोकन के लिए कोई संदेश नहीं',
+    openChat: 'चैट खोलें',
+    noChatsYet: 'अभी तक कोई चैट नहीं',
+    loadingChats: 'चैट लोड हो रहे हैं...',
+    justNow: 'अभी',
+    minuteAgo: '1 मिनट पहले',
+    minutesAgo: '{count} मिनट पहले',
+    hourAgo: '1 घंटा पहले',
+    hoursAgo: '{count} घंटे पहले',
+    dayAgo: '1 दिन पहले',
+    daysAgo: '{count} दिन पहले',
+    weekAgo: '1 सप्ताह पहले',
+    weeksAgo: '{count} सप्ताह पहले',
+    monthAgo: '1 महीना पहले',
+    monthsAgo: '{count} महीने पहले',
+    yearAgo: '1 साल पहले',
+    yearsAgo: '{count} साल पहले'
   },
   es: {
     send: 'Enviar',
@@ -228,7 +398,40 @@ export const translations: Translations = {
     ratingCommentPlaceholder: 'Siéntete libre de agregar detalles específicos',
     ratingFeedbackThankYou: 'Gracias por tu comentario',
     save: 'Guardar',
-    uploadFiles: 'Subir archivos'
+    uploadFiles: 'Subir archivos',
+    newChat: 'Nuevo Chat',
+    searchChats: 'Buscar',
+    pinChat: 'Fijar Chat',
+    unpinChat: 'Desfijar Chat',
+    renameChat: 'Renombrar Chat',
+    exportChat: 'Exportar Chat',
+    deleteChat: 'Eliminar Chat',
+    confirmDeleteChat: '¿Estás seguro de que quieres eliminar este chat? Esta acción no se puede deshacer.',
+    deleteError: 'Error al eliminar el chat. Por favor, inténtalo de nuevo.',
+    renameTooLong: 'El título del chat es demasiado largo. Por favor, usa un título más corto.',
+    renameError: 'Error al renombrar el chat. Por favor, inténtalo de nuevo.',
+    selectExportFormat: 'Selecciona el formato de exportación: JSON, TXT o PDF',
+    invalidExportFormat: 'Formato de exportación inválido seleccionado.',
+    exportError: 'Error al exportar el chat. Por favor, inténtalo de nuevo.',
+    searchPlaceholder: 'Buscar chats...',
+    noSearchResults: 'No se encontraron resultados',
+    noPreview: 'No hay mensajes para previsualizar',
+    openChat: 'Abrir Chat',
+    noChatsYet: 'Aún no hay chats',
+    loadingChats: 'Cargando chats...',
+    justNow: 'Justo ahora',
+    minuteAgo: 'Hace 1 minuto',
+    minutesAgo: 'Hace {count} minutos',
+    hourAgo: 'Hace 1 hora',
+    hoursAgo: 'Hace {count} horas',
+    dayAgo: 'Hace 1 día',
+    daysAgo: 'Hace {count} días',
+    weekAgo: 'Hace 1 semana',
+    weeksAgo: 'Hace {count} semanas',
+    monthAgo: 'Hace 1 mes',
+    monthsAgo: 'Hace {count} meses',
+    yearAgo: 'Hace 1 año',
+    yearsAgo: 'Hace {count} años'
   },
   ar: {
     send: 'إرسال',
@@ -268,7 +471,40 @@ export const translations: Translations = {
     ratingCommentPlaceholder: 'لا تتردد في إضافة تفاصيل محددة',
     ratingFeedbackThankYou: 'شكراً لملاحظاتك',
     save: 'حفظ',
-    uploadFiles: 'تحميل الملفات'
+    uploadFiles: 'تحميل الملفات',
+    newChat: 'محادثة جديدة',
+    searchChats: 'بحث',
+    pinChat: 'تثبيت المحادثة',
+    unpinChat: 'إلغاء التثبيت',
+    renameChat: 'إعادة تسمية المحادثة',
+    exportChat: 'تصدير المحادثة',
+    deleteChat: 'حذف المحادثة',
+    confirmDeleteChat: 'هل أنت متأكد من أنك تريد حذف هذه المحادثة؟ لا يمكن التراجع عن هذا الإجراء.',
+    deleteError: 'فشل حذف المحادثة. يرجى المحاولة مرة أخرى.',
+    renameTooLong: 'عنوان المحادثة طويل جداً. يرجى استخدام عنوان أقصر.',
+    renameError: 'فشل إعادة تسمية المحادثة. يرجى المحاولة مرة أخرى.',
+    selectExportFormat: 'حدد تنسيق التصدير: JSON أو TXT أو PDF',
+    invalidExportFormat: 'تنسيق التصدير المحدد غير صالح.',
+    exportError: 'فشل تصدير المحادثة. يرجى المحاولة مرة أخرى.',
+    searchPlaceholder: 'البحث في المحادثات...',
+    noSearchResults: 'لم يتم العثور على نتائج',
+    noPreview: 'لا توجد رسائل للمعاينة',
+    openChat: 'فتح المحادثة',
+    noChatsYet: 'لا توجد محادثات بعد',
+    loadingChats: 'جار تحميل المحادثات...',
+    justNow: 'الآن',
+    minuteAgo: 'منذ دقيقة واحدة',
+    minutesAgo: 'منذ {count} دقائق',
+    hourAgo: 'منذ ساعة واحدة',
+    hoursAgo: 'منذ {count} ساعات',
+    dayAgo: 'منذ يوم واحد',
+    daysAgo: 'منذ {count} أيام',
+    weekAgo: 'منذ أسبوع واحد',
+    weeksAgo: 'منذ {count} أسابيع',
+    monthAgo: 'منذ شهر واحد',
+    monthsAgo: 'منذ {count} أشهر',
+    yearAgo: 'منذ سنة واحدة',
+    yearsAgo: 'منذ {count} سنوات'
   },
   fr: {
     send: 'Envoyer',
@@ -308,7 +544,40 @@ export const translations: Translations = {
     ratingCommentPlaceholder: 'N\'hésitez pas à ajouter des détails spécifiques',
     ratingFeedbackThankYou: 'Merci pour votre retour',
     save: 'Enregistrer',
-    uploadFiles: 'Télécharger des fichiers'
+    uploadFiles: 'Télécharger des fichiers',
+    newChat: 'Nouveau Chat',
+    searchChats: 'Rechercher',
+    pinChat: 'Épingler le Chat',
+    unpinChat: 'Désépingler le Chat',
+    renameChat: 'Renommer le Chat',
+    exportChat: 'Exporter le Chat',
+    deleteChat: 'Supprimer le Chat',
+    confirmDeleteChat: 'Êtes-vous sûr de vouloir supprimer ce chat? Cette action ne peut pas être annulée.',
+    deleteError: 'Échec de la suppression du chat. Veuillez réessayer.',
+    renameTooLong: 'Le titre du chat est trop long. Veuillez utiliser un titre plus court.',
+    renameError: 'Échec du renommage du chat. Veuillez réessayer.',
+    selectExportFormat: 'Sélectionnez le format d\'exportation: JSON, TXT ou PDF',
+    invalidExportFormat: 'Format d\'exportation invalide sélectionné.',
+    exportError: 'Échec de l\'exportation du chat. Veuillez réessayer.',
+    searchPlaceholder: 'Rechercher des chats...',
+    noSearchResults: 'Aucun résultat trouvé',
+    noPreview: 'Aucun message à prévisualiser',
+    openChat: 'Ouvrir le Chat',
+    noChatsYet: 'Pas encore de chats',
+    loadingChats: 'Chargement des chats...',
+    justNow: 'À l\'instant',
+    minuteAgo: 'Il y a 1 minute',
+    minutesAgo: 'Il y a {count} minutes',
+    hourAgo: 'Il y a 1 heure',
+    hoursAgo: 'Il y a {count} heures',
+    dayAgo: 'Il y a 1 jour',
+    daysAgo: 'Il y a {count} jours',
+    weekAgo: 'Il y a 1 semaine',
+    weeksAgo: 'Il y a {count} semaines',
+    monthAgo: 'Il y a 1 mois',
+    monthsAgo: 'Il y a {count} mois',
+    yearAgo: 'Il y a 1 an',
+    yearsAgo: 'Il y a {count} ans'
   },
   pt: {
     send: 'Enviar',
@@ -348,7 +617,40 @@ export const translations: Translations = {
     ratingCommentPlaceholder: 'Sinta-se à vontade para adicionar detalhes específicos',
     ratingFeedbackThankYou: 'Obrigado pelo seu feedback',
     save: 'Salvar',
-    uploadFiles: 'Enviar arquivos'
+    uploadFiles: 'Enviar arquivos',
+    newChat: 'Novo Chat',
+    searchChats: 'Pesquisar',
+    pinChat: 'Fixar Chat',
+    unpinChat: 'Desafixar Chat',
+    renameChat: 'Renomear Chat',
+    exportChat: 'Exportar Chat',
+    deleteChat: 'Excluir Chat',
+    confirmDeleteChat: 'Tem certeza de que deseja excluir este chat? Esta ação não pode ser desfeita.',
+    deleteError: 'Falha ao excluir o chat. Por favor, tente novamente.',
+    renameTooLong: 'O título do chat é muito longo. Por favor, use um título mais curto.',
+    renameError: 'Falha ao renomear o chat. Por favor, tente novamente.',
+    selectExportFormat: 'Selecione o formato de exportação: JSON, TXT ou PDF',
+    invalidExportFormat: 'Formato de exportação inválido selecionado.',
+    exportError: 'Falha ao exportar o chat. Por favor, tente novamente.',
+    searchPlaceholder: 'Pesquisar chats...',
+    noSearchResults: 'Nenhum resultado encontrado',
+    noPreview: 'Nenhuma mensagem para visualizar',
+    openChat: 'Abrir Chat',
+    noChatsYet: 'Ainda não há chats',
+    loadingChats: 'Carregando chats...',
+    justNow: 'Agora mesmo',
+    minuteAgo: 'Há 1 minuto',
+    minutesAgo: 'Há {count} minutos',
+    hourAgo: 'Há 1 hora',
+    hoursAgo: 'Há {count} horas',
+    dayAgo: 'Há 1 dia',
+    daysAgo: 'Há {count} dias',
+    weekAgo: 'Há 1 semana',
+    weeksAgo: 'Há {count} semanas',
+    monthAgo: 'Há 1 mês',
+    monthsAgo: 'Há {count} meses',
+    yearAgo: 'Há 1 ano',
+    yearsAgo: 'Há {count} anos'
   },
   ru: {
     send: 'Отправить',
@@ -401,7 +703,43 @@ export const translations: Translations = {
     ratingCommentPlaceholder: 'Можете добавить конкретные детали',
     ratingFeedbackThankYou: 'Спасибо за ваш отзыв',
     save: 'Сохранить',
-    uploadFiles: 'Загрузить файлы'
+    uploadFiles: 'Загрузить файлы',
+    newChat: 'Новый чат',
+    searchChats: 'Поиск',
+    pinChat: 'Закрепить чат',
+    unpinChat: 'Открепить чат',
+    pinned: 'Закрепленные',
+    allChats: 'Все чаты',
+    renameChat: 'Переименовать чат',
+    exportChat: 'Экспортировать чат',
+    deleteChat: 'Удалить чат',
+    confirmDeleteChat: 'Вы уверены, что хотите удалить этот чат? Это действие нельзя отменить.',
+    deleteError: 'Не удалось удалить чат. Пожалуйста, попробуйте снова.',
+    cannotDeleteActiveChat: 'Нельзя удалить активный чат',
+    renameTooLong: 'Название чата слишком длинное. Пожалуйста, используйте более короткое название.',
+    renameError: 'Не удалось переименовать чат. Пожалуйста, попробуйте снова.',
+    selectExportFormat: 'Выберите формат экспорта: JSON, TXT или PDF',
+    invalidExportFormat: 'Выбран недопустимый формат экспорта.',
+    exportError: 'Не удалось экспортировать чат. Пожалуйста, попробуйте снова.',
+    searchPlaceholder: 'Поиск чатов...',
+    noSearchResults: 'Результаты не найдены',
+    noPreview: 'Нет сообщений для предпросмотра',
+    openChat: 'Открыть чат',
+    noChatsYet: 'Пока нет чатов',
+    loadingChats: 'Загрузка чатов...',
+    justNow: 'Только что',
+    minuteAgo: '1 минуту назад',
+    minutesAgo: '{count} минут назад',
+    hourAgo: '1 час назад',
+    hoursAgo: '{count} часов назад',
+    dayAgo: '1 день назад',
+    daysAgo: '{count} дней назад',
+    weekAgo: '1 неделю назад',
+    weeksAgo: '{count} недель назад',
+    monthAgo: '1 месяц назад',
+    monthsAgo: '{count} месяцев назад',
+    yearAgo: '1 год назад',
+    yearsAgo: '{count} лет назад'
   },
   bn: {
     send: 'পাঠান',
@@ -441,7 +779,40 @@ export const translations: Translations = {
     ratingCommentPlaceholder: 'নির্দিষ্ট বিবরণ যোগ করতে নির্দ্বিধায়',
     ratingFeedbackThankYou: 'আপনার মতামতের জন্য ধন্যবাদ',
     save: 'সংরক্ষণ করুন',
-    uploadFiles: 'ফাইল আপলোড করুন'
+    uploadFiles: 'ফাইল আপলোড করুন',
+    newChat: 'নতুন চ্যাট',
+    searchChats: 'অনুসন্ধান',
+    pinChat: 'চ্যাট পিন করুন',
+    unpinChat: 'চ্যাট আনপিন করুন',
+    renameChat: 'চ্যাট পুনঃনামকরণ করুন',
+    exportChat: 'চ্যাট রপ্তানি করুন',
+    deleteChat: 'চ্যাট মুছুন',
+    confirmDeleteChat: 'আপনি কি নিশ্চিত যে আপনি এই চ্যাটটি মুছতে চান? এই ক্রিয়াটি পূর্বাবস্থায় ফেরানো যাবে না।',
+    deleteError: 'চ্যাট মুছতে ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।',
+    renameTooLong: 'চ্যাট শিরোনাম খুব দীর্ঘ। অনুগ্রহ করে একটি ছোট শিরোনাম ব্যবহার করুন।',
+    renameError: 'চ্যাট পুনঃনামকরণ করতে ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।',
+    selectExportFormat: 'রপ্তানি বিন্যাস নির্বাচন করুন: JSON, TXT, বা PDF',
+    invalidExportFormat: 'অবৈধ রপ্তানি বিন্যাস নির্বাচিত।',
+    exportError: 'চ্যাট রপ্তানি করতে ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।',
+    searchPlaceholder: 'চ্যাট অনুসন্ধান করুন...',
+    noSearchResults: 'কোনো ফলাফল পাওয়া যায়নি',
+    noPreview: 'পূর্বরূপের জন্য কোনো বার্তা নেই',
+    openChat: 'চ্যাট খুলুন',
+    noChatsYet: 'এখনও কোনো চ্যাট নেই',
+    loadingChats: 'চ্যাট লোড হচ্ছে...',
+    justNow: 'এখনই',
+    minuteAgo: '১ মিনিট আগে',
+    minutesAgo: '{count} মিনিট আগে',
+    hourAgo: '১ ঘন্টা আগে',
+    hoursAgo: '{count} ঘন্টা আগে',
+    dayAgo: '১ দিন আগে',
+    daysAgo: '{count} দিন আগে',
+    weekAgo: '১ সপ্তাহ আগে',
+    weeksAgo: '{count} সপ্তাহ আগে',
+    monthAgo: '১ মাস আগে',
+    monthsAgo: '{count} মাস আগে',
+    yearAgo: '১ বছর আগে',
+    yearsAgo: '{count} বছর আগে'
   },
   ja: {
     send: '送信',
@@ -481,7 +852,40 @@ export const translations: Translations = {
     ratingCommentPlaceholder: '具体的な詳細を自由に追加してください',
     ratingFeedbackThankYou: 'フィードバックありがとうございます',
     save: '保存',
-    uploadFiles: 'ファイルをアップロード'
+    uploadFiles: 'ファイルをアップロード',
+    newChat: '新しいチャット',
+    searchChats: '検索',
+    pinChat: 'チャットをピン留め',
+    unpinChat: 'ピン留めを解除',
+    renameChat: 'チャット名を変更',
+    exportChat: 'チャットをエクスポート',
+    deleteChat: 'チャットを削除',
+    confirmDeleteChat: 'このチャットを削除してもよろしいですか？この操作は元に戻せません。',
+    deleteError: 'チャットの削除に失敗しました。もう一度お試しください。',
+    renameTooLong: 'チャットのタイトルが長すぎます。より短いタイトルを使用してください。',
+    renameError: 'チャット名の変更に失敗しました。もう一度お試しください。',
+    selectExportFormat: 'エクスポート形式を選択: JSON、TXT、またはPDF',
+    invalidExportFormat: '無効なエクスポート形式が選択されました。',
+    exportError: 'チャットのエクスポートに失敗しました。もう一度お試しください。',
+    searchPlaceholder: 'チャットを検索...',
+    noSearchResults: '結果が見つかりません',
+    noPreview: 'プレビューするメッセージがありません',
+    openChat: 'チャットを開く',
+    noChatsYet: 'まだチャットがありません',
+    loadingChats: 'チャットを読み込み中...',
+    justNow: 'たった今',
+    minuteAgo: '1分前',
+    minutesAgo: '{count}分前',
+    hourAgo: '1時間前',
+    hoursAgo: '{count}時間前',
+    dayAgo: '1日前',
+    daysAgo: '{count}日前',
+    weekAgo: '1週間前',
+    weeksAgo: '{count}週間前',
+    monthAgo: '1ヶ月前',
+    monthsAgo: '{count}ヶ月前',
+    yearAgo: '1年前',
+    yearsAgo: '{count}年前'
   }
 };
 

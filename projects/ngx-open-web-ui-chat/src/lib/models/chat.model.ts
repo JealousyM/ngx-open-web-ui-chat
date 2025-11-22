@@ -80,6 +80,7 @@ export interface ChatSession {
   title?: string;
   created_at?: number;
   updated_at?: number;
+  messages?: any[];
 }
 
 export interface ChatCompletionRequest {
@@ -164,6 +165,35 @@ export interface Model {
   filters: any[];
   tags: string[];
 }
+
+export interface ChatHistoryItem {
+  id: string;
+  title: string;
+  created_at: number;
+  updated_at: number;
+  pinned?: boolean;
+  preview?: string;
+}
+
+export interface ChatListResponse {
+  chats: ChatHistoryItem[];
+  page: number;
+  total: number;
+  hasMore: boolean;
+}
+
+export interface ChatContextAction {
+  action: 'pin' | 'unpin' | 'delete' | 'rename' | 'export';
+  chatId: string;
+  data?: any;
+}
+
+export interface ChatContextMenuEvent {
+  chat: ChatHistoryItem;
+  mouseEvent: MouseEvent;
+}
+
+export type ExportFormat = 'json' | 'txt' | 'pdf';
 
 
 

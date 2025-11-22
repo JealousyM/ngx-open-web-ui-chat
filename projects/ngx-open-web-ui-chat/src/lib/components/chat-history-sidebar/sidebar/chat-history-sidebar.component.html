@@ -1,0 +1,70 @@
+<div class="sidebar-overlay" 
+     [class.open]="isOpen" 
+     (click)="onToggle()"
+     [attr.aria-hidden]="!isOpen"
+     role="presentation"></div>
+
+<nav class="sidebar" 
+     [class.open]="isOpen"
+     role="navigation"
+     [attr.aria-label]="translations?.chatHistory || 'Chat history'"
+     [attr.aria-hidden]="!isOpen">
+  <app-chat-history-header
+    [translations]="translations"
+    (newChat)="onNewChat()"
+    (search)="onSearch()">
+  </app-chat-history-header>
+
+  <div class="sidebar-content" role="region" [attr.aria-label]="translations?.chatList || 'Chat list'">
+    @if (isLoading && chats.length === 0) {
+      <div class="loading-state" role="status" aria-live="polite">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>{{ translations?.loadingChats || 'Loading chats...' }}</p>
+      </div>
+    } @else {
+      <app-chat-history-list
+        [chats]="chats"
+        [currentChatId]="currentChatId"
+        [isLoading]="isLoading"
+        [renamingChatId]="renamingChatId"
+        [translations]="translations"
+        (chatSelected)="onChatSelected($event)"
+        (loadMore)="onLoadMore()"
+        (contextMenu)="onContextMenu($event)"
+        (rename)="onChatRename($event)"
+        (cancelRename)="onCancelRename()">
+      </app-chat-history-list>
+    }
+  </div>
+
+  @if (showContextMenu() && contextMenuChat()) {
+    <app-chat-context-menu
+      [chat]="contextMenuChat()!"
+      [position]="contextMenuPosition()"
+      [isPinned]="contextMenuChat()?.pinned ?? false"
+      [isActive]="contextMenuChat()?.id === currentChatId"
+      [translations]="translations"
+      (action)="handleContextMenuAction($event)"
+      (closed)="closeContextMenu()">
+    </app-chat-context-menu>
+  }
+  
+  @if (showDeleteConfirm()) {
+    <app-confirm-dialog
+      [isOpen]="showDeleteConfirm()"
+      [translations]="translations"
+      (confirmed)="onDeleteConfirmed()"
+      (cancelled)="onDeleteCancelled()">
+    </app-confirm-dialog>
+  }
+  
+  @if (showExportMenu()) {
+    <app-export-format-menu
+      [isOpen]="showExportMenu()"
+      [position]="exportMenuPosition()"
+      [translations]="translations"
+      (formatSelected)="onExportFormatSelected($event)"
+      (closed)="closeExportMenu()">
+    </app-export-format-menu>
+  }
+</nav>

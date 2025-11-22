@@ -1,0 +1,108 @@
+<div class="modal-overlay" 
+     *ngIf="isOpen" 
+     (click)="onOverlayClick($event)"
+     (keydown)="onEscapeKey($event)"
+     role="dialog"
+     [attr.aria-modal]="true"
+     [attr.aria-labelledby]="'search-modal-title'"
+     tabindex="-1">
+  <div class="modal-content" 
+       (click)="$event.stopPropagation()"
+       (keydown)="onModalKeyDown($event)">
+    <div class="modal-header">
+      <h2 id="search-modal-title">{{ translations?.searchChats || 'Search Chats' }}</h2>
+      <button class="close-button" 
+              (click)="closeModal()" 
+              [attr.aria-label]="translations?.close || 'Close'"
+              type="button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="search-section">
+        <div class="search-input-container">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input 
+            #searchInput
+            type="text" 
+            class="search-input"
+            [ngModel]="searchQuery()"
+            (ngModelChange)="onSearchQueryChange($event)"
+            [placeholder]="translations?.searchPlaceholder || 'Search chats...'"
+            [attr.aria-label]="translations?.searchChats || 'Search chats'"
+            [attr.aria-describedby]="'search-results-status'"
+            role="searchbox"
+            autofocus>
+          <div class="loading-spinner" *ngIf="isSearching()" role="status" [attr.aria-label]="translations?.searching || 'Searching'">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" opacity="0.25"></circle>
+              <path d="M12 2 A10 10 0 0 1 22 12" opacity="0.75">
+                <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/>
+              </path>
+            </svg>
+          </div>
+        </div>
+        
+        <div class="search-results" 
+             role="listbox"
+             [attr.aria-label]="translations?.searchResults || 'Search results'">
+          <div id="search-results-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+            {{ getSearchResultsAnnouncement() }}
+          </div>
+          
+          <div *ngIf="searchQuery() && !isSearching() && searchResults().length === 0" 
+               class="no-results"
+               role="status">
+            {{ translations?.noSearchResults || 'No results found' }}
+          </div>
+          
+          <div *ngFor="let result of searchResults(); let i = index" 
+               class="result-item" 
+               [class.selected]="selectedResult()?.id === result.id"
+               role="option"
+               [attr.aria-selected]="selectedResult()?.id === result.id"
+               [attr.tabindex]="0"
+               (mouseenter)="onResultHover(result)"
+               (click)="openChat(result.id)"
+               (keydown)="onResultKeyDown($event, result)">
+            <div class="result-title">{{ result.title }}</div>
+            <div class="result-date" aria-hidden="true">{{ result.updated_at * 1000 | date:'short' }}</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="preview-section" 
+           *ngIf="selectedResult()"
+           role="region"
+           [attr.aria-label]="translations?.chatPreview || 'Chat preview'">
+        <div class="preview-content">
+          <h3>{{ selectedResult()?.title }}</h3>
+          <div class="preview-messages" role="log" [attr.aria-label]="translations?.messages || 'Messages'">
+            <div *ngFor="let message of previewMessages()" class="preview-message">
+              <div class="message-role">{{ message.role }}</div>
+              <div class="message-content">
+                <markdown [data]="message.content"></markdown>
+              </div>
+            </div>
+            <div *ngIf="previewMessages().length === 0" class="no-preview" role="status">
+              {{ translations?.noPreview || 'No messages to preview' }}
+            </div>
+          </div>
+          <button class="open-chat-button" 
+                  (click)="openChat(selectedResult()!.id)"
+                  type="button"
+                  [attr.aria-label]="(translations?.openChat || 'Open Chat') + ': ' + selectedResult()?.title">
+            {{ translations?.openChat || 'Open Chat' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

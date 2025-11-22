@@ -105,6 +105,7 @@ export class AppComponent {}
 | `enableMarkdown` | `boolean` | ❌ | `true` | Enable markdown rendering |
 | `debug` | `boolean` | ❌ | `false` | Enable debug logging |
 | `language` | `string` | ❌ | `'en'` | UI language code |
+| `history` | `boolean` | ❌ | `false` | Enable chat history sidebar |
 | `style` | `Partial<CSSStyleDeclaration>` | ❌ | - | Custom CSS styles |
 
 ### Outputs
@@ -313,7 +314,16 @@ src/lib/
 │   ├── openwebui-chat.scss         ← Main styles
 │   ├── chat-input/                 ← Input component
 │   ├── chat-message/               ← Message display component
+│   ├── chat-history-sidebar/       ← History sidebar components
+│   │   ├── sidebar/                ← Main sidebar container
+│   │   ├── list/                   ← Chat list
+│   │   ├── item/                   ← Chat item
+│   │   ├── header/                 ← Sidebar header
+│   │   └── context-menu/           ← Right-click menu
+│   ├── chat-search-modal/          ← Search modal
+│   ├── confirm-dialog/             ← Confirmation dialogs
 │   ├── error-banner/               ← Error display component
+│   ├── export-format-menu/         ← Export options menu
 │   ├── message-actions/            ← Action buttons component
 │   ├── rating-form/                ← Rating form component
 │   └── regenerate-menu/            ← Regenerate menu component
@@ -321,6 +331,9 @@ src/lib/
 │   └── openwebui-api.ts            ← API service
 ├── models/
 │   └── chat.model.ts               ← Type definitions
+├── utils/
+│   ├── audio-recorder.ts           ← Audio recording utility
+│   └── date-formatter.ts           ← Date formatting utility
 └── i18n/
     └── translations.ts             ← Multi-language support
 ```
@@ -440,7 +453,14 @@ The library uses **Socket.IO** for real-time bidirectional communication with Op
 
 ## Version History
 
-### 1.0.9 (Current)
+### 1.0.10 (Current)
+- ✅ **Chat Export** - Export conversations to PDF, TXT, and JSON formats
+- ✅ **Active Chat Protection** - Prevent accidental deletion of the currently active chat
+- ✅ **Markdown Improvements** - Better list indentation and search preview rendering
+- ✅ **UI Polish** - Fixed search modal dimensions and sidebar localization
+- ✅ **Bug Fixes** - Immediate chat list updates and various stability improvements
+
+### 1.0.9
 - ✅ **Voice Input** - Record audio messages with automatic transcription
 - ✅ **Real-time Spectrogram** - Visual feedback during recording
 - ✅ **Multi-language Transcription** - Support for multiple languages
@@ -618,7 +638,7 @@ The component handles various error scenarios:
 - [x] Response interaction controls (continue, regenerate, rate)
 - [x] Comprehensive rating system
 - [x] Voice input with transcription
-- [ ] Export chat history
+- [x] Export chat history
 
 ## Contributing
 

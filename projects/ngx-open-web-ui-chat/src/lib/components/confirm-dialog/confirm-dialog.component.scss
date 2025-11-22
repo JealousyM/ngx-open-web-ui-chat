@@ -1,0 +1,217 @@
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.dialog-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.dialog-icon {
+  color: #f59e0b;
+  margin-bottom: 1rem;
+  animation: iconPulse 0.5s ease-out;
+  
+  svg {
+    display: block;
+  }
+}
+
+@keyframes iconPulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.dialog-header {
+  margin-bottom: 1rem;
+  width: 100%;
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+  }
+}
+
+.dialog-body {
+  margin-bottom: 1.5rem;
+  width: 100%;
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #6b7280;
+    line-height: 1.5;
+  }
+}
+
+.dialog-footer {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.cancel-button,
+.confirm-button {
+  padding: 0.625rem 1.25rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+}
+
+.cancel-button {
+  background-color: #f3f4f6;
+  color: #374151;
+
+  &:hover {
+    background-color: #e5e7eb;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.confirm-button {
+  background-color: #ef4444;
+  color: white;
+
+  &:hover {
+    background-color: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  }
+
+  &:active {
+    background-color: #b91c1c;
+    transform: translateY(0);
+  }
+}
+
+// Responsive design
+@media (max-width: 480px) {
+  .dialog-content {
+    width: 95%;
+    padding: 1.25rem;
+  }
+
+  .dialog-header h2 {
+    font-size: 1.125rem;
+  }
+
+  .dialog-body p {
+    font-size: 0.8125rem;
+  }
+
+  .dialog-footer {
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .dialog-content {
+    background: #1f2937;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .dialog-header h2 {
+    color: #f9fafb;
+  }
+
+  .dialog-body p {
+    color: #9ca3af;
+  }
+
+  .cancel-button {
+    background-color: #374151;
+    color: #e5e7eb;
+
+    &:hover {
+      background-color: #4b5563;
+    }
+  }
+
+  .confirm-button {
+    background-color: #dc2626;
+
+    &:hover {
+      background-color: #b91c1c;
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .dialog-overlay,
+  .dialog-content,
+  .dialog-icon,
+  .cancel-button,
+  .confirm-button {
+    animation: none !important;
+    transition: none !important;
+  }
+}

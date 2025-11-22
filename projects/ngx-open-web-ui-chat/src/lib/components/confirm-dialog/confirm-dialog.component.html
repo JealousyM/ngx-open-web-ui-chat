@@ -1,0 +1,42 @@
+<div class="dialog-overlay" 
+     *ngIf="isOpen" 
+     (click)="onOverlayClick($event)"
+     (keydown)="onEscapeKey($event)"
+     role="dialog"
+     [attr.aria-modal]="true"
+     [attr.aria-labelledby]="'confirm-dialog-title'"
+     tabindex="-1">
+  <div class="dialog-content" 
+       (click)="$event.stopPropagation()">
+    <div class="dialog-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+        <line x1="12" y1="9" x2="12" y2="13"></line>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
+    </div>
+    
+    <div class="dialog-header">
+      <h2 id="confirm-dialog-title">{{ title || (translations?.deleteChat || 'Delete Chat') }}</h2>
+    </div>
+
+    <div class="dialog-body">
+      <p>{{ message || (translations?.confirmDeleteChat || 'Are you sure you want to delete this chat? This action cannot be undone.') }}</p>
+    </div>
+
+    <div class="dialog-footer">
+      <button class="cancel-button" 
+              (click)="onCancel()" 
+              [attr.aria-label]="cancelText || (translations?.close || 'Cancel')"
+              type="button">
+        {{ cancelText || (translations?.close || 'Cancel') }}
+      </button>
+      <button class="confirm-button" 
+              (click)="onConfirm()" 
+              [attr.aria-label]="confirmText || (translations?.deleteChat || 'Delete')"
+              type="button">
+        {{ confirmText || (translations?.deleteChat || 'Delete') }}
+      </button>
+    </div>
+  </div>
+</div>
