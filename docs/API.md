@@ -19,6 +19,7 @@
 | `enableMarkdown` | `boolean` | `true` | Enable/disable markdown rendering for messages |
 | `debug` | `boolean` | `false` | Enable debug logging to console |
 | `language` | `string` | `'en'` | UI language code (en, ru, zh, etc.) |
+| `history` | `boolean` | `false` | Enable chat history sidebar |
 | `style` | `Partial<CSSStyleDeclaration>` | `undefined` | Custom inline styles for the component |
 
 ### Outputs (Events)
