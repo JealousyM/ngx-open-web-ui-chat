@@ -27,7 +27,8 @@ Angular 20 component library for embedding OpenWebUI chat with Socket.IO streami
 📱 **Responsive** - Mobile-friendly design  
 ⏹️ **Stop Generation** - Cancel AI response anytime  
 ⭐ **Response Actions** - Continue, regenerate, and rate responses  
-👍 **Rating System** - Comprehensive feedback with good/bad ratings
+👍 **Rating System** - Comprehensive feedback with good/bad ratings  
+💬 **Ask & Explain** - Context menu for selected text with AI explanations
 
 ## Installation
 
@@ -326,7 +327,9 @@ src/lib/
 │   ├── export-format-menu/         ← Export options menu
 │   ├── message-actions/            ← Action buttons component
 │   ├── rating-form/                ← Rating form component
-│   └── regenerate-menu/            ← Regenerate menu component
+│   ├── regenerate-menu/            ← Regenerate menu component
+│   ├── text-selection-menu/        ← Text selection context menu
+│   └── ask-explain-modal/          ← Ask/Explain modal component
 ├── services/
 │   └── openwebui-api.ts            ← API service
 ├── models/
@@ -453,7 +456,14 @@ The library uses **Socket.IO** for real-time bidirectional communication with Op
 
 ## Version History
 
-### 1.0.10 (Current)
+### 1.0.11 (Current)
+- ✅ **Ask & Explain** - Context menu for selected text with instant AI explanations
+- ✅ **Text Selection Menu** - Right-click on selected text to ask questions or get explanations
+- ✅ **Ephemeral Completions** - Ask/Explain responses don't clutter chat history
+- ✅ **Full Localization** - All Ask & Explain features translated to 10 languages
+- ✅ **Unit Tests** - Complete test coverage for new components
+
+### 1.0.10
 - ✅ **Chat Export** - Export conversations to PDF, TXT, and JSON formats
 - ✅ **Active Chat Protection** - Prevent accidental deletion of the currently active chat
 - ✅ **Markdown Improvements** - Better list indentation and search preview rendering
@@ -632,6 +642,39 @@ The component handles various error scenarios:
 - **Visualization**: Real-time FFT analysis with frequency bars
 - **Cleanup**: Automatic microphone release after recording
 
+## Ask & Explain Feature
+
+The component includes an interactive context menu for selected text:
+
+### How to Use
+
+1. **Select text** in any chat message
+2. **Right-click** to open the context menu
+3. Choose:
+   - **Ask** - Type a custom question about the selected text
+   - **Explain** - Get an instant AI explanation
+
+### Features
+
+- 💬 **Context Menu** - Clean, positioned menu on right-click
+- ❓ **Ask Mode** - Input field for custom questions
+- 📖 **Explain Mode** - Instant explanations without additional input
+- 🎨 **Modal Interface** - Beautiful modal for displaying responses
+- 📝 **Markdown Rendering** - Formatted AI responses
+- ⚡ **Streaming** - Real-time response generation
+- 🌍 **Localized** - Full translation support
+- 🔒 **Ephemeral** - Responses don't persist in chat history
+
+### Example
+
+```
+User selects: "Angular signals are reactive primitives"
+Right-clicks → Explain
+
+AI Response (in modal):
+"Angular signals are a new reactive state management system..."
+```
+
 ## Roadmap
 
 - [x] File upload support
@@ -639,6 +682,7 @@ The component handles various error scenarios:
 - [x] Comprehensive rating system
 - [x] Voice input with transcription
 - [x] Export chat history
+- [x] Ask & Explain for selected text
 
 ## Contributing
 

@@ -1,0 +1,43 @@
+.selection-menu {
+    position: fixed;
+    z-index: 1000;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    min-width: 120px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    color: #e5e5e5;
+    cursor: pointer;
+    text-align: left;
+    font-size: 14px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: #333;
+    }
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+.divider {
+    height: 1px;
+    background-color: #333;
+    margin: 4px 0;
+}

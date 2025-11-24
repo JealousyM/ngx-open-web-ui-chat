@@ -48,7 +48,7 @@
     </div>
   }
   
-  <div class="chat-messages">
+  <div class="chat-messages" (contextmenu)="handleContextMenu($event)">
     @for (msg of messages(); track $index) {
       <openwebui-chat-message
         [message]="msg"
@@ -104,5 +104,26 @@
     (clearTranscriptionError)="clearTranscriptionError()"
     (spectrogramCanvasReady)="onSpectrogramCanvasReady($event)"
   />
+
+  @if (showSelectionMenu()) {
+    <openwebui-text-selection-menu
+      [x]="selectionMenuX()"
+      [y]="selectionMenuY()"
+      [translations]="t"
+      (onAsk)="handleAsk()"
+      (onExplain)="handleExplain()"
+    />
+  }
+
+  @if (showAskExplainModal()) {
+    <openwebui-ask-explain-modal
+      [mode]="askExplainMode()"
+      [response]="askExplainResponse()"
+      [isLoading]="isAskExplainLoading()"
+      [translations]="t"
+      (onClose)="closeAskExplainModal()"
+      (onAsk)="handleAskSubmit($event)"
+    />
+  }
 </div>
 

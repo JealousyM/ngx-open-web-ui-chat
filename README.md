@@ -32,6 +32,7 @@ Interactive demo showcasing all features:
 - 👍 **Rating System** - Comprehensive feedback with good/bad ratings
 - 📤 **Chat Export** - Download conversations as PDF, TXT, or JSON
 - 🛡️ **Safe Deletion** - Prevents accidental deletion of active chats
+- 💬 **Ask & Explain** - Context menu for selected text with AI explanations
 
 ## 🚀 Quick Start
 
@@ -142,7 +143,9 @@ openwebui-ts-embedded-sdk/
 │       │   │   ├── export-format-menu/
 │       │   │   ├── message-actions/
 │       │   │   ├── rating-form/
-│       │   │   └── regenerate-menu/
+│       │   │   ├── regenerate-menu/
+│       │   │   ├── text-selection-menu/
+│       │   │   └── ask-explain-modal/
 │       │   ├── services/
 │       │   │   └── openwebui-api.ts
 │       │   ├── models/
@@ -382,7 +385,7 @@ The component includes voice recording with automatic transcription:
 
 ---
 
-**Status:** Production-ready v1.0.10
+**Status:** Production-ready v1.0.11
 **Angular Version:** 20.x  
 **Node Required:** >=20.19.0  
 

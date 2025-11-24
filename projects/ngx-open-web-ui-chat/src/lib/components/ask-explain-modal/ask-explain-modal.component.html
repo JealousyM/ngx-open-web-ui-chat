@@ -1,0 +1,47 @@
+<div class="modal-overlay" (click)="onClose.emit()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ title }}</h3>
+      <button class="close-btn" (click)="onClose.emit()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    
+    <div class="modal-body" #scrollContainer>
+      @if (mode === 'ask' && !response) {
+        <div class="input-container">
+          <input 
+            type="text" 
+            [(ngModel)]="question" 
+            (keydown.enter)="submitQuestion()"
+            [placeholder]="placeholder"
+            [disabled]="isLoading"
+            autofocus
+          >
+          <button class="send-btn" (click)="submitQuestion()" [disabled]="!question.trim() || isLoading">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+              <path fill-rule="evenodd" d="M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+        </div>
+      }
+
+      @if (response || isLoading) {
+        <div class="response-content">
+          @if (response) {
+            <markdown [data]="response"></markdown>
+          }
+          @if (isLoading) {
+            <div class="loading-indicator">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

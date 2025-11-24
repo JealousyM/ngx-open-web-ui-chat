@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.11] - 2025-11-24
+
+### Added
+
+- 💬 **Ask & Explain Feature** - Interactive context menu for selected text
+  - **Text Selection Menu** - Right-click on selected text to open context menu
+  - **Ask Option** - Ask custom questions about selected text
+  - **Explain Option** - Get instant AI explanations of selected content
+  - **Modal Interface** - Beautiful modal for displaying AI responses
+  - **Ephemeral Completions** - Responses don't persist in chat history
+  - **Streaming Responses** - Real-time AI responses with loading indicators
+  - **Markdown Rendering** - Formatted responses with syntax highlighting
+- 🌍 **Translation Support** - Ask/Explain UI fully localized
+  - Added `ask`, `explain`, `askQuestion`, `askPlaceholder` translation keys
+  - Translations for all 10 supported languages
+  - Localized prompts sent to AI based on active language
+- 📝 **Component Architecture** - Modular design
+  - `TextSelectionMenuComponent` - Contextual menu display
+  - `AskExplainModalComponent` - Modal for questions and responses
+  - Separate HTML, SCSS, and TypeScript files for maintainability
+- ✅ **Unit Tests** - Full test coverage
+  - `TextSelectionMenuComponent.spec.ts` - Menu interaction tests
+  - `AskExplainModalComponent.spec.ts` - Modal functionality tests
+
+### Changed
+- Updated modal styling with fixed height (600px) and proper padding
+- Enhanced context menu positioning logic
+- Improved response display with auto-scroll to bottom
+
+### Technical Details
+- Added `generateEphemeralCompletion()` to OpenWebUIService
+- Implemented `handleContextMenu()` event listener
+- Created reusable modal component with dual modes (ask/explain)
+- Context menu closes on outside click
+- Proper cleanup and state management
+
 ## [1.0.10] - 2025-11-22
 
 ### Added
@@ -230,6 +266,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **1.0.11** - Ask & Explain feature with context menu for selected text
+- **1.0.10** - Chat export (PDF/TXT/JSON) and active chat protection
 - **1.0.9** - Voice input with automatic transcription
 - **1.0.7** - Response interaction controls (continue, regenerate, rate) and comprehensive rating system
 - **1.0.4** - Stop generation feature, upload files, chat history persistence and completion finalization fixes

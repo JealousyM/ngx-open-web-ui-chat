@@ -645,6 +645,77 @@ export class OpenWebUIService {
     return this.messageStream$.asObservable();
   }
 
+  public generateEphemeralCompletion(prompt: string): Observable<string> {
+    this.debugLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    this.debugLog('📤 Generating ephemeral completion:', prompt);
+    
+    const stream$ = new ReplaySubject<string>(1000);
+    const abortController = new AbortController();
+    
+    const endpoint = this.config()?.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/chat/completions`;
+    
+    const request: any = {
+      stream: true,
+      model: this.config()!.modelId,
+      messages: [{ role: 'user', content: prompt }],
+      params: {},
+      features: {
+        image_generation: false,
+        code_interpreter: false,
+        web_search: false
+      }
+    };
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.config()?.apiKey}`,
+        'Cookie': `token=${this.config()?.apiKey}`
+      },
+      body: JSON.stringify(request),
+      signal: abortController.signal
+    }).then(async response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      if (!reader) {
+        throw new Error('Response body is null');
+      }
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              if (data.choices && data.choices[0]?.delta?.content) {
+                stream$.next(data.choices[0].delta.content);
+              }
+            } catch (e) {
+              // Ignore parse errors for partial chunks
+            }
+          }
+        }
+      }
+      stream$.complete();
+    }).catch(error => {
+      stream$.error(error);
+    });
+
+    return stream$.asObservable();
+  }
+
   public async stopGeneration(): Promise<void> {
     this.debugLog('Stopping generation');
     

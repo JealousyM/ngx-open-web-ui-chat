@@ -3,6 +3,7 @@ import { ChatHistorySidebarComponent } from './chat-history-sidebar.component';
 import { OpenWebUIService } from '../../../services/openwebui-api';
 import { of, throwError } from 'rxjs';
 import { ChatHistoryItem } from '../../../models/chat.model';
+import { translations } from '../../../i18n/translations';
 
 describe('ChatHistorySidebarComponent - Delete Functionality', () => {
   let component: ChatHistorySidebarComponent;
@@ -23,6 +24,7 @@ describe('ChatHistorySidebarComponent - Delete Functionality', () => {
 
     fixture = TestBed.createComponent(ChatHistorySidebarComponent);
     component = fixture.componentInstance;
+    component.translations = translations.en; // Set translations
   });
 
   it('should create', () => {
@@ -30,6 +32,33 @@ describe('ChatHistorySidebarComponent - Delete Functionality', () => {
   });
 
   describe('handleDeleteChat', () => {
+    it('should set chatToDelete and show confirmation dialog', () => {
+      const chat: ChatHistoryItem = { 
+        id: 'chat-1', 
+        title: 'Chat 1', 
+        created_at: 1000, 
+        updated_at: 1000, 
+        pinned: false 
+      };
+      component.chats = [chat];
+      
+      component.handleDeleteChat('chat-1');
+      
+      expect(component.chatToDelete()).toEqual(chat);
+      expect(component.showDeleteConfirm()).toBe(true);
+    });
+
+    it('should do nothing if chat ID is not found', () => {
+      component.chats = [];
+      
+      component.handleDeleteChat('non-existent');
+      
+      expect(component.chatToDelete()).toBeNull();
+      expect(component.showDeleteConfirm()).toBe(false);
+    });
+  });
+
+  describe('onDeleteConfirmed', () => {
     const mockChats: ChatHistoryItem[] = [
       { id: 'chat-1', title: 'Chat 1', created_at: 1000, updated_at: 1000, pinned: false },
       { id: 'chat-2', title: 'Chat 2', created_at: 2000, updated_at: 2000, pinned: false },
@@ -38,38 +67,26 @@ describe('ChatHistorySidebarComponent - Delete Functionality', () => {
 
     beforeEach(() => {
       component.chats = [...mockChats];
-      jest.spyOn(window, 'confirm').mockReturnValue(true);
     });
 
-    it('should show confirmation dialog before deleting', () => {
+    it('should call deleteChat API with correct chat ID', (done) => {
       (mockOpenWebUIService.deleteChat as jest.Mock).mockReturnValue(of(void 0));
+      component.chatToDelete.set(mockChats[1]); // Chat 2
       
-      component.handleDeleteChat('chat-1');
+      component.chatsUpdated.subscribe((updatedChats) => {
+        expect(mockOpenWebUIService.deleteChat).toHaveBeenCalledWith('chat-2');
+        done();
+      });
       
-      expect(window.confirm).toHaveBeenCalled();
+      component.onDeleteConfirmed();
     });
 
-    it('should not delete if user cancels confirmation', () => {
-      (window.confirm as jest.Mock).mockReturnValue(false);
-      
-      component.handleDeleteChat('chat-1');
-      
-      expect(mockOpenWebUIService.deleteChat).not.toHaveBeenCalled();
-    });
-
-    it('should call deleteChat API with correct chat ID', () => {
+    it('should emit contextMenuAction when delete is confirmed', () => {
       (mockOpenWebUIService.deleteChat as jest.Mock).mockReturnValue(of(void 0));
-      
-      component.handleDeleteChat('chat-2');
-      
-      expect(mockOpenWebUIService.deleteChat).toHaveBeenCalledWith('chat-2');
-    });
-
-    it('should emit contextMenuAction when delete is initiated', () => {
-      (mockOpenWebUIService.deleteChat as jest.Mock).mockReturnValue(of(void 0));
+      component.chatToDelete.set(mockChats[0]);
       jest.spyOn(component.contextMenuAction, 'emit');
       
-      component.handleDeleteChat('chat-1');
+      component.onDeleteConfirmed();
       
       expect(component.contextMenuAction.emit).toHaveBeenCalledWith({
         action: 'delete',
@@ -79,6 +96,7 @@ describe('ChatHistorySidebarComponent - Delete Functionality', () => {
 
     it('should remove deleted chat from list on success', (done) => {
       (mockOpenWebUIService.deleteChat as jest.Mock).mockReturnValue(of(void 0));
+      component.chatToDelete.set(mockChats[1]); // Chat 2
       
       component.chatsUpdated.subscribe((updatedChats) => {
         expect(updatedChats.length).toBe(2);
@@ -88,45 +106,58 @@ describe('ChatHistorySidebarComponent - Delete Functionality', () => {
         done();
       });
       
-      component.handleDeleteChat('chat-2');
+      component.onDeleteConfirmed();
     });
 
     it('should emit empty string to clear active chat if deleted chat was active', (done) => {
       (mockOpenWebUIService.deleteChat as jest.Mock).mockReturnValue(of(void 0));
       component.currentChatId = 'chat-1';
+      component.chatToDelete.set(mockChats[0]);
       
       component.chatSelected.subscribe((chatId) => {
         expect(chatId).toBe('');
         done();
       });
       
-      component.handleDeleteChat('chat-1');
+      component.onDeleteConfirmed();
     });
 
-    it('should not emit chatSelected if deleted chat was not active', () => {
+    it('should not emit chatSelected if deleted chat was not active', (done) => {
       (mockOpenWebUIService.deleteChat as jest.Mock).mockReturnValue(of(void 0));
       component.currentChatId = 'chat-1';
+      component.chatToDelete.set(mockChats[1]); // Delete chat-2
       jest.spyOn(component.chatSelected, 'emit');
       
-      component.handleDeleteChat('chat-2');
+      // Wait for deletion to complete
+      component.chatsUpdated.subscribe(() => {
+        expect(component.chatSelected.emit).not.toHaveBeenCalled();
+        done();
+      });
       
-      expect(component.chatSelected.emit).not.toHaveBeenCalled();
+      component.onDeleteConfirmed();
     });
 
-    it('should handle API errors gracefully', () => {
+    it('should handle API errors gracefully', (done) => {
       const error = new Error('Delete failed');
       (mockOpenWebUIService.deleteChat as jest.Mock).mockReturnValue(throwError(() => error));
+      component.chatToDelete.set(mockChats[0]);
+      
       jest.spyOn(window, 'alert').mockImplementation();
       jest.spyOn(console, 'error').mockImplementation();
       
-      component.handleDeleteChat('chat-1');
+      // Since error doesn't emit to chatsUpdated, we need to wait differently
+      setTimeout(() => {
+        expect(console.error).toHaveBeenCalledWith('Failed to delete chat:', error);
+        expect(window.alert).toHaveBeenCalled();
+        done();
+      }, 100);
       
-      expect(console.error).toHaveBeenCalledWith('Failed to delete chat:', error);
-      expect(window.alert).toHaveBeenCalled();
+      component.onDeleteConfirmed();
     });
 
     it('should preserve other chats when one is deleted', (done) => {
       (mockOpenWebUIService.deleteChat as jest.Mock).mockReturnValue(of(void 0));
+      component.chatToDelete.set(mockChats[1]); // Delete chat-2
       
       component.chatsUpdated.subscribe((updatedChats) => {
         // Verify the deleted chat is gone
@@ -141,7 +172,48 @@ describe('ChatHistorySidebarComponent - Delete Functionality', () => {
         done();
       });
       
-      component.handleDeleteChat('chat-2');
+      component.onDeleteConfirmed();
+    });
+
+    it('should do nothing if chatToDelete is null', () => {
+      component.chatToDelete.set(null);
+      
+      component.onDeleteConfirmed();
+      
+      expect(mockOpenWebUIService.deleteChat).not.toHaveBeenCalled();
+    });
+
+    it('should reset confirmation dialog state', (done) => {
+      (mockOpenWebUIService.deleteChat as jest.Mock).mockReturnValue(of(void 0));
+      component.chatToDelete.set(mockChats[0]);
+      component.showDeleteConfirm.set(true);
+      
+      component.chatsUpdated.subscribe(() => {
+        expect(component.showDeleteConfirm()).toBe(false);
+        expect(component.chatToDelete()).toBeNull();
+        done();
+      });
+      
+      component.onDeleteConfirmed();
+    });
+  });
+
+  describe('onDeleteCancelled', () => {
+    it('should reset confirmation dialog state', () => {
+      const chat: ChatHistoryItem = { 
+        id: 'chat-1', 
+        title: 'Chat 1', 
+        created_at: 1000, 
+        updated_at: 1000, 
+        pinned: false 
+      };
+      component.chatToDelete.set(chat);
+      component.showDeleteConfirm.set(true);
+      
+      component.onDeleteCancelled();
+      
+      expect(component.showDeleteConfirm()).toBe(false);
+      expect(component.chatToDelete()).toBeNull();
     });
   });
 });

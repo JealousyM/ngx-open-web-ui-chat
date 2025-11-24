@@ -11,6 +11,8 @@ import { ChatInputComponent } from './chat-input/chat-input.component';
 import { AudioRecorder } from '../utils/audio-recorder';
 import { ChatHistorySidebarComponent } from './chat-history-sidebar/sidebar/chat-history-sidebar.component';
 import { ChatSearchModalComponent } from './chat-search-modal/chat-search-modal.component';
+import { TextSelectionMenuComponent } from './text-selection-menu/text-selection-menu.component';
+import { AskExplainModalComponent } from './ask-explain-modal/ask-explain-modal.component';
 
 @Component({
   selector: 'openwebui-chat',
@@ -23,7 +25,9 @@ import { ChatSearchModalComponent } from './chat-search-modal/chat-search-modal.
     ChatMessageComponent,
     ChatInputComponent,
     ChatHistorySidebarComponent,
-    ChatSearchModalComponent
+    ChatSearchModalComponent,
+    TextSelectionMenuComponent,
+    AskExplainModalComponent
   ],
   templateUrl: './openwebui-chat.html',
   styleUrls: ['./openwebui-chat.scss']
@@ -87,6 +91,16 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   public hasMoreChats = signal(true);
   public isLoadingChats = signal(false);
   public showSearchModal = signal(false);
+  
+  public showSelectionMenu = signal(false);
+  public selectionMenuX = signal(0);
+  public selectionMenuY = signal(0);
+  public selectedText = signal('');
+  
+  public showAskExplainModal = signal(false);
+  public askExplainMode = signal<'ask' | 'explain'>('explain');
+  public askExplainResponse = signal('');
+  public isAskExplainLoading = signal(false);
   
   public chatId?: string;
   private openWebUIService = inject(OpenWebUIService);
@@ -321,6 +335,73 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
     if (!target.closest('.rating-form') && !target.closest('.rate-good-btn') && !target.closest('.rate-bad-btn') && this.showRatingForm()) {
       this.closeRatingForm();
     }
+    if (!target.closest('.selection-menu') && this.showSelectionMenu()) {
+      this.showSelectionMenu.set(false);
+    }
+  }
+
+  public handleContextMenu(event: MouseEvent): void {
+    const selection = window.getSelection();
+    const text = selection?.toString().trim();
+    
+    if (text) {
+      event.preventDefault();
+      this.selectedText.set(text);
+      this.selectionMenuX.set(event.clientX);
+      this.selectionMenuY.set(event.clientY);
+      this.showSelectionMenu.set(true);
+    } else {
+      this.showSelectionMenu.set(false);
+    }
+  }
+
+  public handleAsk(): void {
+    this.showSelectionMenu.set(false);
+    this.askExplainMode.set('ask');
+    this.askExplainResponse.set('');
+    this.isAskExplainLoading.set(false);
+    this.showAskExplainModal.set(true);
+  }
+
+  public handleExplain(): void {
+    this.showSelectionMenu.set(false);
+    this.askExplainMode.set('explain');
+    this.askExplainResponse.set('');
+    this.isAskExplainLoading.set(true);
+    this.showAskExplainModal.set(true);
+    
+    const prompt = `> ${this.selectedText()}\n\n\n${this.t.explain || 'Explain'}`;
+    this.generateEphemeralResponse(prompt);
+  }
+
+  public handleAskSubmit(question: string): void {
+    this.isAskExplainLoading.set(true);
+    const prompt = `> ${this.selectedText()}\n\n\n${question}`;
+    this.generateEphemeralResponse(prompt);
+  }
+
+  private generateEphemeralResponse(prompt: string): void {
+    this.openWebUIService.generateEphemeralCompletion(prompt).subscribe({
+      next: (chunk) => {
+        this.askExplainResponse.update(current => current + chunk);
+      },
+      complete: () => {
+        this.isAskExplainLoading.set(false);
+      },
+      error: (error) => {
+        if (this.debug) {
+          console.error('[OpenWebUI] Ask/Explain error:', error);
+        }
+        this.isAskExplainLoading.set(false);
+        this.showErrorMessage(this.t.errorNetworkFailure ?? 'Failed to generate response.');
+      }
+    });
+  }
+
+  public closeAskExplainModal(): void {
+    this.showAskExplainModal.set(false);
+    this.askExplainResponse.set('');
+    this.isAskExplainLoading.set(false);
   }
 
   public async onFileSelected(event: Event): Promise<void> {

@@ -102,6 +102,11 @@ export interface Translation {
   errorLoadChatsFailed?: string;
   errorLoadChatFailed?: string;
   cannotDeleteActiveChat?: string;
+  // Ask and Explain
+  ask?: string;
+  explain?: string;
+  askQuestion?: string;
+  askPlaceholder?: string;
 }
 
 export interface Translations {
@@ -212,7 +217,11 @@ export const translations: Translations = {
     toggleSidebar: 'Toggle chat history sidebar',
     errorLoadChatsFailed: 'Failed to load chats. Please try again.',
     errorLoadChatFailed: 'Failed to load chat. Please try again.',
-    cannotDeleteActiveChat: 'Cannot delete active chat'
+    cannotDeleteActiveChat: 'Cannot delete active chat',
+    ask: 'Ask',
+    explain: 'Explain',
+    askQuestion: 'Ask',
+    askPlaceholder: 'Ask a question about the selected text...'
   },
   zh: {
     send: '发送',
@@ -285,7 +294,11 @@ export const translations: Translations = {
     monthAgo: '1 个月前',
     monthsAgo: '{count} 个月前',
     yearAgo: '1 年前',
-    yearsAgo: '{count} 年前'
+    yearsAgo: '{count} 年前',
+    ask: '询问',
+    explain: '解释',
+    askQuestion: '询问',
+    askPlaceholder: '询问有关所选文本的问题...'
   },
   hi: {
     send: 'भेजें',
@@ -358,7 +371,11 @@ export const translations: Translations = {
     monthAgo: '1 महीना पहले',
     monthsAgo: '{count} महीने पहले',
     yearAgo: '1 साल पहले',
-    yearsAgo: '{count} साल पहले'
+    yearsAgo: '{count} साल पहले',
+    ask: 'पूछें',
+    explain: 'व्याख्या करें',
+    askQuestion: 'पूछें',
+    askPlaceholder: 'चयनित पाठ के बारे में प्रश्न पूछें...'
   },
   es: {
     send: 'Enviar',
@@ -431,7 +448,11 @@ export const translations: Translations = {
     monthAgo: 'Hace 1 mes',
     monthsAgo: 'Hace {count} meses',
     yearAgo: 'Hace 1 año',
-    yearsAgo: 'Hace {count} años'
+    yearsAgo: 'Hace {count} años',
+    ask: 'Preguntar',
+    explain: 'Explicar',
+    askQuestion: 'Preguntar',
+    askPlaceholder: 'Haz una pregunta sobre el texto seleccionado...'
   },
   ar: {
     send: 'إرسال',
@@ -504,7 +525,11 @@ export const translations: Translations = {
     monthAgo: 'منذ شهر واحد',
     monthsAgo: 'منذ {count} أشهر',
     yearAgo: 'منذ سنة واحدة',
-    yearsAgo: 'منذ {count} سنوات'
+    yearsAgo: 'منذ {count} سنوات',
+    ask: 'اسأل',
+    explain: 'اشرح',
+    askQuestion: 'اسأل',
+    askPlaceholder: 'اطرح سؤالاً حول النص المحدد...'
   },
   fr: {
     send: 'Envoyer',
@@ -577,7 +602,11 @@ export const translations: Translations = {
     monthAgo: 'Il y a 1 mois',
     monthsAgo: 'Il y a {count} mois',
     yearAgo: 'Il y a 1 an',
-    yearsAgo: 'Il y a {count} ans'
+    yearsAgo: 'Il y a {count} ans',
+    ask: 'Demander',
+    explain: 'Expliquer',
+    askQuestion: 'Demander',
+    askPlaceholder: 'Posez une question sur le texte sélectionné...'
   },
   pt: {
     send: 'Enviar',
@@ -650,7 +679,11 @@ export const translations: Translations = {
     monthAgo: 'Há 1 mês',
     monthsAgo: 'Há {count} meses',
     yearAgo: 'Há 1 ano',
-    yearsAgo: 'Há {count} anos'
+    yearsAgo: 'Há {count} anos',
+    ask: 'Perguntar',
+    explain: 'Explicar',
+    askQuestion: 'Perguntar',
+    askPlaceholder: 'Faça uma pergunta sobre o texto selecionado...'
   },
   ru: {
     send: 'Отправить',
@@ -739,7 +772,11 @@ export const translations: Translations = {
     monthAgo: '1 месяц назад',
     monthsAgo: '{count} месяцев назад',
     yearAgo: '1 год назад',
-    yearsAgo: '{count} лет назад'
+    yearsAgo: '{count} лет назад',
+    ask: 'Спросить',
+    explain: 'Объяснить',
+    askQuestion: 'Спросить',
+    askPlaceholder: 'Задайте вопрос о выделенном тексте...'
   },
   bn: {
     send: 'পাঠান',
@@ -812,7 +849,11 @@ export const translations: Translations = {
     monthAgo: '১ মাস আগে',
     monthsAgo: '{count} মাস আগে',
     yearAgo: '১ বছর আগে',
-    yearsAgo: '{count} বছর আগে'
+    yearsAgo: '{count} বছর আগে',
+    ask: 'জিজ্ঞাসা করুন',
+    explain: 'ব্যাখ্যা করুন',
+    askQuestion: 'জিজ্ঞাসা করুন',
+    askPlaceholder: 'নির্বাচিত পাঠ্য সম্পর্কে একটি প্রশ্ন জিজ্ঞাসা করুন...'
   },
   ja: {
     send: '送信',
