@@ -33,6 +33,7 @@ Interactive demo showcasing all features:
 - 📤 **Chat Export** - Download conversations as PDF, TXT, or JSON
 - 🛡️ **Safe Deletion** - Prevents accidental deletion of active chats
 - 💬 **Ask & Explain** - Context menu for selected text with AI explanations
+- 📂 **Folder Support** - Organize chats into folders with drag & drop
 
 ## 🚀 Quick Start
 
@@ -137,6 +138,14 @@ openwebui-ts-embedded-sdk/
 │       │   │   ├── chat-input/
 │       │   │   ├── chat-message/
 │       │   │   ├── chat-history-sidebar/
+│       │   │   │   ├── sidebar/
+│       │   │   │   ├── list/
+│       │   │   │   ├── item/
+│       │   │   │   ├── header/
+│       │   │   │   ├── context-menu/
+│       │   │   │   ├── folder-list/
+│       │   │   │   ├── folder-item/
+│       │   │   │   └── folder-context-menu/
 │       │   │   ├── chat-search-modal/
 │       │   │   ├── confirm-dialog/
 │       │   │   ├── error-banner/
@@ -184,6 +193,7 @@ openwebui-ts-embedded-sdk/
 | `debug` | `boolean` | ❌ | `false` | Debug logging |
 | `language` | `string` | ❌ | `'en'` | UI language |
 | `history` | `boolean` | ❌ | `false` | Enable chat history sidebar |
+| `folders` | `boolean` | ❌ | `false` | Enable folder support |
 
 ### Outputs
 
@@ -365,6 +375,7 @@ MIT License - see LICENSE file for details
 - [x] Comprehensive rating system
 - [x] Voice input with transcription
 - [x] Export chat history
+- [x] Folder support (Drag & Drop)
 - [ ] Custom themes
 
 ## 🎤 Voice Input
@@ -385,7 +396,7 @@ The component includes voice recording with automatic transcription:
 
 ---
 
-**Status:** Production-ready v1.0.11
+**Status:** Production-ready v1.0.12
 **Angular Version:** 20.x  
 **Node Required:** >=20.19.0  
 

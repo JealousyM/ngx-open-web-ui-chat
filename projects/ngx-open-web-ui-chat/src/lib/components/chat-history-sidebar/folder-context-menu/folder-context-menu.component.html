@@ -1,0 +1,40 @@
+<div class="context-menu" 
+     [style.left.px]="position.x" 
+     [style.top.px]="position.y"
+     role="menu"
+     [attr.aria-label]="translations?.folderActions || 'Folder actions'"
+     (keydown)="onKeyDown($event)">
+  
+  <button class="menu-item" 
+          (click)="emitAction('create')" 
+          type="button"
+          role="menuitem"
+          [attr.aria-label]="createText">
+    <svg class="menu-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span>{{ createText }}</span>
+  </button>
+  
+  <button class="menu-item" 
+          (click)="emitAction('rename')" 
+          type="button"
+          role="menuitem"
+          [attr.aria-label]="renameText">
+    <svg class="menu-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M11.5 1.5L14.5 4.5L5 14H2V11L11.5 1.5ZM12.5 2.5L13.5 3.5L12 5L11 4L12.5 2.5Z" fill="currentColor"/>
+    </svg>
+    <span>{{ renameText }}</span>
+  </button>
+  
+  <button class="menu-item danger" 
+          (click)="emitAction('delete')" 
+          type="button"
+          role="menuitem"
+          [attr.aria-label]="deleteText">
+    <svg class="menu-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M5 2V1H11V2H14V3H13V14H3V3H2V2H5ZM4 3V13H12V3H4ZM6 5H7V11H6V5ZM9 5H10V11H9V5Z" fill="currentColor"/>
+    </svg>
+    <span>{{ deleteText }}</span>
+  </button>
+</div>

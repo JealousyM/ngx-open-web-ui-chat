@@ -16,23 +16,65 @@
   </app-chat-history-header>
 
   <div class="sidebar-content" role="region" [attr.aria-label]="translations?.chatList || 'Chat list'">
-    @if (isLoading && chats.length === 0) {
+    @if (isLoading && chats.length === 0 && (!folders || folderList.length === 0)) {
       <div class="loading-state" role="status" aria-live="polite">
         <div class="spinner" aria-hidden="true"></div>
         <p>{{ translations?.loadingChats || 'Loading chats...' }}</p>
       </div>
     } @else {
+      @if (folders) {
+        <div class="folders-section">
+          <div class="section-header">
+            <h3>{{ translations?.folders || 'Folders' }}</h3>
+            <button 
+              class="create-folder-btn"
+              (click)="onCreateRootFolder()"
+              [attr.aria-label]="translations?.createFolder || 'Create folder'"
+              [attr.title]="translations?.createFolder || 'Create folder'">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12h14"/>
+              </svg>
+            </button>
+          </div>
+          
+          @if (folderList.length > 0) {
+            <app-folder-list
+              [folders]="folderList"
+              [expandedFolderIds]="expandedFolderIds()"
+              [renamingFolderId]="renamingFolderId"
+              [translations]="translations"
+              [currentChatId]="currentChatId"
+              [connectedDropLists]="connectedDropLists"
+              (folderSelected)="onFolderSelected($event)"
+              (folderToggled)="onFolderToggled($event)"
+              (chatSelected)="handleFolderChatClick($event)"
+              (contextMenu)="onFolderContextMenu($event)"
+              (chatContextMenu)="onContextMenu($event)"
+              (rename)="onFolderRename($event)"
+              (cancelRename)="onCancelFolderRename()"
+              (itemDrop)="drop($event)">
+            </app-folder-list>
+          } @else {
+            <div class="empty-folders">
+              <p>{{ translations?.noFolders || 'No folders yet' }}</p>
+            </div>
+          }
+        </div>
+      }
+      
       <app-chat-history-list
         [chats]="chats"
         [currentChatId]="currentChatId"
         [isLoading]="isLoading"
         [renamingChatId]="renamingChatId"
         [translations]="translations"
+        [connectedDropLists]="connectedDropLists"
         (chatSelected)="onChatSelected($event)"
         (loadMore)="onLoadMore()"
         (contextMenu)="onContextMenu($event)"
         (rename)="onChatRename($event)"
-        (cancelRename)="onCancelRename()">
+        (cancelRename)="onCancelRename()"
+        (itemDrop)="drop($event)">
       </app-chat-history-list>
     }
   </div>
@@ -44,6 +86,7 @@
       [isPinned]="contextMenuChat()?.pinned ?? false"
       [isActive]="contextMenuChat()?.id === currentChatId"
       [translations]="translations"
+      [folders]="folderList"
       (action)="handleContextMenuAction($event)"
       (closed)="closeContextMenu()">
     </app-chat-context-menu>
@@ -66,5 +109,26 @@
       (formatSelected)="onExportFormatSelected($event)"
       (closed)="closeExportMenu()">
     </app-export-format-menu>
+  }
+
+  @if (showFolderContextMenu() && folderContextMenuFolder()) {
+    <app-folder-context-menu
+      [folder]="folderContextMenuFolder()!"
+      [position]="folderContextMenuPosition()"
+      [translations]="translations"
+      (action)="handleFolderContextMenuAction($event)"
+      (closed)="closeFolderContextMenu()">
+    </app-folder-context-menu>
+  }
+
+  @if (showFolderDeleteConfirm()) {
+    <app-confirm-dialog
+      [isOpen]="showFolderDeleteConfirm()"
+      [title]="translations?.deleteFolder || 'Delete Folder'"
+      [message]="(translations?.confirmDeleteFolder || 'Are you sure you want to delete folder') + ' \'' + (folderToDelete()?.name || '') + '\'?'"
+      [translations]="translations"
+      (confirmed)="onFolderDeleteConfirmed()"
+      (cancelled)="onFolderDeleteCancelled()">
+    </app-confirm-dialog>
   }
 </nav>

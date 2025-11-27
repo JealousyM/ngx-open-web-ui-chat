@@ -17,13 +17,19 @@
       [currentChatId]="chatId"
       [isLoading]="isLoadingChats()"
       [translations]="t"
+      [folders]="folders"
+      [folderList]="folderList()"
+      [renamingFolderId]="renamingFolderId"
       (chatSelected)="handleChatSelected($event)"
       (newChatRequested)="handleNewChatRequest()"
       (searchRequested)="handleSearchRequested()"
       (loadMoreRequested)="loadMoreChats()"
       (contextMenuAction)="handleContextMenuAction($event)"
+      (folderAction)="handleFolderAction($event)"
+      (folderRenamed)="handleFolderRenamed($event)"
       (toggleSidebar)="toggleSidebar()"
       (chatsUpdated)="handleChatsUpdated($event)"
+      (foldersUpdated)="handleFoldersUpdated($event)"
     />
 
     <app-chat-search-modal
@@ -126,4 +132,3 @@
     />
   }
 </div>
-

@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { lexer } from 'marked';
-import { ChatSession, OpenWebUIChatConfig, Model, ChatHistoryItem, ChatListResponse } from '../models/chat.model';
+import { ChatSession, OpenWebUIChatConfig, Model, ChatHistoryItem, ChatListResponse, FolderItem, FolderListResponse } from '../models/chat.model';
 
 export interface ChatEvent {
   chat_id: string;
@@ -1802,7 +1802,7 @@ export class OpenWebUIService {
 
     return new Observable<void>(observer => {
       fetch(url, {
-        method: 'DELETE',
+        method: 'POST',
         headers: {
           'Authorization': `Bearer ${cfg.apiKey}`,
           'Content-Type': 'application/json',
@@ -1823,6 +1823,339 @@ export class OpenWebUIService {
         });
     });
   }
+
+  // ===== Folder Management API Methods =====
+  
+  public getFolders(): Observable<FolderItem[]> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Fetching folders');
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/folders/`;
+
+    return new Observable<FolderItem[]>(observer => {
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          this.debugLog('Folders fetched:', data);
+          const folders: FolderItem[] = Array.isArray(data) ? data : [];
+          observer.next(folders);
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Get folders error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  public createFolder(name: string, parent_id?: string | null): Observable<FolderItem> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Creating folder:', name, 'with parent:', parent_id);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/folders/`;
+    //, parent_id: parent_id
+    //api/v1/folders/5c88f368-969e-4958-a32d-aa11601c62ab/update/parent
+    //{"parent_id":"68072b88-a45a-4e45-a487-194ad32678d3"}
+    //const updateParentUrl = `${endpoint}/api/v1/folders/${folderId}/update/parent`;
+
+    return new Observable<FolderItem>(observer => {
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        },
+        body: JSON.stringify({ name, parent_id: parent_id || null })
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          this.debugLog('Folder created:', data);
+          
+          if (parent_id) {
+            const updateParentUrl = `${endpoint}/api/v1/folders/${data.id}/update/parent`;
+            this.debugLog('Updating folder parent:', updateParentUrl);
+            
+            return fetch(updateParentUrl, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${cfg.apiKey}`,
+                'Content-Type': 'application/json',
+                'Cookie': `token=${cfg.apiKey}`
+              },
+              body: JSON.stringify({ parent_id: parent_id })
+            })
+            .then(res => {
+              if (!res.ok) {
+                throw new Error(`Failed to update parent folder: ${res.status}`);
+              }
+              return res.json();
+            })
+            .then(updatedData => {
+              this.debugLog('Folder parent updated:', updatedData);
+              observer.next(updatedData as FolderItem);
+              observer.complete();
+            });
+          } else {
+            observer.next(data as FolderItem);
+            observer.complete();
+          }
+        })
+        .catch(error => {
+          this.debugLog('Create folder error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  public renameFolder(folderId: string, newName: string): Observable<FolderItem> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Renaming folder:', folderId, 'to:', newName);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/folders/${folderId}/update`;
+
+    return new Observable<FolderItem>(observer => {
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        },
+        body: JSON.stringify({ name: newName })
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          this.debugLog('Folder renamed:', data);
+          observer.next(data as FolderItem);
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Rename folder error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  public moveFolder(folderId: string, newParentId: string | null): Observable<FolderItem> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Moving folder:', folderId, 'to parent:', newParentId);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/folders/${folderId}/update`;
+
+    return new Observable<FolderItem>(observer => {
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        },
+        body: JSON.stringify({ parent_id: newParentId })
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          this.debugLog('Folder moved:', data);
+          observer.next(data as FolderItem);
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Move folder error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  public deleteFolder(folderId: string): Observable<void> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Deleting folder:', folderId);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/folders/${folderId}`;
+
+    return new Observable<void>(observer => {
+      fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          this.debugLog('Folder deleted successfully');
+          observer.next();
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Delete folder error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  public moveChatToFolder(chatId: string, folderId: string | null): Observable<void> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Moving chat:', chatId, 'to folder:', folderId);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/chats/${chatId}/folder`;
+
+    return new Observable<void>(observer => {
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        },
+        body: JSON.stringify({ folder_id: folderId })
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          this.debugLog('Chat moved to folder successfully');
+          observer.next();
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Move chat to folder error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  public getChatsInFolder(folderId: string, page: number = 1): Observable<ChatHistoryItem[]> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Fetching chats in folder:', folderId, 'page:', page);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/chats/folder/${folderId}/list?page=${page}`;
+
+    return new Observable<ChatHistoryItem[]>(observer => {
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          this.debugLog('Chats in folder fetched:', data);
+          const chats: ChatHistoryItem[] = Array.isArray(data) ? data : [];
+          observer.next(chats);
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Get chats in folder error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  /**
+   * Toggle folder expanded state
+   */
+  public toggleFolderExpanded(folderId: string, isExpanded: boolean): Observable<void> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Toggling folder expanded:', folderId, 'to:', isExpanded);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/folders/${folderId}/update/expanded`;
+
+    return new Observable<void>(observer => {
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        },
+        body: JSON.stringify({ is_expanded: isExpanded })
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          this.debugLog('Folder expanded state toggled successfully');
+          observer.next();
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Toggle folder expanded error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  // ===== End Folder Management API Methods =====
+
 
   public deleteChat(chatId: string): Observable<void> {
     const cfg = this.config();

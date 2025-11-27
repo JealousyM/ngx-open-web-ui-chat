@@ -20,6 +20,7 @@
 | `debug` | `boolean` | `false` | Enable debug logging to console |
 | `language` | `string` | `'en'` | UI language code (en, ru, zh, etc.) |
 | `history` | `boolean` | `false` | Enable chat history sidebar |
+| `folders` | `boolean` | `false` | Enable folder support for organizing chats |
 | `style` | `Partial<CSSStyleDeclaration>` | `undefined` | Custom inline styles for the component |
 
 ### Outputs (Events)

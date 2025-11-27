@@ -1,0 +1,35 @@
+<div class="folder-list" 
+     role="tree" 
+     [attr.aria-label]="translations?.folders || 'Folders'">
+  @if (flattenedFolders.length === 0) {
+    <div class="empty-state">
+      <p>{{ translations?.noFolders || 'No folders yet' }}</p>
+    </div>
+  } @else {
+    @for (item of flattenedFolders; track trackByFolderId($index, item)) {
+      <app-folder-item
+        cdkDrag
+        [cdkDragData]="item.folder"
+        [folder]="item.folder"
+        [isExpanded]="item.isExpanded"
+        [isRenaming]="isRenaming(item.folder.id)"
+        [depth]="item.depth"
+        [translations]="translations"
+        [tabindex]="getTabIndex($index)"
+        [folderChats]="item.folder.chats || []"
+        [currentChatId]="currentChatId"
+        [connectedDropLists]="connectedDropLists"
+        (folderClick)="onFolderToggle($event)"
+        (chatSelected)="onChatSelected($event)"
+        (toggle)="onFolderToggle(item.folder.id)"
+        (contextMenu)="onFolderContextMenu($event, item.folder)"
+        (chatContextMenu)="onChatContextMenu($event)"
+        (rename)="onFolderRename(item.folder.id, $event)"
+        (cancelRename)="onCancelRename()"
+        (itemDrop)="onDrop($event)"
+      >
+        <div *cdkDragPlaceholder class="folder-placeholder"></div>
+      </app-folder-item>
+    }
+  }
+</div>

@@ -173,6 +173,7 @@ export interface ChatHistoryItem {
   updated_at: number;
   pinned?: boolean;
   preview?: string;
+  folder_id?: string | null;
 }
 
 export interface ChatListResponse {
@@ -183,9 +184,10 @@ export interface ChatListResponse {
 }
 
 export interface ChatContextAction {
-  action: 'pin' | 'unpin' | 'delete' | 'rename' | 'export';
+  action: 'pin' | 'unpin' | 'delete' | 'rename' | 'export' | 'move';
   chatId: string;
   data?: any;
+  targetFolderId?: string | null;
 }
 
 export interface ChatContextMenuEvent {
@@ -195,6 +197,43 @@ export interface ChatContextMenuEvent {
 
 export type ExportFormat = 'json' | 'txt' | 'pdf';
 
+// Folder interfaces
+export interface FolderData {
+  system_prompt?: string;
+  files?: any[];
+}
 
+export interface FolderItem {
+  id: string;
+  user_id: string;
+  name: string;
+  parent_id: string | null;
+  items: string[];
+  meta: {
+    description: string;
+    tags: string[];
+  };
+  data: {
+    system_prompt?: string;
+    files: any[];
+  };
+  created_at: number;
+  updated_at: number;
+  is_expanded?: boolean;
+  chats?: ChatHistoryItem[];
+}
 
+export type FolderContextAction = 'create' | 'delete' | 'rename' | 'move';
 
+export interface FolderContextMenuEvent {
+  folder: FolderItem;
+  action: FolderContextAction;
+  mouseEvent: MouseEvent;
+}
+
+export interface FolderListResponse {
+  folders: FolderItem[];
+  page?: number;
+  total?: number;
+  hasMore?: boolean;
+}

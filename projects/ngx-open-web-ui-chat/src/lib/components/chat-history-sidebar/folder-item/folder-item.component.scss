@@ -1,0 +1,329 @@
+.folder-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 6px;
+    margin-bottom: 2px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+        transform: translateX(2px);
+    }
+
+    &:active {
+        transform: translateX(1px) scale(0.99);
+    }
+
+    &.is-renaming {
+        background-color: rgba(59, 130, 246, 0.05);
+        cursor: default;
+        transform: none;
+
+        &:hover {
+            background-color: rgba(59, 130, 246, 0.05);
+            transform: none;
+        }
+    }
+}
+
+.folder-item-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.folder-toggle {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        color: #374151;
+    }
+
+    &:active {
+        transform: scale(0.9);
+    }
+
+    &:not(.has-items) {
+        visibility: hidden;
+    }
+}
+
+.chevron-icon {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.folder-item.is-expanded .chevron-icon {
+    transform: rotate(90deg);
+}
+
+.folder-icon {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    color: #f59e0b;
+    transition: color 0.2s ease;
+
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.folder-item:hover .folder-icon {
+    color: #d97706;
+}
+
+.folder-details {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.folder-name {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1f2937;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+}
+
+.folder-count {
+    flex-shrink: 0;
+    font-size: 11px;
+    color: #9ca3af;
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 2px 6px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.folder-rename-input {
+    flex: 1;
+    padding: 4px 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1f2937;
+    border: 2px solid #3b82f6;
+    border-radius: 4px;
+    outline: none;
+    background-color: #ffffff;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    animation: slideIn 0.2s ease-out;
+
+    &:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+}
+
+// Folder chats styles
+.folder-chats {
+    margin-top: 4px;
+}
+
+.folder-chat-item {
+    padding: 6px 12px 6px 36px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    &.active {
+        background-color: rgba(59, 130, 246, 0.1);
+
+        .chat-title {
+            color: #2563eb;
+            font-weight: 500;
+        }
+    }
+
+    .chat-icon {
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+        color: #6b7280;
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .chat-title {
+        flex: 1;
+        font-size: 12px;
+        color: #4b5563;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+    .folder-item {
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        &.is-renaming {
+            background-color: rgba(59, 130, 246, 0.15);
+
+            &:hover {
+                background-color: rgba(59, 130, 246, 0.15);
+            }
+        }
+    }
+
+    .folder-toggle {
+        color: #9ca3af;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #d1d5db;
+        }
+    }
+
+    .folder-icon {
+        color: #fbbf24;
+    }
+
+    .folder-item:hover .folder-icon {
+        color: #fcd34d;
+    }
+
+    .folder-name {
+        color: #f9fafb;
+    }
+
+    .folder-count {
+        color: #6b7280;
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .folder-rename-input {
+        background-color: #374151;
+        color: #f9fafb;
+        border-color: #60a5fa;
+
+        &:focus {
+            border-color: #93c5fd;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+        }
+    }
+
+    .folder-chat-item {
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        &.active {
+            background-color: rgba(59, 130, 246, 0.2);
+
+            .chat-title {
+                color: #60a5fa;
+            }
+        }
+
+        .chat-icon {
+            color: #9ca3af;
+        }
+
+        .chat-title {
+            color: #d1d5db;
+        }
+    }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+
+    .folder-item,
+    .folder-toggle,
+    .folder-icon,
+    .folder-name,
+    .folder-count,
+    .folder-rename-input,
+    .chevron-icon {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .folder-item {
+
+        &:hover,
+        &:active {
+            transform: none !important;
+        }
+    }
+
+    .folder-toggle:active {
+        transform: none !important;
+    }
+}
+
+// Focus visible styles for keyboard navigation
+.folder-item:focus-visible {
+    outline: 2px solid #0066cc;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.1);
+}
+
+.folder-toggle:focus-visible {
+    outline: 2px solid #0066cc;
+    outline-offset: 1px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .folder-item:focus-visible {
+        outline-color: #60a5fa;
+        box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.2);
+    }
+
+    .folder-toggle:focus-visible {
+        outline-color: #60a5fa;
+    }
+}

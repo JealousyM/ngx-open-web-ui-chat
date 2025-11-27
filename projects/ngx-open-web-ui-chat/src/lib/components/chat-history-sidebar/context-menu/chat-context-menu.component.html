@@ -39,6 +39,42 @@
     <span>{{ renameText }}</span>
   </button>
   
+  <div class="menu-item-wrapper" (mouseenter)="showMoveMenu = true" (mouseleave)="showMoveMenu = false">
+    <button class="menu-item" 
+            (click)="toggleMoveMenu($event)" 
+            type="button"
+            role="menuitem"
+            [attr.aria-label]="moveText"
+            [attr.aria-haspopup]="true"
+            [attr.aria-expanded]="showMoveMenu">
+      <svg class="menu-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M14 11V14H2V11H1V14C1 14.55 1.45 15 2 15H14C14.55 15 15 14.55 15 14V11H14ZM10 7L8 9L6 7H9V1H7V7H10Z" fill="currentColor"/>
+        <path d="M2 9H14V11H2V9Z" fill="currentColor"/>
+      </svg>
+      <span>{{ moveText }}</span>
+      <svg class="chevron-right" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+
+    @if (showMoveMenu && flattenedFolders.length > 0) {
+      <div class="submenu" role="menu">
+        @for (folder of flattenedFolders; track folder.id) {
+          <button class="menu-item" 
+                  (click)="emitMoveAction(folder.id)" 
+                  type="button" 
+                  role="menuitem"
+                  [style.padding-left.px]="12 + (folder.level * 16)">
+            <svg class="menu-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span class="folder-name">{{ folder.name }}</span>
+          </button>
+        }
+      </div>
+    }
+  </div>
+  
   <button class="menu-item" 
           (click)="emitAction('export')" 
           type="button"

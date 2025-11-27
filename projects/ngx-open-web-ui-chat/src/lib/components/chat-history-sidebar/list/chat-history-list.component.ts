@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { ChatHistoryItem, ChatContextMenuEvent } from '../../../models/chat.model';
 import { ChatHistoryItemComponent } from '../item/chat-history-item.component';
 import { Translation } from '../../../i18n/translations';
@@ -7,11 +8,11 @@ import { Translation } from '../../../i18n/translations';
 @Component({
   selector: 'app-chat-history-list',
   standalone: true,
-  imports: [CommonModule, ChatHistoryItemComponent],
+  imports: [CommonModule, ChatHistoryItemComponent, DragDropModule],
   templateUrl: './chat-history-list.component.html',
   styleUrls: ['./chat-history-list.component.scss']
 })
-export class ChatHistoryListComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ChatHistoryListComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
   @Input() public chats: ChatHistoryItem[] = [];
   @Input() public currentChatId: string | null = null;
   @Input() public isLoading = false;
@@ -23,6 +24,9 @@ export class ChatHistoryListComponent implements OnInit, OnDestroy, AfterViewIni
   @Output() public contextMenu = new EventEmitter<ChatContextMenuEvent>();
   @Output() public rename = new EventEmitter<{ chatId: string; newTitle: string }>();
   @Output() public cancelRename = new EventEmitter<void>();
+  @Output() public itemDrop = new EventEmitter<CdkDragDrop<any[]>>();
+
+  @Input() public connectedDropLists: string[] = [];
 
   @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef<HTMLDivElement>;
   @ViewChild('loadMoreTrigger', { static: false }) loadMoreTrigger?: ElementRef<HTMLDivElement>;
@@ -68,12 +72,18 @@ export class ChatHistoryListComponent implements OnInit, OnDestroy, AfterViewIni
     this.intersectionObserver.observe(this.loadMoreTrigger.nativeElement);
   }
 
-  public get pinnedChats(): ChatHistoryItem[] {
-    return this.chats.filter(chat => chat.pinned);
+  public pinnedChats: ChatHistoryItem[] = [];
+  public unpinnedChats: ChatHistoryItem[] = [];
+
+  public ngOnChanges(changes: SimpleChanges): void {
+    if (changes['chats']) {
+      this.updateChatLists();
+    }
   }
 
-  public get unpinnedChats(): ChatHistoryItem[] {
-    return this.chats.filter(chat => !chat.pinned);
+  private updateChatLists(): void {
+    this.pinnedChats = this.chats.filter(chat => chat.pinned);
+    this.unpinnedChats = this.chats.filter(chat => !chat.pinned);
   }
 
   public onChatClick(chatId: string): void {
@@ -90,6 +100,10 @@ export class ChatHistoryListComponent implements OnInit, OnDestroy, AfterViewIni
 
   public onCancelRename(): void {
     this.cancelRename.emit();
+  }
+
+  public onDrop(event: CdkDragDrop<any[]>): void {
+    this.itemDrop.emit(event);
   }
 
   public isRenaming(chatId: string): boolean {

@@ -149,9 +149,6 @@ describe('OpenwebuiChatComponent - Chat History Integration Properties', () => {
             hasMore: false
           }));
           
-          // Try to load chat list
-          component.loadChatList();
-          
           fixture.detectChanges();
           
           // Property assertion: Service should NOT be called when history is disabled

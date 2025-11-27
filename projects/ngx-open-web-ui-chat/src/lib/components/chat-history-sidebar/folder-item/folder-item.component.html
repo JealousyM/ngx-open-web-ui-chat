@@ -1,0 +1,103 @@
+<div 
+  class="folder-item"
+  [class.is-expanded]="isExpanded"
+  [class.is-renaming]="isRenaming"
+  [style.padding-left.px]="depth * 16"
+  [attr.tabindex]="tabindex"
+  [attr.role]="'treeitem'"
+  [attr.aria-label]="getAriaLabel()"
+  [attr.aria-expanded]="isExpanded"
+  (contextmenu)="onContextMenu($event)"
+  (keydown)="onKeyDown($event)"
+>
+  <div class="folder-item-content"
+       cdkDropList
+       [id]="'folder-' + folder.id"
+       [cdkDropListData]="folder.chats || []"
+       [cdkDropListConnectedTo]="connectedDropLists"
+       (cdkDropListDropped)="onDrop($event)"
+       (click)="onFolderClick()">
+    <button 
+      class="folder-toggle"
+      [class.has-items]="folder.items && folder.items.length > 0"
+      (click)="onToggleClick($event)"
+      [attr.aria-label]="isExpanded ? (translations?.collapse || 'Collapse') : (translations?.expand || 'Expand')"
+      tabindex="-1"
+    >
+      <svg 
+        *ngIf="folder.items && folder.items.length > 0"
+        class="chevron-icon" 
+        viewBox="0 0 24 24" 
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+
+
+    <div class="folder-icon">
+      @if (isExpanded) {
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2V19"></path>
+          <path d="M2 8h20"></path>
+          <path d="M6 13h12"></path>
+        </svg>
+      } @else {
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+        </svg>
+      }
+    </div>
+
+    <div class="folder-details">
+      <input
+        *ngIf="isRenaming"
+        class="folder-rename-input"
+        type="text"
+        [(ngModel)]="renameValue"
+        (keydown)="onRenameKeydown($event)"
+        (blur)="onRenameBlur()"
+        [attr.aria-label]="translations?.renameFolderPlaceholder || 'Rename folder'"
+        #renameInput
+        autofocus
+      />
+      <span *ngIf="!isRenaming" class="folder-name">{{ folder.name }}</span>
+      <span *ngIf="!isRenaming && folder.items && folder.items.length > 0" class="folder-count">
+        {{ folder.items.length }}
+      </span>
+    </div>
+  </div>
+
+  @if (isExpanded && folder.chats && folder.chats.length > 0) {
+    <div class="folder-chats" 
+         [style.padding-left.px]="(depth + 1) * 16"
+         cdkDropList
+         [id]="'folder-chats-' + folder.id"
+         [cdkDropListData]="folder.chats"
+         [cdkDropListConnectedTo]="connectedDropLists"
+         (cdkDropListDropped)="onDrop($event)">
+      @for (chat of folder.chats; track chat.id) {
+        <div 
+          class="folder-chat-item"
+          cdkDrag
+          [cdkDragData]="chat"
+          [class.active]="chat.id === currentChatId"
+          (click)="onChatClick(chat.id, $event)"
+          (contextmenu)="onChatContextMenu($event, chat)"
+        >
+          <div *cdkDragPlaceholder class="chat-placeholder"></div>
+          <div class="chat-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+          <span class="chat-title">{{ chat.title }}</span>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -11,10 +11,19 @@
   } @else {
     <div class="chat-list">
       @if (pinnedChats.length > 0) {
-        <div class="pinned-section" role="group" [attr.aria-label]="translations?.pinnedChats || 'Pinned chats'">
+        <div class="pinned-section" 
+             role="group" 
+             [attr.aria-label]="translations?.pinnedChats || 'Pinned chats'"
+             cdkDropList
+             id="pinned-list"
+             [cdkDropListData]="pinnedChats"
+             [cdkDropListConnectedTo]="connectedDropLists"
+             (cdkDropListDropped)="onDrop($event)">
           <div class="section-label" aria-hidden="true">{{ translations?.pinned || 'Pinned' }}</div>
           @for (chat of pinnedChats; track chat.id; let i = $index) {
             <app-chat-history-item
+              cdkDrag
+              [cdkDragData]="chat"
               [chat]="chat"
               [isActive]="chat.id === currentChatId"
               [isPinned]="true"
@@ -25,18 +34,28 @@
               (contextMenu)="onChatContextMenu($event, chat)"
               (rename)="onChatRename(chat.id, $event)"
               (cancelRename)="onCancelRename()">
+              <div *cdkDragPlaceholder class="chat-placeholder"></div>
             </app-chat-history-item>
           }
         </div>
       }
 
       @if (unpinnedChats.length > 0) {
-        <div class="unpinned-section" role="group" [attr.aria-label]="translations?.allChats || 'All chats'">
+        <div class="unpinned-section" 
+             role="group" 
+             [attr.aria-label]="translations?.allChats || 'All chats'"
+             cdkDropList
+             id="root-list"
+             [cdkDropListData]="unpinnedChats"
+             [cdkDropListConnectedTo]="connectedDropLists"
+             (cdkDropListDropped)="onDrop($event)">
           @if (pinnedChats.length > 0) {
             <div class="section-label" aria-hidden="true">{{ translations?.allChats || 'All Chats' }}</div>
           }
           @for (chat of unpinnedChats; track chat.id; let i = $index) {
             <app-chat-history-item
+              cdkDrag
+              [cdkDragData]="chat"
               [chat]="chat"
               [isActive]="chat.id === currentChatId"
               [isPinned]="false"
@@ -47,6 +66,7 @@
               (contextMenu)="onChatContextMenu($event, chat)"
               (rename)="onChatRename(chat.id, $event)"
               (cancelRename)="onCancelRename()">
+              <div *cdkDragPlaceholder class="chat-placeholder"></div>
             </app-chat-history-item>
           }
         </div>

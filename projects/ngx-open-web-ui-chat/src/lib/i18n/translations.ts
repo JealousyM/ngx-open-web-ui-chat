@@ -107,6 +107,35 @@ export interface Translation {
   explain?: string;
   askQuestion?: string;
   askPlaceholder?: string;
+  // Folders
+  folders?: string;
+  folder?: string;
+  createFolder?: string;
+  createSubfolder?: string;
+  newFolder?: string;
+  folderName?: string;
+  renameFolder?: string;
+  renameFolderPlaceholder?: string;
+  deleteFolder?: string;
+  moveFolder?: string;
+  moveToFolder?: string;
+  moveChat?: string;
+  confirmDeleteFolder?: string;
+  folderNameRequired?: string;
+  folderNameTooLong?: string;
+  createFolderError?: string;
+  deleteFolderError?: string;
+  renameFolderError?: string;
+  moveFolderError?: string;
+  moveChatError?: string;
+  noFolder?: string;
+  noFolders?: string;
+  folderActions?: string;
+  expanded?: string;
+  collapsed?: string;
+  items?: string;
+  expand?: string;
+  collapse?: string;
 }
 
 export interface Translations {
@@ -221,7 +250,36 @@ export const translations: Translations = {
     ask: 'Ask',
     explain: 'Explain',
     askQuestion: 'Ask',
-    askPlaceholder: 'Ask a question about the selected text...'
+    askPlaceholder: 'Ask a question about the selected text...',
+    // Folders
+    folders: 'Folders',
+    folder: 'Folder',
+    createFolder: 'Create Folder',
+    createSubfolder: 'Create Subfolder',
+    newFolder: 'New Folder',
+    folderName: 'Folder Name',
+    renameFolder: 'Rename Folder',
+    renameFolderPlaceholder: 'Enter folder name',
+    deleteFolder: 'Delete Folder',
+    moveFolder: 'Move Folder',
+    moveToFolder: 'Move to Folder',
+    moveChat: 'Move Chat',
+    confirmDeleteFolder: 'Are you sure you want to delete this folder? All chats inside will be moved to the root level.',
+    folderNameRequired: 'Folder name is required.',
+    folderNameTooLong: 'Folder name is too long. Maximum 100 characters.',
+    createFolderError: 'Failed to create folder. Please try again.',
+    deleteFolderError: 'Failed to delete folder. Please try again.',
+    renameFolderError: 'Failed to rename folder. Please try again.',
+    moveFolderError: 'Failed to move folder. Please try again.',
+    moveChatError: 'Failed to move chat. Please try again.',
+    noFolder: 'No Folder',
+    noFolders: 'No folders yet',
+    folderActions: 'Folder actions',
+    expanded: 'Expanded',
+    collapsed: 'Collapsed',
+    items: 'items',
+    expand: 'Expand',
+    collapse: 'Collapse'
   },
   zh: {
     send: '发送',
@@ -452,7 +510,36 @@ export const translations: Translations = {
     ask: 'Preguntar',
     explain: 'Explicar',
     askQuestion: 'Preguntar',
-    askPlaceholder: 'Haz una pregunta sobre el texto seleccionado...'
+    askPlaceholder: 'Haz una pregunta sobre el texto seleccionado...',
+    // Folders
+    folders: 'Carpetas',
+    folder: 'Carpeta',
+    createFolder: 'Crear Carpeta',
+    createSubfolder: 'Crear Subcarpeta',
+    newFolder: 'Nueva Carpeta',
+    folderName: 'Nombre de Carpeta',
+    renameFolder: 'Renombrar Carpeta',
+    renameFolderPlaceholder: 'Ingrese nombre de carpeta',
+    deleteFolder: 'Eliminar Carpeta',
+    moveFolder: 'Mover Carpeta',
+    moveToFolder: 'Mover a Carpeta',
+    moveChat: 'Mover Chat',
+    confirmDeleteFolder: '¿Estás seguro de que quieres eliminar esta carpeta? Todos los chats dentro se moverán al nivel raíz.',
+    folderNameRequired: 'Se requiere nombre de carpeta.',
+    folderNameTooLong: 'El nombre de carpeta es demasiado largo. Máximo 100 caracteres.',
+    createFolderError: 'Error al crear carpeta. Por favor, inténtalo de nuevo.',
+    deleteFolderError: 'Error al eliminar carpeta. Por favor, inténtalo de nuevo.',
+    renameFolderError: 'Error al renombrar carpeta. Por favor, inténtalo de nuevo.',
+    moveFolderError: 'Error al mover carpeta. Por favor, inténtalo de nuevo.',
+    moveChatError: 'Error al mover chat. Por favor, inténtalo de nuevo.',
+    noFolder: 'Sin Carpeta',
+    noFolders: 'Aún no hay carpetas',
+    folderActions: 'Acciones de carpeta',
+    expanded: 'Expandido',
+    collapsed: 'Contraído',
+    items: 'elementos',
+    expand: 'Expandir',
+    collapse: 'Contraer'
   },
   ar: {
     send: 'إرسال',
@@ -683,7 +770,36 @@ export const translations: Translations = {
     ask: 'Perguntar',
     explain: 'Explicar',
     askQuestion: 'Perguntar',
-    askPlaceholder: 'Faça uma pergunta sobre o texto selecionado...'
+    askPlaceholder: 'Faça uma pergunta sobre o texto selecionado...',
+    // Folders
+    folders: 'Pastas',
+    folder: 'Pasta',
+    createFolder: 'Criar Pasta',
+    createSubfolder: 'Criar Subpasta',
+    newFolder: 'Nova Pasta',
+    folderName: 'Nome da Pasta',
+    renameFolder: 'Renomear Pasta',
+    renameFolderPlaceholder: 'Digite o nome da pasta',
+    deleteFolder: 'Excluir Pasta',
+    moveFolder: 'Mover Pasta',
+    moveToFolder: 'Mover para Pasta',
+    moveChat: 'Mover Chat',
+    confirmDeleteFolder: 'Tem certeza de que deseja excluir esta pasta? Todos os chats dentro serão movidos para o nível raiz.',
+    folderNameRequired: 'Nome da pasta é obrigatório.',
+    folderNameTooLong: 'O nome da pasta é muito longo. Máximo 100 caracteres.',
+    createFolderError: 'Falha ao criar pasta. Por favor, tente novamente.',
+    deleteFolderError: 'Falha ao excluir pasta. Por favor, tente novamente.',
+    renameFolderError: 'Falha ao renomear pasta. Por favor, tente novamente.',
+    moveFolderError: 'Falha ao mover pasta. Por favor, tente novamente.',
+    moveChatError: 'Falha ao mover chat. Por favor, tente novamente.',
+    noFolder: 'Sem Pasta',
+    noFolders: 'Ainda não há pastas',
+    folderActions: 'Ações da pasta',
+    expanded: 'Expandido',
+    collapsed: 'Contraído',
+    items: 'itens',
+    expand: 'Expandir',
+    collapse: 'Contrair'
   },
   ru: {
     send: 'Отправить',
@@ -776,7 +892,36 @@ export const translations: Translations = {
     ask: 'Спросить',
     explain: 'Объяснить',
     askQuestion: 'Спросить',
-    askPlaceholder: 'Задайте вопрос о выделенном тексте...'
+    askPlaceholder: 'Задайте вопрос о выделенном тексте...',
+    // Folders
+    folders: 'Папки',
+    folder: 'Папка',
+    createFolder: 'Создать папку',
+    createSubfolder: 'Создать подпапку',
+    newFolder: 'Новая папка',
+    folderName: 'Название папки',
+    renameFolder: 'Переименовать папку',
+    renameFolderPlaceholder: 'Введите название папки',
+    deleteFolder: 'Удалить папку',
+    moveFolder: 'Переместить папку',
+    moveToFolder: 'Переместить в папку',
+    moveChat: 'Переместить чат',
+    confirmDeleteFolder: 'Вы уверены, что хотите удалить эту папку? Все чаты внутри будут перемещены на верхний уровень.',
+    folderNameRequired: 'Требуется название папки.',
+    folderNameTooLong: 'Название папки слишком длинное. Максимум 100 символов.',
+    createFolderError: 'Не удалось создать папку. Попробуйте снова.',
+    deleteFolderError: 'Не удалось удалить папку. Попробуйте снова.',
+    renameFolderError: 'Не удалось переименовать папку. Попробуйте снова.',
+    moveFolderError: 'Не удалось переместить папку. Попробуйте снова.',
+    moveChatError: 'Не удалось переместить чат. Попробуйте снова.',
+    noFolder: 'Без папки',
+    noFolders: 'Пока нет папок',
+    folderActions: 'Действия с папкой',
+    expanded: 'Развернуто',
+    collapsed: 'Свернуто',
+    items: 'элементов',
+    expand: 'Развернуть',
+    collapse: 'Свернуть'
   },
   bn: {
     send: 'পাঠান',

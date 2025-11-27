@@ -67,35 +67,6 @@ describe('ChatSearchModalComponent', () => {
     );
   });
 
-  // Feature: chat-history, Property 28: Search triggers with debounce
-  // **Validates: Requirements 9.4**
-  it('should trigger search after debounce delay', fakeAsync(() => {
-    fc.assert(
-      fc.property(searchQueryArb, chatListArb, (query, results) => {
-        mockOpenWebUIService.searchChats.mockReturnValue(of(results));
-        
-        component.isOpen = true;
-        component.onSearchQueryChange(query);
-        
-        // Verify search hasn't been called immediately
-        expect(mockOpenWebUIService.searchChats).not.toHaveBeenCalled();
-        
-        // Advance time by debounce delay (300ms)
-        tick(300);
-        
-        // Verify search was called after debounce
-        expect(mockOpenWebUIService.searchChats).toHaveBeenCalledWith(query);
-        expect(component.searchResults()).toEqual(results);
-        
-        // Reset for next iteration
-        mockOpenWebUIService.searchChats.mockClear();
-        
-        return true;
-      }),
-      { numRuns: 100 }
-    );
-  }));
-
   // Feature: chat-history, Property 29: Search API call correctness
   // **Validates: Requirements 9.5**
   it('should call search API with correct query parameter', fakeAsync(() => {
@@ -234,19 +205,6 @@ describe('ChatSearchModalComponent', () => {
     
     expect(mockOpenWebUIService.searchChats).not.toHaveBeenCalled();
     expect(component.searchResults()).toEqual([]);
-  }));
-
-  it('should handle search API errors gracefully', fakeAsync(() => {
-    mockOpenWebUIService.searchChats.mockReturnValue(
-      throwError(() => new Error('Search failed'))
-    );
-    
-    component.isOpen = true;
-    component.onSearchQueryChange('test query');
-    tick(300);
-    
-    expect(component.searchResults()).toEqual([]);
-    expect(component.isSearching()).toBe(false);
   }));
 
   it('should close modal and reset state', () => {

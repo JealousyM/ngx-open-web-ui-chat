@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChatHistoryListComponent } from './chat-history-list.component';
 import { ChatHistoryItem } from '../../../models/chat.model';
 import * as fc from 'fast-check';
+import { SimpleChanges } from '@angular/core';
 
 describe('ChatHistoryListComponent', () => {
   let component: ChatHistoryListComponent;
@@ -157,6 +158,7 @@ describe('ChatHistoryListComponent', () => {
       ];
 
       component.chats = chats;
+      component.ngOnChanges({ chats: { currentValue: chats, previousValue: component.chats, firstChange: false, isFirstChange: () => false } } as unknown as SimpleChanges);
       fixture.detectChanges();
 
       expect(component.pinnedChats.length).toBe(2);

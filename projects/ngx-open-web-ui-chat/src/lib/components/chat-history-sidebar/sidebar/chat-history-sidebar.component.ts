@@ -1,9 +1,12 @@
-import { Component, Input, Output, EventEmitter, inject, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, signal, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ChatHistoryItem, ChatContextAction, ChatContextMenuEvent } from '../../../models/chat.model';
+import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { ChatHistoryItem, ChatContextAction, ChatContextMenuEvent, FolderItem, FolderContextMenuEvent, FolderContextAction } from '../../../models/chat.model';
 import { ChatHistoryHeaderComponent } from '../header/chat-history-header.component';
 import { ChatHistoryListComponent } from '../list/chat-history-list.component';
 import { ChatContextMenuComponent } from '../context-menu/chat-context-menu.component';
+import { FolderListComponent } from '../folder-list/folder-list.component';
+import { FolderContextMenuComponent } from '../folder-context-menu/folder-context-menu.component';
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { ExportFormatMenuComponent } from '../../export-format-menu/export-format-menu.component';
 import { Translation } from '../../../i18n/translations';
@@ -12,16 +15,19 @@ import { OpenWebUIService } from '../../../services/openwebui-api';
 @Component({
   selector: 'app-chat-history-sidebar',
   standalone: true,
-  imports: [CommonModule, ChatHistoryHeaderComponent, ChatHistoryListComponent, ChatContextMenuComponent, ConfirmDialogComponent, ExportFormatMenuComponent],
+  imports: [CommonModule, ChatHistoryHeaderComponent, ChatHistoryListComponent, ChatContextMenuComponent, FolderListComponent, FolderContextMenuComponent, ConfirmDialogComponent, ExportFormatMenuComponent, DragDropModule],
   templateUrl: './chat-history-sidebar.component.html',
   styleUrls: ['./chat-history-sidebar.component.scss']
 })
-export class ChatHistorySidebarComponent {
+export class ChatHistorySidebarComponent implements OnChanges {
   @Input() public isOpen = false;
   @Input() public chats: ChatHistoryItem[] = [];
   @Input() public currentChatId: string | null = null;
   @Input() public isLoading = false;
   @Input() public translations?: Translation;
+  @Input() public folders = false;
+  @Input() public folderList: FolderItem[] = [];
+  @Input() public renamingFolderId: string | null = null;
 
   @Output() public chatSelected = new EventEmitter<string>();
   @Output() public newChatRequested = new EventEmitter<void>();
@@ -30,6 +36,9 @@ export class ChatHistorySidebarComponent {
   @Output() public contextMenuAction = new EventEmitter<ChatContextAction>();
   @Output() public toggleSidebar = new EventEmitter<void>();
   @Output() public chatsUpdated = new EventEmitter<ChatHistoryItem[]>();
+  @Output() public folderAction = new EventEmitter<{ action: FolderContextAction; folderId: string }>();
+  @Output() public folderRenamed = new EventEmitter<{ folderId: string; newName: string }>();
+  @Output() public foldersUpdated = new EventEmitter<FolderItem[]>();
 
   public renamingChatId: string | null = null;
   public showContextMenu = signal(false);
@@ -42,6 +51,35 @@ export class ChatHistorySidebarComponent {
   public showExportMenu = signal(false);
   public exportMenuChatId = signal<string | null>(null);
   public exportMenuPosition = signal({ x: 0, y: 0 });
+  
+  public expandedFolderIds = signal<Set<string>>(new Set());
+  public showFolderContextMenu = signal(false);
+  public folderContextMenuPosition = signal({ x: 0, y: 0 });
+  public folderContextMenuFolder = signal<FolderItem | null>(null);
+  
+  public showFolderDeleteConfirm = signal(false);
+  public folderToDelete = signal<FolderItem | null>(null);
+
+  public connectedDropLists: string[] = [];
+
+  public ngOnChanges(changes: SimpleChanges): void {
+    if (changes['folderList']) {
+      this.updateConnectedDropLists();
+    }
+  }
+
+  private updateConnectedDropLists(): void {
+    const folderIds = this.getAllFolderIds(this.folderList);
+    this.connectedDropLists = ['pinned-list', 'root-list', 'folder-structure', ...folderIds.map(id => `folder-${id}`)];
+  }
+
+  private getAllFolderIds(folders: FolderItem[]): string[] {
+    let ids: string[] = [];
+    for (const folder of folders) {
+      ids.push(folder.id);
+    }
+    return ids;
+  }
 
   private openWebUIService = inject(OpenWebUIService);
 
@@ -104,7 +142,99 @@ export class ChatHistorySidebarComponent {
       case 'export':
         this.handleExportChat(action.chatId, menuPosition);
         break;
+      case 'move':
+        if (action.targetFolderId) {
+          this.handleMoveChat(action.chatId, action.targetFolderId);
+        }
+        break;
     }
+  }
+
+  /**
+   * Handle move chat to folder
+   */
+  public handleMoveChat(chatId: string, folderId: string | null): void {
+    const action: ChatContextAction = {
+      action: 'move',
+      chatId: chatId,
+      targetFolderId: folderId
+    };
+    this.contextMenuAction.emit(action);
+
+    let chatToMove: ChatHistoryItem | undefined = this.chats.find(c => c.id === chatId);
+    let sourceFolderId: string | null = null;
+
+    if (!chatToMove) {
+      for (const folder of this.folderList) {
+        if (folder.chats) {
+          const found = folder.chats.find(c => c.id === chatId);
+          if (found) {
+            chatToMove = found;
+            sourceFolderId = folder.id;
+            break;
+          }
+        }
+      }
+    }
+
+    this.openWebUIService.moveChatToFolder(chatId, folderId).subscribe({
+      next: () => {
+        if (folderId === null) {
+          if (sourceFolderId !== null) {
+            const updatedFolders = this.folderList.map(folder => {
+              if (folder.id === sourceFolderId) {
+                return {
+                  ...folder,
+                  chats: (folder.chats || []).filter(c => c.id !== chatId)
+                };
+              }
+              return folder;
+            });
+            this.foldersUpdated.emit(updatedFolders);
+          }
+          
+          if (chatToMove) {
+            const updatedChat = { ...chatToMove, folder_id: null, pinned: false };
+            const updatedChats = [updatedChat, ...this.chats].sort((a, b) => {
+              if (a.pinned && !b.pinned) return -1;
+              if (!a.pinned && b.pinned) return 1;
+              return b.updated_at - a.updated_at;
+            });
+            this.chatsUpdated.emit(updatedChats);
+          }
+        } else {
+          if (sourceFolderId === null) {
+            const updatedChats = this.chats.filter(chat => chat.id !== chatId);
+            this.chatsUpdated.emit(updatedChats);
+          }
+
+          if (chatToMove) {
+            const updatedFolders = this.folderList.map(folder => {
+              let newFolder = { ...folder };
+              
+              if (sourceFolderId !== null && folder.id === sourceFolderId) {
+                newFolder.chats = (folder.chats || []).filter(c => c.id !== chatId);
+              }
+              
+              if (folder.id === folderId && folder.is_expanded) {
+                const currentChats = newFolder.chats || [];
+                if (!currentChats.find(c => c.id === chatId)) {
+                   const updatedChat = { ...chatToMove!, folder_id: folderId };
+                   newFolder.chats = [updatedChat, ...currentChats].sort((a, b) => b.updated_at - a.updated_at);
+                }
+              }
+              
+              return newFolder;
+            });
+            
+            this.foldersUpdated.emit(updatedFolders);
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Failed to move chat:', error);
+      }
+    });
   }
 
   /**
@@ -365,6 +495,234 @@ export class ChatHistorySidebarComponent {
       const errorMessage = this.translations?.exportError || 
         'Failed to export chat. Please try again.';
       alert(errorMessage);
+    }
+  }
+
+  /**
+   * Handle folder selection
+   */
+  public onFolderSelected(folderId: string): void {
+    // Toggle folder expansion
+    this.onFolderToggled(folderId);
+  }
+
+  /**
+   * Handle folder toggle (expand/collapse)
+   */
+  public onFolderToggled(folderId: string): void {
+    const folder = this.folderList.find(f => f.id === folderId);
+    if (!folder) return;
+
+    const newExpandedState = !folder.is_expanded;
+
+    this.openWebUIService.toggleFolderExpanded(folderId, newExpandedState).subscribe({
+      next: () => {
+        if (newExpandedState) {
+          this.openWebUIService.getChatsInFolder(folderId).subscribe({
+            next: (chats) => {
+              const updatedFolders = this.folderList.map(f => 
+                f.id === folderId 
+                  ? { ...f, is_expanded: true, chats: chats }
+                  : f
+              );
+              this.foldersUpdated.emit(updatedFolders);
+            },
+            error: (error) => {
+              console.error('Failed to load folder chats:', error);
+            }
+          });
+        } else {
+          const updatedFolders = this.folderList.map(f => 
+            f.id === folderId 
+              ? { ...f, is_expanded: false, chats: [] }
+              : f
+          );
+          this.foldersUpdated.emit(updatedFolders);
+        }
+      },
+      error: (error) => {
+        console.error('Failed to toggle folder expansion:', error);
+      }
+    });
+  }
+
+  /**
+   * Handle folder context menu
+   */
+  public onFolderContextMenu(event: FolderContextMenuEvent): void {
+    event.mouseEvent.preventDefault();
+    this.folderContextMenuFolder.set(event.folder);
+    const position = {
+      x: event.mouseEvent.clientX,
+      y: event.mouseEvent.clientY
+    };
+    this.folderContextMenuPosition.set(position);
+    this.showFolderContextMenu.set(true);
+  }
+
+  /**
+   * Handle folder context menu action
+   */
+  public handleFolderContextMenuAction(data: { action: FolderContextAction; folderId: string }): void {
+    this.showFolderContextMenu.set(false);
+    const folder = this.folderContextMenuFolder();
+    this.folderContextMenuFolder.set(null);
+    
+    if (data.action === 'delete' && folder && folder.id === data.folderId) {
+      this.folderToDelete.set(folder);
+      this.showFolderDeleteConfirm.set(true);
+      return;
+    }
+    
+    this.folderAction.emit(data);
+    
+    if (data.action === 'rename') {
+      this.renamingFolderId = data.folderId;
+    }
+  }
+
+  public onFolderDeleteConfirmed(): void {
+    const folder = this.folderToDelete();
+    if (folder) {
+      this.folderAction.emit({ action: 'delete', folderId: folder.id });
+    }
+    this.showFolderDeleteConfirm.set(false);
+    this.folderToDelete.set(null);
+  }
+
+  public onFolderDeleteCancelled(): void {
+    this.showFolderDeleteConfirm.set(false);
+    this.folderToDelete.set(null);
+  }
+
+  /**
+   * Close folder context menu
+   */
+  public closeFolderContextMenu(): void {
+    this.showFolderContextMenu.set(false);
+    this.folderContextMenuFolder.set(null);
+  }
+
+  /**
+   * Handle folder rename
+   */
+  public onFolderRename(data: { folderId: string; newName: string }): void {
+    this.renamingFolderId = null;
+    this.folderRenamed.emit(data);
+  }
+
+  /**
+   * Cancel folder rename
+   */
+  public onCancelFolderRename(): void {
+    this.renamingFolderId = null;
+  }
+
+  /**
+   * Create root folder (no parent)
+   */
+  public onCreateRootFolder(): void {
+    this.folderAction.emit({
+      action: 'create',
+      folderId: '' // Empty folderId means root level
+    });
+  }
+
+  /**
+   * Handle chat selection from a folder
+   */
+  public handleFolderChatClick(chatId: string): void {
+    let foundChat: ChatHistoryItem | undefined;
+    
+    for (const folder of this.folderList) {
+      if (folder.chats) {
+        foundChat = folder.chats.find(c => c.id === chatId);
+        if (foundChat) break;
+      }
+    }
+
+    if (foundChat) {
+      this.chatSelected.emit(foundChat.id);
+    } else {
+      console.warn('Chat not found in loaded folders:', chatId);
+    }
+  }
+
+  public moveFolder(folderId: string, parentId: string | null): void {
+    this.openWebUIService.moveFolder(folderId, parentId).subscribe({
+      next: (updatedFolder) => {
+        // We need to update the folder list.
+        // Since we don't have the full list from the API response, we might need to reload folders
+        // or manually update the local list.
+        // For now, let's emit an event to request folder list refresh or update local state.
+        // The parent component (OpenWebUiChatComponent) usually handles folder loading.
+        // But here we are in ChatHistorySidebarComponent.
+        // We can emit foldersUpdated, but that expects a list.
+        
+        // Let's manually update the local folder list to reflect the move
+        const updatedFolders = this.folderList.map(f => 
+          f.id === folderId ? { ...f, parent_id: parentId } : f
+        );
+        this.foldersUpdated.emit(updatedFolders);
+      },
+      error: (error) => {
+        console.error('Failed to move folder:', error);
+      }
+    });
+  }
+
+  public drop(event: CdkDragDrop<any[]>): void {
+    const isFolderDrag = event.previousContainer.id === 'folder-structure';
+    const isFolderDropTarget = event.container.id === 'folder-structure';
+
+    if (isFolderDrag) {
+      const folder = event.item.data as FolderItem;
+      
+      if (isFolderDropTarget) {
+        if (folder.parent_id) {
+           this.moveFolder(folder.id, null);
+        }
+      } else if (event.container.id.startsWith('folder-')) {
+         const targetFolderId = event.container.id.replace('folder-', '');
+         if (targetFolderId !== folder.id) {
+            this.moveFolder(folder.id, targetFolderId);
+         }
+      }
+      return;
+    }
+
+    if (isFolderDropTarget) {
+       this.handleMoveChat(event.item.data.id, null);
+       return;
+    }
+
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+      
+      const item = event.container.data[event.currentIndex];
+      const targetId = event.container.id;
+      
+      if (targetId === 'pinned-list') {
+        this.handlePinChat(item.id);
+      } else if (targetId === 'root-list') {
+        if (item.pinned) {
+          this.handleUnpinChat(item.id);
+        } else {
+          this.handleMoveChat(item.id, null); 
+        }
+      } else if (targetId.startsWith('folder-')) {
+        const folderId = targetId.startsWith('folder-chats-') 
+          ? targetId.replace('folder-chats-', '')
+          : targetId.replace('folder-', '');
+        this.handleMoveChat(item.id, folderId);
+      }
     }
   }
 }

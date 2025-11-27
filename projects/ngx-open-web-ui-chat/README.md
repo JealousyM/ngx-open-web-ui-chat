@@ -29,6 +29,7 @@ Angular 20 component library for embedding OpenWebUI chat with Socket.IO streami
 ⭐ **Response Actions** - Continue, regenerate, and rate responses  
 👍 **Rating System** - Comprehensive feedback with good/bad ratings  
 💬 **Ask & Explain** - Context menu for selected text with AI explanations
+📂 **Folder Support** - Organize chats into folders with drag & drop
 
 ## Installation
 
@@ -107,6 +108,7 @@ export class AppComponent {}
 | `debug` | `boolean` | ❌ | `false` | Enable debug logging |
 | `language` | `string` | ❌ | `'en'` | UI language code |
 | `history` | `boolean` | ❌ | `false` | Enable chat history sidebar |
+| `folders` | `boolean` | ❌ | `false` | Enable folder support |
 | `style` | `Partial<CSSStyleDeclaration>` | ❌ | - | Custom CSS styles |
 
 ### Outputs
@@ -320,7 +322,10 @@ src/lib/
 │   │   ├── list/                   ← Chat list
 │   │   ├── item/                   ← Chat item
 │   │   ├── header/                 ← Sidebar header
-│   │   └── context-menu/           ← Right-click menu
+│   │   ├── context-menu/           ← Chat context menu
+│   │   ├── folder-list/            ← Folder list
+│   │   ├── folder-item/            ← Folder item
+│   │   └── folder-context-menu/    ← Folder context menu
 │   ├── chat-search-modal/          ← Search modal
 │   ├── confirm-dialog/             ← Confirmation dialogs
 │   ├── error-banner/               ← Error display component
@@ -456,7 +461,13 @@ The library uses **Socket.IO** for real-time bidirectional communication with Op
 
 ## Version History
 
-### 1.0.11 (Current)
+### 1.0.12 (Current)
+- ✅ **Folder Support** - Organize chats into folders with drag & drop
+- ✅ **Drag & Drop** - Improved drag and drop experience for chats and folders
+- ✅ **Context Menus** - Manage folders with right-click context menu
+- ✅ **Nested Folders** - Support for hierarchical folder structures
+
+### 1.0.11
 - ✅ **Ask & Explain** - Context menu for selected text with instant AI explanations
 - ✅ **Text Selection Menu** - Right-click on selected text to ask questions or get explanations
 - ✅ **Ephemeral Completions** - Ask/Explain responses don't clutter chat history
@@ -675,6 +686,32 @@ AI Response (in modal):
 "Angular signals are a new reactive state management system..."
 ```
 
+## Folder Support
+
+Organize your conversations efficiently with folders:
+
+### Features
+
+- 📂 **Create Folders** - Group related chats together
+- 🖱️ **Drag & Drop** - Easily move chats into folders
+- 📑 **Nested Structure** - Create subfolders for better organization
+- ✏️ **Manage** - Rename or delete folders via context menu
+
+### Usage
+
+1. **Enable Folders**: Set `[folders]="true"` in your component
+2. **Create Folder**: Click the "New Folder" button in the sidebar
+3. **Move Chats**: Drag and drop chats into folders
+4. **Context Menu**: Right-click folders to manage them
+
+```typescript
+<openwebui-chat
+  [folders]="true"
+  ...
+>
+</openwebui-chat>
+```
+
 ## Roadmap
 
 - [x] File upload support
@@ -682,7 +719,9 @@ AI Response (in modal):
 - [x] Comprehensive rating system
 - [x] Voice input with transcription
 - [x] Export chat history
+- [x] Export chat history
 - [x] Ask & Explain for selected text
+- [x] Folder support (Drag & Drop)
 
 ## Contributing
 

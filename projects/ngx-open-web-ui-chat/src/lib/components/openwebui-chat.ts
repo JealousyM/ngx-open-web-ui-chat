@@ -1,5 +1,5 @@
 import { Component, signal, Input, OnInit, Output, EventEmitter, inject, HostListener, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { ChatMessage, OpenWebUIChatConfig, UploadedFile, ChatHistoryItem, ChatContextAction } from '../models/chat.model';
+import { ChatMessage, OpenWebUIChatConfig, UploadedFile, ChatHistoryItem, ChatContextAction, FolderItem, FolderContextAction } from '../models/chat.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OpenWebUIService } from '../services/openwebui-api';
@@ -13,6 +13,8 @@ import { ChatHistorySidebarComponent } from './chat-history-sidebar/sidebar/chat
 import { ChatSearchModalComponent } from './chat-search-modal/chat-search-modal.component';
 import { TextSelectionMenuComponent } from './text-selection-menu/text-selection-menu.component';
 import { AskExplainModalComponent } from './ask-explain-modal/ask-explain-modal.component';
+import { forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'openwebui-chat',
@@ -41,6 +43,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   @Input() enableMarkdown = true;
   @Input() language = 'en';
   @Input() history = false;
+  @Input() folders = false;
 
   @Output() chatInitialized = new EventEmitter<void>();
   @Output() messagesChanged = new EventEmitter<number>();
@@ -67,6 +70,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   public regenerateInputText = signal('');
   public messageHoverStates = signal<Map<string, boolean>>(new Map());
   
+  
   public showRatingForm = signal(false);
   public ratingFormTarget = signal<ChatMessage | null>(null);
   public ratingFormValue = signal<number>(5);
@@ -87,6 +91,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   
   public showSidebar = signal(false);
   public chatList = signal<ChatHistoryItem[]>([]);
+  public folderList = signal<FolderItem[]>([]);
   public currentPage = signal(1);
   public hasMoreChats = signal(true);
   public isLoadingChats = signal(false);
@@ -102,6 +107,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   public askExplainResponse = signal('');
   public isAskExplainLoading = signal(false);
   
+  public renamingFolderId: string | null = null;
   public chatId?: string;
   private openWebUIService = inject(OpenWebUIService);
   private cdr = inject(ChangeDetectorRef);
@@ -135,6 +141,10 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
 
     if (this.history) {
       this.loadChatList();
+    }
+    
+    if (this.folders) {
+      this.loadFolders();
     }
   }
 
@@ -1624,7 +1634,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   /**
    * Load chat list from API
    */
-  public loadChatList(): void {
+  private loadChatList(): void {
     if (!this.history) {
       return;
     }
@@ -1658,6 +1668,60 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
           console.error('[OpenWebUI] Failed to load chat list:', error);
         }
         this.showErrorMessage(this.t.errorLoadChatsFailed ?? 'Failed to load chat history. Please try again.');
+      }
+    });
+  }
+
+  /**
+   * Load folders from API
+   */
+  private loadFolders(): void {
+    this.openWebUIService.getFolders().subscribe({
+      next: (folders) => {
+        const expandedFolders = folders.filter(f => f.is_expanded);
+        
+        if (expandedFolders.length > 0) {
+          const chatLoadObservables = expandedFolders.map(folder =>
+            this.openWebUIService.getChatsInFolder(folder.id).pipe(
+              map(chats => ({ folderId: folder.id, chats }))
+            )
+          );
+
+          forkJoin(chatLoadObservables).subscribe({
+            next: (results) => {
+              const chatsMap = new Map(results.map(r => [r.folderId, r.chats]));
+              
+              const updatedFolders = folders.map(f =>
+                chatsMap.has(f.id)
+                  ? { ...f, chats: chatsMap.get(f.id) }
+                  : f
+              );
+              
+              this.folderList.set(updatedFolders);
+              
+              if (this.debug) {
+                console.log('[OpenWebUI] Folders loaded with chats:', updatedFolders.length);
+              }
+            },
+            error: (error) => {
+              this.folderList.set(folders);
+              if (this.debug) {
+                console.error('[OpenWebUI] Failed to load chats for some folders:', error);
+              }
+            }
+          });
+        } else {
+          this.folderList.set(folders);
+          
+          if (this.debug) {
+            console.log('[OpenWebUI] Folders loaded:', folders.length);
+          }
+        }
+      },
+      error: (error) => {
+        if (this.debug) {
+          console.error('[OpenWebUI] Failed to load folders:', error);
+        }
       }
     });
   }
@@ -1758,5 +1822,145 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
    */
   public handleChatsUpdated(updatedChats: ChatHistoryItem[]): void {
     this.chatList.set(updatedChats);
+  }
+
+  /**
+   * Handle folder actions (create, rename, move, delete)
+   */
+  public handleFolderAction(data: { action: FolderContextAction; folderId: string }): void {
+    const { action, folderId } = data;
+
+    switch (action) {
+      case 'create':
+        this.createFolder(folderId);
+        break;
+      case 'rename':
+        break;
+      case 'delete':
+        this.deleteFolder(folderId);
+        break;
+    }
+  }
+
+  /**
+   * Create a new folder (inline creation)
+   */
+  private createFolder(parentId?: string): void {
+    const tempFolder: FolderItem = {
+      id: 'temp-' + Date.now(),
+      user_id: '',
+      name: '',
+      parent_id: parentId || null,
+      items: [],
+      meta: { description: '', tags: [] },
+      data: { system_prompt: undefined, files: [] },
+      created_at: Date.now() / 1000,
+      updated_at: Date.now() / 1000,
+      is_expanded: false
+    };
+
+    this.renamingFolderId = tempFolder.id;
+
+    this.folderList.update(folders => {
+      const updatedFolders = folders.map(f => 
+        f.id === parentId ? { ...f, is_expanded: true } : f
+      );
+      return [tempFolder, ...updatedFolders];
+    });
+  }
+
+  public handleFolderRenamed(data: { folderId: string; newName: string }): void {
+    const { folderId, newName } = data;
+
+    if (folderId.startsWith('temp-')) {
+      this.handleFolderCreated(newName, folderId);
+      return;
+    }
+
+    this.openWebUIService.renameFolder(folderId, newName).subscribe({
+      next: () => {
+        this.loadFolders();
+        
+        if (this.debug) {
+          console.log('[OpenWebUI] Folder renamed:', folderId, newName);
+        }
+      },
+      error: (error) => {
+        if (this.debug) {
+          console.error('[OpenWebUI] Failed to rename folder:', error);
+        }
+        alert(this.t.renameFolderError || 'Failed to rename folder. Please try again.');
+        this.loadFolders();
+      }
+    });
+  }
+
+  /**
+   * Handle folders updated from sidebar (expansion/collapse)
+   */
+  public handleFoldersUpdated(folders: FolderItem[]): void {
+    this.folderList.set(folders);
+    
+    if (this.debug) {
+      console.log('[OpenWebUI] Folders updated:', folders);
+    }
+  }
+
+  /**
+   * Handle new folder creation from inline input
+   */
+  private handleFolderCreated(folderName: string, tempId: string): void {
+    const trimmedName = folderName.trim();
+    
+    const tempFolder = this.folderList().find(f => f.id === tempId);
+    const parentId = tempFolder?.parent_id;
+
+    this.folderList.update(folders => folders.filter(f => f.id !== tempId));
+
+    if (!trimmedName) {
+      return;
+    }
+
+    if (trimmedName.length > 50) {
+      alert(this.t.folderNameTooLong || 'Folder name is too long. Maximum 50 characters.');
+      return;
+    }
+
+    this.openWebUIService.createFolder(trimmedName, parentId).subscribe({
+      next: (newFolder) => {
+        this.loadFolders();
+        
+        if (this.debug) {
+          console.log('[OpenWebUI] Folder created:', newFolder);
+        }
+      },
+      error: (error) => {
+        if (this.debug) {
+          console.error('[OpenWebUI] Failed to create folder:', error);
+        }
+        alert(this.t.createFolderError || 'Failed to create folder. Please try again.');
+      }
+    });
+  }
+
+  /**
+   * Delete a folder
+   */
+  private deleteFolder(folderId: string): void {
+    this.openWebUIService.deleteFolder(folderId).subscribe({
+      next: () => {
+        this.loadFolders();
+        
+        if (this.debug) {
+          console.log('[OpenWebUI] Folder deleted:', folderId);
+        }
+      },
+      error: (error) => {
+        if (this.debug) {
+          console.error('[OpenWebUI] Failed to delete folder:', error);
+        }
+        alert(this.t.deleteFolderError || 'Failed to delete folder. Please try again.');
+      }
+    });
   }
 }

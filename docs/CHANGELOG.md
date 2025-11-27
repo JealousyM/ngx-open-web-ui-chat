@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.12] - 2025-11-28
+
+### Added
+
+- 📂 **Folder Support** - Organize chats into folders
+  - **Create Folders** - Create new folders to group related conversations
+  - **Drag & Drop** - Drag chats into folders and reorder them
+  - **Context Menu** - Right-click on folders to rename or delete
+  - **Nested Organization** - Keep your workspace clean and structured
+- 🖱️ **Drag & Drop Improvements**
+  - **Visual Feedback** - Clear indicators when dragging items
+  - **Smooth Animations** - Better user experience during reordering
+
+### Fixed
+
+- 🐛 **Drag & Drop** - Fixed issues with drop targets and list updates
+- 🐛 **Chat Move** - Fixed bug where moved chats wouldn't appear immediately
+- 🐛 **Subfolder Creation** - Fixed issue with creating subfolders
+
 ## [1.0.11] - 2025-11-24
 
 ### Added

@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ChatHistoryItem, ChatContextAction } from '../../../models/chat.model';
+import { ChatHistoryItem, ChatContextAction, FolderItem } from '../../../models/chat.model';
 import { Translation } from '../../../i18n/translations';
 
 @Component({
@@ -16,6 +16,9 @@ export class ChatContextMenuComponent {
   @Input() isPinned = false;
   @Input() isActive = false;
   @Input() translations?: Translation;
+  @Input() folders: FolderItem[] = [];
+  
+  public showMoveMenu = false;
 
   @Output() action = new EventEmitter<ChatContextAction>();
   @Output() closed = new EventEmitter<void>();
@@ -45,6 +48,21 @@ export class ChatContextMenuComponent {
     this.closed.emit();
   }
 
+  public toggleMoveMenu(event: MouseEvent): void {
+    event.stopPropagation();
+    this.showMoveMenu = !this.showMoveMenu;
+  }
+
+  public emitMoveAction(folderId: string): void {
+    const contextAction: ChatContextAction = {
+      action: 'move',
+      chatId: this.chat.id,
+      targetFolderId: folderId
+    };
+    this.action.emit(contextAction);
+    this.closed.emit();
+  }
+
   public get pinText(): string {
     return this.translations?.pinChat || 'Pin Chat';
   }
@@ -61,6 +79,10 @@ export class ChatContextMenuComponent {
     return this.translations?.exportChat || 'Export Chat';
   }
 
+  public get moveText(): string {
+    return this.translations?.moveChat || 'Move to Folder';
+  }
+
   public get deleteText(): string {
     return this.translations?.deleteChat || 'Delete Chat';
   }
@@ -68,6 +90,28 @@ export class ChatContextMenuComponent {
   /**
    * Handle keyboard navigation in context menu
    */
+  public flattenedFolders: FolderDisplayItem[] = [];
+
+  ngOnChanges(): void {
+    this.flattenedFolders = this.getFlattenedFolders(this.folders);
+  }
+
+  private getFlattenedFolders(folders: FolderItem[]): FolderDisplayItem[] {
+    if (!folders) return [];
+
+    const buildTree = (parentId: string | null, level: number): FolderDisplayItem[] => {
+      return folders
+        .filter(f => f.parent_id === parentId)
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .reduce((acc: FolderDisplayItem[], folder) => {
+          const item: FolderDisplayItem = { ...folder, level };
+          return [...acc, item, ...buildTree(folder.id, level + 1)];
+        }, []);
+    };
+
+    return buildTree(null, 0);
+  }
+
   public onKeyDown(event: KeyboardEvent): void {
     const menuItems = this.elementRef.nativeElement.querySelectorAll('.menu-item');
     const currentIndex = Array.from(menuItems).findIndex(item => item === document.activeElement);
@@ -101,4 +145,8 @@ export class ChatContextMenuComponent {
         break;
     }
   }
+}
+
+interface FolderDisplayItem extends FolderItem {
+  level: number;
 }
