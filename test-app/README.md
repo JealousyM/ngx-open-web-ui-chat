@@ -7,7 +7,6 @@ Modern test application for demonstrating the `ngx-open-web-ui-chat` library.
 ### 1. **Dynamic Configuration**
 - Real-time Host URL and API Key input
 - Secure API key storage (input type="password")
-- Secure API key storage (input type="password")
 - Lock changes after connection
 
 ### 2. **Folder Support**
@@ -15,28 +14,33 @@ Modern test application for demonstrating the `ngx-open-web-ui-chat` library.
 - Drag & drop interface
 - Context menu for management
 
-### 3. **Smart Model Loading**
+### 3. **Notes Support**
+- Integrated markdown editor
+- Create, edit, and organize notes
+- Auto-save functionality
+
+### 4. **Smart Model Loading**
 - "Show Models" button active only when Host and API Key are provided
 - Automatic loading of available models list
 - Loading indicator
 
-### 4. **Progressive Connection Flow**
+### 5. **Progressive Connection Flow**
 1. ✅ Enter Host URL and API Key
 2. ✅ Load models (Show Models)
 3. ✅ Select model from list
 4. ✅ Connect to chat (Connect Chat)
 
-### 5. **Conditional UI**
+### 6. **Conditional UI**
 - **Chat available** only after model selection and connection
 - **Clear Chat** active only when there are messages
 - **Disconnect** to reset all settings
 
-### 6. **Modern Layout**
+### 7. **Modern Layout**
 - **Sidebar** (left panel): Configuration, models, controls
 - **Chat Area** (right panel): Chat interface
 - **Placeholder**: Beautiful user guide
 
-### 7. **Responsive Design**
+### 8. **Responsive Design**
 - Adaptive layout for mobile devices
 - SCSS with modern features (nesting, variables)
 

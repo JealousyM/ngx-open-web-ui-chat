@@ -1,0 +1,116 @@
+<div class="note-editor-overlay">
+  <div class="note-editor">
+    <div class="note-editor-header">
+      <div class="note-editor-title-container">
+        <svg class="note-icon" xmlns="http://www.w3.org/2000/svg" stroke-width="2" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" 
+                d="M10 3v4a1 1 0 0 1-1 1H5m4 8h6m-6-4h6m4-8v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"/>
+        </svg>
+        <input 
+          type="text" 
+          class="note-title-input"
+          [(ngModel)]="noteTitle"
+          [placeholder]="translations?.noteTitle || 'Note Title'"
+          [attr.aria-label]="translations?.noteTitle || 'Note Title'">
+      </div>
+      <div class="note-editor-actions">
+        <button 
+          class="btn-secondary" 
+          (click)="onClose()"
+          [attr.aria-label]="translations?.cancelNote || 'Cancel'">
+          {{ translations?.cancelNote || 'Cancel' }}
+        </button>
+        <button 
+          class="btn-primary" 
+          (click)="onSave()"
+          [attr.aria-label]="translations?.saveNote || 'Save'">
+          {{ translations?.saveNote || 'Save' }}
+        </button>
+      </div>
+    </div>
+    
+    <div class="note-editor-tabs">
+      <div class="tab-header">
+        <button 
+          class="tab-btn" 
+          [class.active]="activeTab() === 'write'"
+          (click)="setActiveTab('write')">
+          {{ translations?.write || 'Write' }}
+        </button>
+        <button 
+          class="tab-btn" 
+          [class.active]="activeTab() === 'preview'"
+          (click)="setActiveTab('preview')">
+          {{ translations?.preview || 'Preview' }}
+        </button>
+      </div>
+      
+      @if (activeTab() === 'write') {
+        <div class="editor-toolbar">
+          <button class="toolbar-btn" (click)="insertFormatting('header')" title="Add header text">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
+              <path d="M0 3.75C0 2.784.784 2 1.75 2h12.5c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0 1 14.25 14H1.75A1.75 1.75 0 0 1 0 12.25Zm1.75-.25a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25v-8.5a.25.25 0 0 0-.25-.25ZM3.5 6.25a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75Z"></path>
+            </svg>
+          </button>
+          <button class="toolbar-btn" (click)="insertFormatting('bold')" title="Add bold text">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
+              <path d="M4 2h4.5a3.501 3.501 0 0 1 2.852 5.53A3.499 3.499 0 0 1 8.5 13H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm1 1.5v3h3.5a2 2 0 1 0 0-4H5Zm0 4.5v3.5h3a2 2 0 1 0 0-4H5Z"></path>
+            </svg>
+          </button>
+          <button class="toolbar-btn" (click)="insertFormatting('italic')" title="Add italic text">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
+              <path d="M6 2.75A.75.75 0 0 1 6.75 2h6.5a.75.75 0 0 1 0 1.5h-2.505l-3.858 9H9.25a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1 0-1.5h2.505l3.858-9H6.75A.75.75 0 0 1 6 2.75Z"></path>
+            </svg>
+          </button>
+          <div class="toolbar-divider"></div>
+          <button class="toolbar-btn" (click)="insertFormatting('quote')" title="Insert a quote">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
+              <path d="M1.75 2.5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5Zm0 5a.75.75 0 0 0 0 1.5h5.5a.75.75 0 0 0 0-1.5h-5.5Zm0 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5ZM15 5.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm-1 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path>
+            </svg>
+          </button>
+          <button class="toolbar-btn" (click)="insertFormatting('code')" title="Insert code">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
+              <path d="M4.72 3.22a.75.75 0 0 1 1.06 1.06L2.06 8l3.72 3.72a.75.75 0 1 1-1.06 1.06L.47 8.53a.75.75 0 0 1 0-1.06l4.25-4.25Zm6.56 0a.75.75 0 1 0-1.06 1.06L13.94 8l-3.72 3.72a.75.75 0 1 0 1.06 1.06l4.25-4.25a.75.75 0 0 0 0-1.06l-4.25-4.25Z"></path>
+            </svg>
+          </button>
+          <button class="toolbar-btn" (click)="insertFormatting('link')" title="Add a link">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
+              <path d="M7.775 3.275a.75.75 0 0 0 1.06 1.06l1.25-1.25a2 2 0 1 1 2.83 2.83l-2.5 2.5a2 2 0 0 1-2.83 0 .75.75 0 0 0-1.06 1.06 3.5 3.5 0 0 0 4.95 0l2.5-2.5a3.5 3.5 0 0 0-4.95-4.95l-1.25 1.25Zm-4.69 9.64a2 2 0 0 1 0-2.83l2.5-2.5a2 2 0 0 1 2.83 0 .75.75 0 0 0 1.06-1.06 3.5 3.5 0 0 0-4.95 0l-2.5 2.5a3.5 3.5 0 0 0 4.95 4.95l1.25-1.25a.75.75 0 0 0-1.06-1.06l-1.25 1.25a2 2 0 0 1-2.83 0Z"></path>
+            </svg>
+          </button>
+          <div class="toolbar-divider"></div>
+          <button class="toolbar-btn" (click)="insertFormatting('list-ul')" title="Add a bulleted list">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
+              <path d="M2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm3.75-1.5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5Zm0 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5Zm0 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5ZM3 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm-1 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path>
+            </svg>
+          </button>
+          <button class="toolbar-btn" (click)="insertFormatting('list-ol')" title="Add a numbered list">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
+              <path d="M2.003 2.5a.5.5 0 0 0-.723-.447l-1.003.5a.5.5 0 0 0 .446.895l.28-.14V6H.5a.5.5 0 0 0 0 1h2.003a.5.5 0 0 0 0-1h-.5V3a.5.5 0 0 0 .5-.5ZM5 3.25a.75.75 0 0 1 .75-.75h8.5a.75.75 0 0 1 0 1.5h-8.5A.75.75 0 0 1 5 3.25Zm0 5a.75.75 0 0 1 .75-.75h8.5a.75.75 0 0 1 0 1.5h-8.5A.75.75 0 0 1 5 8.25Zm0 5a.75.75 0 0 1 .75-.75h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1-.75-.75ZM.924 10.32l.003-.004a.5.5 0 0 1 .8.681l-1.1 1.121H3v1h-2.5a.5.5 0 0 1-.5-.5v-.25c0-.25.114-.477.295-.63l1.1-1.12.003-.003a.5.5 0 0 0 .025-.695Z"></path>
+            </svg>
+          </button>
+          <button class="toolbar-btn" (click)="insertFormatting('task')" title="Add a task list">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
+              <path d="M2.5 4.5a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm0-1.5a.5.5 0 1 0 0 1 .5.5 0 0 0 0-1Zm2.75 0a.75.75 0 0 1 .75-.75h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1-.75-.75ZM1 10.5a2 2 0 1 1 4 0 2 2 0 0 1-4 0Zm1.5 0a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0Zm2.75 0a.75.75 0 0 1 .75-.75h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1-.75-.75Z"></path>
+            </svg>
+          </button>
+        </div>
+      }
+    </div>
+    
+    <div class="note-editor-content">
+      @if (activeTab() === 'write') {
+        <textarea 
+          class="note-content-textarea"
+          [(ngModel)]="noteContent"
+          [placeholder]="translations?.noteContent || 'Start writing your note in markdown...'"
+          [attr.aria-label]="translations?.noteContent || 'Note content'">
+        </textarea>
+      } @else {
+        <div class="note-content-preview markdown-body">
+          <markdown [data]="noteContent()"></markdown>
+        </div>
+      }
+    </div>
+  </div>
+</div>

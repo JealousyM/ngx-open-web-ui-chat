@@ -1,5 +1,5 @@
 import { Component, signal, Input, OnInit, Output, EventEmitter, inject, HostListener, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { ChatMessage, OpenWebUIChatConfig, UploadedFile, ChatHistoryItem, ChatContextAction, FolderItem, FolderContextAction } from '../models/chat.model';
+import { ChatMessage, OpenWebUIChatConfig, UploadedFile, ChatHistoryItem, ChatContextAction, FolderItem, FolderContextAction, NoteItem } from '../models/chat.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OpenWebUIService } from '../services/openwebui-api';
@@ -13,6 +13,9 @@ import { ChatHistorySidebarComponent } from './chat-history-sidebar/sidebar/chat
 import { ChatSearchModalComponent } from './chat-search-modal/chat-search-modal.component';
 import { TextSelectionMenuComponent } from './text-selection-menu/text-selection-menu.component';
 import { AskExplainModalComponent } from './ask-explain-modal/ask-explain-modal.component';
+import { NoteEditorComponent } from './note-editor/note-editor.component';
+import { NotesSidebarComponent } from './notes-sidebar/notes-sidebar.component';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -29,7 +32,10 @@ import { map } from 'rxjs/operators';
     ChatHistorySidebarComponent,
     ChatSearchModalComponent,
     TextSelectionMenuComponent,
-    AskExplainModalComponent
+    AskExplainModalComponent,
+    NoteEditorComponent,
+    NotesSidebarComponent,
+    ConfirmDialogComponent
   ],
   templateUrl: './openwebui-chat.html',
   styleUrls: ['./openwebui-chat.scss']
@@ -44,6 +50,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   @Input() language = 'en';
   @Input() history = false;
   @Input() folders = false;
+  @Input() notes = false;
 
   @Output() chatInitialized = new EventEmitter<void>();
   @Output() messagesChanged = new EventEmitter<number>();
@@ -106,6 +113,15 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   public askExplainMode = signal<'ask' | 'explain'>('explain');
   public askExplainResponse = signal('');
   public isAskExplainLoading = signal(false);
+  
+  // Notes state
+  public notesList = signal<NoteItem[]>([]);
+  public isLoadingNotes = signal(false);
+  public showNoteEditor = signal(false);
+  public showNotesSidebar = signal(false);
+  public currentNote = signal<NoteItem | null>(null);
+  public noteToDelete = signal<NoteItem | null>(null);
+  public showNoteDeleteConfirm = signal(false);
   
   public renamingFolderId: string | null = null;
   public chatId?: string;
@@ -1962,5 +1978,211 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
         alert(this.t.deleteFolderError || 'Failed to delete folder. Please try again.');
       }
     });
+  }
+
+  // Notes management methods
+  
+  /**
+   * Load notes list from API
+   */
+  public loadNotes(): void {
+    this.isLoadingNotes.set(true);
+    
+    this.openWebUIService.getNotes().subscribe({
+      next: (notes) => {
+        this.notesList.set(notes);
+        this.isLoadingNotes.set(false);
+        
+        if (this.debug) {
+          console.log('[OpenWebUI] Notes loaded:', notes.length);
+        }
+      },
+      error: (error) => {
+        if (this.debug) {
+          console.error('[OpenWebUI] Failed to load notes:', error);
+        }
+        this.isLoadingNotes.set(false);
+        this.showErrorMessage(this.t.loadNotesError || 'Failed to load notes. Please try again.');
+      }
+    });
+  }
+
+  /**
+   * Open an existing note in the editor
+   */
+  public openNote(noteId: string): void {
+    this.openWebUIService.getNoteById(noteId).subscribe({
+      next: (note) => {
+        this.currentNote.set(note);
+        this.showNoteEditor.set(true);
+        
+        if (this.debug) {
+          console.log('[OpenWebUI] Note opened:', noteId);
+        }
+      },
+      error: (error) => {
+        if (this.debug) {
+          console.error('[OpenWebUI] Failed to load note:', error);
+        }
+        this.showErrorMessage(this.t.loadNotesError || 'Failed to load note. Please try again.');
+      }
+    });
+  }
+
+  /**
+   * Create a new note
+   */
+  public createNote(): void {
+    const today = new Date().toISOString().split('T')[0];
+    
+    this.openWebUIService.createNote(today).subscribe({
+      next: (note) => {
+        this.notesList.update(notes => [note, ...notes]);
+        this.currentNote.set(note);
+        this.showNoteEditor.set(true);
+        
+        if (this.debug) {
+          console.log('[OpenWebUI] Note created:', note.id);
+        }
+      },
+      error: (error) => {
+        if (this.debug) {
+          console.error('[OpenWebUI] Failed to create note:', error);
+        }
+        this.showErrorMessage(this.t.createNoteError || 'Failed to create note. Please try again.');
+      }
+    });
+  }
+
+  /**
+   * Save note changes by calling the update API endpoint
+   */
+  public saveNote(data: { title: string; content: string }): void {
+    const note = this.currentNote();
+    
+    if (!note) {
+      return;
+    }
+
+    this.openWebUIService.updateNote(note.id, data.title, data.content).subscribe({
+      next: (updatedNote) => {
+        // Update the note in the list
+        this.notesList.update(notes => 
+          notes.map(n => n.id === updatedNote.id ? updatedNote : n)
+        );
+        
+        this.closeNoteEditor();
+        
+        if (this.debug) {
+          console.log('[OpenWebUI] Note saved:', updatedNote.id);
+        }
+      },
+      error: (error) => {
+        if (this.debug) {
+          console.error('[OpenWebUI] Failed to save note:', error);
+        }
+        this.showErrorMessage(this.t.saveNoteError || 'Failed to save note. Please try again.');
+      }
+    });
+  }
+
+  /**
+   * Close the note editor
+   */
+  public closeNoteEditor(): void {
+    this.showNoteEditor.set(false);
+    this.currentNote.set(null);
+  }
+
+  /**
+   * Delete a note
+   */
+  public deleteNote(noteId: string): void {
+    const note = this.notesList().find(n => n.id === noteId);
+    if (!note) {
+      return;
+    }
+    
+    this.noteToDelete.set(note);
+    this.showNoteDeleteConfirm.set(true);
+  }
+
+  /**
+   * Handle note delete confirmation
+   */
+  public onNoteDeleteConfirmed(): void {
+    const note = this.noteToDelete();
+    if (!note) {
+      return;
+    }
+
+    const noteId = note.id;
+    this.showNoteDeleteConfirm.set(false);
+    this.noteToDelete.set(null);
+
+    this.openWebUIService.deleteNote(noteId).subscribe({
+      next: () => {
+        this.notesList.update(notes => notes.filter(n => n.id !== noteId));
+        
+        if (this.currentNote()?.id === noteId) {
+          this.closeNoteEditor();
+        }
+        
+        if (this.debug) {
+          console.log('[OpenWebUI] Note deleted:', noteId);
+        }
+      },
+      error: (error) => {
+        if (this.debug) {
+          console.error('[OpenWebUI] Failed to delete note:', error);
+        }
+        this.showErrorMessage(this.t.deleteNoteError || 'Failed to delete note. Please try again.');
+      }
+    });
+  }
+
+  /**
+   * Handle note delete cancellation
+   */
+  public onNoteDeleteCancelled(): void {
+    this.showNoteDeleteConfirm.set(false);
+    this.noteToDelete.set(null);
+  }
+
+  // Notes sidebar methods
+
+  /**
+   * Toggle notes sidebar visibility
+   */
+  public toggleNotesSidebar(): void {
+    this.showNotesSidebar.update(v => !v);
+    
+    // Load notes when opening sidebar
+    if (this.showNotesSidebar() && this.notesList().length === 0) {
+      this.loadNotes();
+    }
+  }
+
+  /**
+   * Handle note selection from sidebar
+   */
+  public handleNoteSelected(noteId: string): void {
+    this.openNote(noteId);
+    this.showNotesSidebar.set(false);
+  }
+
+  /**
+   * Handle create note from sidebar
+   */
+  public handleCreateNoteFromSidebar(): void {
+    this.createNote();
+    this.showNotesSidebar.set(false);
+  }
+
+  /**
+   * Handle delete note from sidebar
+   */
+  public handleDeleteNoteFromSidebar(noteId: string): void {
+    this.deleteNote(noteId);
   }
 }

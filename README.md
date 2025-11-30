@@ -34,6 +34,7 @@ Interactive demo showcasing all features:
 - 🛡️ **Safe Deletion** - Prevents accidental deletion of active chats
 - 💬 **Ask & Explain** - Context menu for selected text with AI explanations
 - 📂 **Folder Support** - Organize chats into folders with drag & drop
+- 📝 **Notes Support** - Integrated markdown note editor with sidebar
 
 ## 🚀 Quick Start
 
@@ -146,6 +147,8 @@ openwebui-ts-embedded-sdk/
 │       │   │   │   ├── folder-list/
 │       │   │   │   ├── folder-item/
 │       │   │   │   └── folder-context-menu/
+│       │   │   ├── note-editor/            ← Note editor component
+│       │   │   ├── notes-sidebar/          ← Notes sidebar component
 │       │   │   ├── chat-search-modal/
 │       │   │   ├── confirm-dialog/
 │       │   │   ├── error-banner/
@@ -194,6 +197,7 @@ openwebui-ts-embedded-sdk/
 | `language` | `string` | ❌ | `'en'` | UI language |
 | `history` | `boolean` | ❌ | `false` | Enable chat history sidebar |
 | `folders` | `boolean` | ❌ | `false` | Enable folder support |
+| `notes` | `boolean` | ❌ | `false` | Enable notes feature |
 
 ### Outputs
 
@@ -369,19 +373,6 @@ MIT License - see LICENSE file for details
 - ✅ **Clean Code** - Following Angular style guide
 
 ## 🔮 Roadmap
-
-- [x] File upload support
-- [x] Response interaction controls (continue, regenerate, rate)
-- [x] Comprehensive rating system
-- [x] Voice input with transcription
-- [x] Export chat history
-- [x] Folder support (Drag & Drop)
-- [ ] Custom themes
-
-## 🎤 Voice Input
-
-The component includes voice recording with automatic transcription:
-
 ### Features
 - Click microphone button to start recording
 - Real-time spectrogram visualization
@@ -396,7 +387,7 @@ The component includes voice recording with automatic transcription:
 
 ---
 
-**Status:** Production-ready v1.0.12
+**Status:** Production-ready v1.0.13
 **Angular Version:** 20.x  
 **Node Required:** >=20.19.0  
 

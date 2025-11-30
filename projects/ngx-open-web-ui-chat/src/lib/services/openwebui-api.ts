@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { lexer } from 'marked';
-import { ChatSession, OpenWebUIChatConfig, Model, ChatHistoryItem, ChatListResponse, FolderItem, FolderListResponse } from '../models/chat.model';
+import { ChatSession, OpenWebUIChatConfig, Model, ChatHistoryItem, ChatListResponse, FolderItem, FolderListResponse, NoteItem } from '../models/chat.model';
 
 export interface ChatEvent {
   chat_id: string;
@@ -2464,5 +2464,227 @@ export class OpenWebUIService {
     }
     
     return doc.output('blob');
+  }
+
+  /**
+   * Get all notes for the authenticated user
+   */
+  public getNotes(): Observable<NoteItem[]> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Fetching notes');
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/notes/`;
+
+    return new Observable<NoteItem[]>(observer => {
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          this.debugLog('Notes fetched:', data);
+          const notes: NoteItem[] = Array.isArray(data) ? data : [];
+          observer.next(notes);
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Get notes error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  /**
+   * Get a specific note by ID
+   */
+  public getNoteById(id: string): Observable<NoteItem> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Fetching note by id:', id);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/notes/${id}`;
+
+    return new Observable<NoteItem>(observer => {
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          this.debugLog('Note fetched:', data);
+          observer.next(data as NoteItem);
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Get note error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  /**
+   * Create a new note
+   */
+  public createNote(title: string, content?: string): Observable<NoteItem> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Creating note:', title);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/notes/create`;
+
+    const noteData = {
+      title,
+      data: {
+        content: {
+          json: null,
+          html: '',
+          md: content || ''
+        }
+      },
+      meta: null,
+      access_control: {}
+    };
+
+    return new Observable<NoteItem>(observer => {
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        },
+        body: JSON.stringify(noteData)
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          this.debugLog('Note created:', data);
+          observer.next(data as NoteItem);
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Create note error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  /**
+   * Update an existing note
+   */
+  public updateNote(id: string, title: string, content: string): Observable<NoteItem> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Updating note:', id);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/notes/${id}/update`;
+
+    const noteData = {
+      title,
+      data: {
+        content: {
+          md: content
+        }
+      }
+    };
+
+    return new Observable<NoteItem>(observer => {
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        },
+        body: JSON.stringify(noteData)
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          this.debugLog('Note updated:', data);
+          observer.next(data as NoteItem);
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Update note error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  /**
+   * Delete a note by ID
+   */
+  public deleteNote(id: string): Observable<void> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Deleting note:', id);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/notes/${id}/delete`;
+
+    return new Observable<void>(observer => {
+      fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          this.debugLog('Note deleted successfully');
+          observer.next();
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Delete note error:', error);
+          observer.error(error);
+        });
+    });
   }
 }

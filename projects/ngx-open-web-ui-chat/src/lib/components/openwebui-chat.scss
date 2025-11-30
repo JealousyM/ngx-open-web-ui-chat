@@ -46,6 +46,37 @@
   }
 }
 
+.notes-toggle-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background: #f5f5f5;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  svg {
+    display: block;
+    color: #3b82f6;
+  }
+}
+
 .rating-confirmation {
   position: absolute;
   top: 16px;

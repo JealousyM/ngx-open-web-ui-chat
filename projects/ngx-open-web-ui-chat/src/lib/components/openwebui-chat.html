@@ -10,7 +10,22 @@
         <rect x="14" y="3" width="7" height="18" rx="2" />
       </svg>
     </button>
+  }
 
+  @if (notes) {
+    <button 
+      class="notes-toggle-btn" 
+      (click)="toggleNotesSidebar()"
+      [attr.aria-label]="t.notes ?? 'Notes'"
+      [attr.aria-expanded]="showNotesSidebar()">
+      <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" stroke-width="2" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" 
+              d="M10 3v4a1 1 0 0 1-1 1H5m4 8h6m-6-4h6m4-8v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"/>
+      </svg>
+    </button>
+  }
+
+  @if (history) {
     <app-chat-history-sidebar
       [isOpen]="showSidebar()"
       [chats]="chatList()"
@@ -130,5 +145,38 @@
       (onClose)="closeAskExplainModal()"
       (onAsk)="handleAskSubmit($event)"
     />
+  }
+
+  @if (notes) {
+    <app-notes-sidebar
+      [isOpen]="showNotesSidebar()"
+      [notes]="notesList()"
+      [isLoading]="isLoadingNotes()"
+      [translations]="t"
+      (noteSelected)="handleNoteSelected($event)"
+      (createNote)="handleCreateNoteFromSidebar()"
+      (deleteNote)="handleDeleteNoteFromSidebar($event)"
+      (close)="toggleNotesSidebar()"
+    />
+  }
+
+  @if (showNoteEditor()) {
+    <app-note-editor
+      [note]="currentNote()"
+      [translations]="t"
+      (save)="saveNote($event)"
+      (close)="closeNoteEditor()"
+    />
+  }
+
+  @if (showNoteDeleteConfirm()) {
+    <app-confirm-dialog
+      [isOpen]="showNoteDeleteConfirm()"
+      [title]="t.deleteNote || 'Delete Note'"
+      [message]="t.confirmDeleteNote || 'Are you sure you want to delete this note? This action cannot be undone.'"
+      [translations]="t"
+      (confirmed)="onNoteDeleteConfirmed()"
+      (cancelled)="onNoteDeleteCancelled()">
+    </app-confirm-dialog>
   }
 </div>

@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.13] - 2025-11-30
+
+### Added
+
+- 📝 **Notes Support** - Integrated markdown note editor
+  - **Markdown Editor** - Rich text editing with preview mode
+  - **Formatting Toolbar** - GitHub-like toolbar for bold, italic, lists, code, etc.
+  - **Sidebar Integration** - Dedicated notes sidebar with search and management
+  - **Auto-save** - Notes are automatically saved
+  - **Multi-language** - Full translation support for note interface
+- 🌍 **Expanded Translations**
+  - Added missing translations for Folders and Notes in all supported languages
+  - Improved parity across English, Chinese, Hindi, Spanish, Arabic, French, Portuguese, Russian, Bengali, and Japanese
+
+### Fixed
+
+- 🐛 **Build Issues** - Resolved SCSS compilation errors in note editor
+- 🐛 **Translations** - Fixed missing keys in non-English languages
+
 ## [1.0.12] - 2025-11-28
 
 ### Added

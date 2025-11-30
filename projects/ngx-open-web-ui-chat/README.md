@@ -30,6 +30,8 @@ Angular 20 component library for embedding OpenWebUI chat with Socket.IO streami
 👍 **Rating System** - Comprehensive feedback with good/bad ratings  
 💬 **Ask & Explain** - Context menu for selected text with AI explanations
 📂 **Folder Support** - Organize chats into folders with drag & drop
+📝 **Notes Support** - Integrated markdown note editor with sidebar
+
 
 ## Installation
 
@@ -109,6 +111,7 @@ export class AppComponent {}
 | `language` | `string` | ❌ | `'en'` | UI language code |
 | `history` | `boolean` | ❌ | `false` | Enable chat history sidebar |
 | `folders` | `boolean` | ❌ | `false` | Enable folder support |
+| `notes` | `boolean` | ❌ | `false` | Enable notes feature |
 | `style` | `Partial<CSSStyleDeclaration>` | ❌ | - | Custom CSS styles |
 
 ### Outputs
@@ -330,6 +333,8 @@ src/lib/
 │   ├── confirm-dialog/             ← Confirmation dialogs
 │   ├── error-banner/               ← Error display component
 │   ├── export-format-menu/         ← Export options menu
+│   ├── note-editor/                ← Note editor component
+│   ├── notes-sidebar/              ← Notes sidebar component
 │   ├── message-actions/            ← Action buttons component
 │   ├── rating-form/                ← Rating form component
 │   ├── regenerate-menu/            ← Regenerate menu component

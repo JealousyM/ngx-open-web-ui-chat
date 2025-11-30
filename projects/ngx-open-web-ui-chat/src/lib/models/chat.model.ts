@@ -237,3 +237,42 @@ export interface FolderListResponse {
   total?: number;
   hasMore?: boolean;
 }
+
+// Note interfaces
+export interface NoteContent {
+  md: string;       // Markdown format
+  html: string;     // HTML format
+  json: any | null; // ProseMirror JSON format
+}
+
+export interface NoteData {
+  content: NoteContent;
+  files?: any[];
+}
+
+export interface NoteItem {
+  id: string;
+  user_id: string;
+  title: string;
+  data: NoteData;
+  meta: any | null;
+  access_control: Record<string, any>;
+  created_at: number;
+  updated_at: number;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    profile_image_url: string;
+  };
+}
+
+export type NoteContextAction = 'delete' | 'open';
+
+export interface NoteContextMenuEvent {
+  note: NoteItem;
+  action: NoteContextAction;
+  mouseEvent: MouseEvent;
+}
+

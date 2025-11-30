@@ -1,0 +1,91 @@
+<div class="notes-sidebar" [class.open]="isOpen">
+  <div class="notes-sidebar-header">
+    <div class="header-title">
+      <svg class="notes-icon" xmlns="http://www.w3.org/2000/svg" stroke-width="2" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" 
+              d="M10 3v4a1 1 0 0 1-1 1H5m4 8h6m-6-4h6m4-8v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"/>
+      </svg>
+      <h2>{{ translations?.notes || 'Notes' }}</h2>
+    </div>
+    <button 
+      class="close-btn" 
+      (click)="onClose()"
+      [attr.aria-label]="translations?.close || 'Close'">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+
+  <div class="notes-sidebar-actions">
+    <button 
+      class="create-note-btn" 
+      (click)="onCreateNote()"
+      [attr.aria-label]="translations?.createNote || 'Create Note'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      {{ translations?.createNote || 'Create Note' }}
+    </button>
+
+    <div class="search-container">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+      <input 
+        type="text" 
+        class="search-input"
+        [(ngModel)]="searchQuery"
+        [placeholder]="translations?.searchNotes || 'Search notes'"
+        [attr.aria-label]="translations?.searchNotes || 'Search notes'">
+    </div>
+  </div>
+
+  <div class="notes-list-container">
+    @if (isLoading) {
+      <div class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>{{ translations?.loadingNotes || 'Loading notes...' }}</p>
+      </div>
+    } @else if (filteredNotes.length === 0) {
+      <div class="empty-state">
+        <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" stroke-width="2" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" 
+                d="M10 3v4a1 1 0 0 1-1 1H5m4 8h6m-6-4h6m4-8v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"/>
+        </svg>
+        <p>{{ translations?.noNotes || 'No notes yet' }}</p>
+        <button class="create-first-note-btn" (click)="onCreateNote()">
+          {{ translations?.createNote || 'Create Note' }}
+        </button>
+      </div>
+    } @else {
+      <div class="notes-list">
+        @for (note of filteredNotes; track note.id) {
+          <div class="note-item" (click)="onNoteClick(note.id)">
+            <div class="note-item-header">
+              <h3 class="note-title">{{ note.title }}</h3>
+              <button 
+                class="delete-btn"
+                (click)="onDeleteNote(note.id, $event)"
+                [attr.aria-label]="translations?.deleteNote || 'Delete note'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+            <p class="note-preview">{{ getPreview(note) }}</p>
+            <div class="note-meta">
+              <span class="note-date">{{ formatDate(note.updated_at) }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<div class="notes-sidebar-overlay" [class.visible]="isOpen" (click)="onClose()"></div>
