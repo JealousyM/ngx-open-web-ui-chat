@@ -56,6 +56,7 @@ export interface Translation {
   unpinChat?: string;
   renameChat?: string;
   exportChat?: string;
+  archiveChat?: string;
   deleteChat?: string;
   confirmDeleteChat?: string;
   deleteError?: string;
@@ -159,6 +160,13 @@ export interface Translation {
   createNoteError?: string;
   saveNoteError?: string;
   loadNotesError?: string;
+  // Archive
+  archivedChats?: string;
+  unarchiveChat?: string;
+  archiveError?: string;
+  unarchiveError?: string;
+  loadMore?: string;
+  yes?: string;
 }
 
 export interface Translations {
@@ -224,7 +232,9 @@ export const translations: Translations = {
     unpinChat: 'Unpin Chat',
     renameChat: 'Rename Chat',
     exportChat: 'Export Chat',
+    archiveChat: 'Archive Chat',
     deleteChat: 'Delete Chat',
+    yes: 'Yes',
     confirmDeleteChat: 'Are you sure you want to delete this chat? This action cannot be undone.',
     deleteError: 'Failed to delete chat. Please try again.',
     renameTooLong: 'Chat title is too long. Please use a shorter title.',
@@ -304,7 +314,32 @@ export const translations: Translations = {
     collapsed: 'Collapsed',
     items: 'items',
     expand: 'Expand',
-    collapse: 'Collapse'
+    collapse: 'Collapse',
+    // Notes
+    notes: 'Notes',
+    note: 'Note',
+    createNote: 'Create Note',
+    newNote: 'New Note',
+    noteTitle: 'Note Title',
+    noteContent: 'Note Content',
+    deleteNote: 'Delete Note',
+    confirmDeleteNote: 'Are you sure you want to delete this note? This action cannot be undone.',
+    noNotes: 'No notes',
+    loadingNotes: 'Loading notes...',
+    searchNotes: 'Search notes...',
+    openNote: 'Open Note',
+    saveNote: 'Save Note',
+    cancelNote: 'Cancel',
+    deleteNoteError: 'Failed to delete note. Please try again.',
+    createNoteError: 'Failed to create note. Please try again.',
+    saveNoteError: 'Failed to save note. Please try again.',
+    loadNotesError: 'Failed to load notes. Please try again.',
+    // Archive
+    archivedChats: 'Archived Chats',
+    unarchiveChat: 'Unarchive',
+    archiveError: 'Failed to archive chat. Please try again.',
+    unarchiveError: 'Failed to unarchive chat. Please try again.',
+    loadMore: 'Load More'
   },
   zh: {
     send: '发送',
@@ -351,7 +386,9 @@ export const translations: Translations = {
     unpinChat: '取消置顶',
     renameChat: '重命名对话',
     exportChat: '导出对话',
+    archiveChat: '归档对话',
     deleteChat: '删除对话',
+    yes: '是',
     confirmDeleteChat: '确定要删除此对话吗？此操作无法撤销。',
     deleteError: '删除对话失败。请重试。',
     renameTooLong: '对话标题太长。请使用较短的标题。',
@@ -431,7 +468,13 @@ export const translations: Translations = {
     saveNoteError: '保存笔记失败。请重试。',
     loadNotesError: '加载笔记失败。请重试。',
     write: '编辑',
-    preview: '预览'
+    preview: '预览',
+    // Archive
+    archivedChats: '归档对话',
+    unarchiveChat: '取消归档',
+    archiveError: '归档对话失败。请重试。',
+    unarchiveError: '取消归档对话失败。请重试。',
+    loadMore: '加载更多'
   },
   hi: {
     send: 'भेजें',
@@ -478,6 +521,7 @@ export const translations: Translations = {
     unpinChat: 'चैट अनपिन करें',
     renameChat: 'चैट का नाम बदलें',
     exportChat: 'चैट निर्यात करें',
+    archiveChat: 'चैट आर्काइव करें',
     deleteChat: 'चैट हटाएं',
     confirmDeleteChat: 'क्या आप वाकई इस चैट को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।',
     deleteError: 'चैट हटाने में विफल। कृपया पुनः प्रयास करें।',
@@ -558,7 +602,14 @@ export const translations: Translations = {
     saveNoteError: 'नोट सहेजने में विफल। कृपया पुनः प्रयास करें।',
     loadNotesError: 'नोट्स लोड करने में विफल। कृपया पुनः प्रयास करें।',
     write: 'लिखें',
-    preview: 'पूर्वावलोकन'
+    preview: 'पूर्वावलोकन',
+    // Archive
+    archivedChats: 'आर्काइव की गई चैट',
+    unarchiveChat: 'आर्काइव से निकालें',
+    archiveError: 'चैट आर्काइव करने में विफल। कृपया पुनः प्रयास करें।',
+    unarchiveError: 'चैट को आर्काइव से निकालने में विफल। कृपया पुनः प्रयास करें।',
+    loadMore: 'और लोड करें',
+    yes: 'हाँ',
   },
   es: {
     send: 'Enviar',
@@ -605,6 +656,7 @@ export const translations: Translations = {
     unpinChat: 'Desfijar Chat',
     renameChat: 'Renombrar Chat',
     exportChat: 'Exportar Chat',
+    archiveChat: 'Archivar Chat',
     deleteChat: 'Eliminar Chat',
     confirmDeleteChat: '¿Estás seguro de que quieres eliminar este chat? Esta acción no se puede deshacer.',
     deleteError: 'Error al eliminar el chat. Por favor, inténtalo de nuevo.',
@@ -685,7 +737,14 @@ export const translations: Translations = {
     saveNoteError: 'Error al guardar la nota. Por favor, inténtalo de nuevo.',
     loadNotesError: 'Error al cargar las notas. Por favor, inténtalo de nuevo.',
     write: 'Escribir',
-    preview: 'Vista previa'
+    preview: 'Vista previa',
+    // Archive
+    archivedChats: 'Chats Archivados',
+    unarchiveChat: 'Desarchivar',
+    archiveError: 'Error al archivar el chat. Por favor, inténtalo de nuevo.',
+    unarchiveError: 'Error al desarchivar el chat. Por favor, inténtalo de nuevo.',
+    loadMore: 'Cargar más',
+    yes: 'Sí',
   },
   ar: {
     send: 'إرسال',
@@ -732,6 +791,7 @@ export const translations: Translations = {
     unpinChat: 'إلغاء التثبيت',
     renameChat: 'إعادة تسمية المحادثة',
     exportChat: 'تصدير المحادثة',
+    archiveChat: 'أرشفة المحادثة',
     deleteChat: 'حذف المحادثة',
     confirmDeleteChat: 'هل أنت متأكد من أنك تريد حذف هذه المحادثة؟ لا يمكن التراجع عن هذا الإجراء.',
     deleteError: 'فشل حذف المحادثة. يرجى المحاولة مرة أخرى.',
@@ -812,7 +872,14 @@ export const translations: Translations = {
     saveNoteError: 'فشل حفظ الملاحظة. يرجى المحاولة مرة أخرى.',
     loadNotesError: 'فشل تحميل الملاحظات. يرجى المحاولة مرة أخرى.',
     write: 'كتابة',
-    preview: 'معاينة'
+    preview: 'معاينة',
+    // Archive
+    archivedChats: 'المحادثات المؤرشقة',
+    unarchiveChat: 'إلغاء الأرشفة',
+    archiveError: 'فشل أرشفة المحادثة. يرجى المحاولة مرة أخرى.',
+    unarchiveError: 'فشل إلغاء أرشفة المحادثة. يرجى المحاولة مرة أخرى.',
+    loadMore: 'تحميل المزيد',
+    yes: 'نعم',
   },
   fr: {
     send: 'Envoyer',
@@ -939,7 +1006,15 @@ export const translations: Translations = {
     saveNoteError: 'Échec de l\'enregistrement de la note. Veuillez réessayer.',
     loadNotesError: 'Échec du chargement des notes. Veuillez réessayer.',
     write: 'Écrire',
-    preview: 'Aperçu'
+    preview: 'Aperçu',
+    // Archive
+    archivedChats: 'Chats archivés',
+    archiveChat: 'Archive chats',
+    unarchiveChat: 'Désarchiver',
+    archiveError: 'Échec de l\'archivage du chat. Veuillez réessayer.',
+    unarchiveError: 'Échec du désarchivage du chat. Veuillez réessayer.',
+    loadMore: 'Charger plus',
+    yes: 'Oui',
   },
   pt: {
     send: 'Enviar',
@@ -1066,7 +1141,15 @@ export const translations: Translations = {
     saveNoteError: 'Falha ao salvar nota. Por favor, tente novamente.',
     loadNotesError: 'Falha ao carregar notas. Por favor, tente novamente.',
     write: 'Escrever',
-    preview: 'Visualizar'
+    preview: 'Visualizar',
+    // Archive
+    archivedChats: 'Chats Arquivados',
+    archiveChat: 'Arquivar chats',
+    unarchiveChat: 'Desarquivar',
+    archiveError: 'Falha ao arquivar chat. Por favor, tente novamente.',
+    unarchiveError: 'Falha ao desarquivar chat. Por favor, tente novamente.',
+    loadMore: 'Carregar mais',
+    yes: 'Sim',
   },
   ru: {
     send: 'Отправить',
@@ -1209,7 +1292,15 @@ export const translations: Translations = {
     saveNoteError: 'Не удалось сохранить заметку. Попробуйте снова.',
     loadNotesError: 'Не удалось загрузить заметки. Попробуйте снова.',
     write: 'Редактировать',
-    preview: 'Просмотр'
+    preview: 'Просмотр',
+    // Archive
+    archivedChats: 'Архив чатов',
+    archiveChat: 'Архивные чаты',
+    unarchiveChat: 'Разархивировать',
+    archiveError: 'Не удалось архивировать чат. Попробуйте снова.',
+    unarchiveError: 'Не удалось разархивировать чат. Попробуйте снова.',
+    loadMore: 'Загрузить еще',
+    yes: 'Да',
   },
   bn: {
     send: 'পাঠান',
@@ -1336,7 +1427,15 @@ export const translations: Translations = {
     saveNoteError: 'নোট সংরক্ষণ করতে ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।',
     loadNotesError: 'নোট লোড করতে ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।',
     write: 'লিখুন',
-    preview: 'পূর্বরূপ'
+    preview: 'পূর্বরূপ',
+    // Archive
+    archivedChats: 'আর্কাইভ করা চ্যাট',
+    archiveChat: 'চ্যাট আর্কাইভ',
+    unarchiveChat: 'আনআর্কাইভ',
+    archiveError: 'চ্যাট আর্কাইভ করতে ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।',
+    unarchiveError: 'চ্যাট আনআর্কাইভ করতে ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।',
+    loadMore: 'আরও লোড করুন',
+    yes: 'হ্যাঁ',
   },
   ja: {
     send: '送信',
@@ -1464,7 +1563,15 @@ export const translations: Translations = {
     saveNoteError: 'ノートの保存に失敗しました。もう一度お試しください。',
     loadNotesError: 'ノートの読み込みに失敗しました。もう一度お試しください。',
     write: '書く',
-    preview: 'プレビュー'
+    preview: 'プレビュー',
+    yes: 'はい',
+    // Archive
+    archivedChats: 'アーカイブされたチャット',
+    archiveChat: 'チャットをアーカイブ',
+    unarchiveChat: 'アーカイブ解除',
+    archiveError: 'チャットのアーカイブに失敗しました。もう一度お試しください。',
+    unarchiveError: 'チャットのアーカイブ解除に失敗しました。もう一度お試しください。',
+    loadMore: 'さらに読み込む',
   }
 };
 

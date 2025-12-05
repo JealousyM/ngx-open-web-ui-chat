@@ -12,7 +12,8 @@
   <app-chat-history-header
     [translations]="translations"
     (newChat)="onNewChat()"
-    (search)="onSearch()">
+    (search)="onSearch()"
+    (openArchivedChats)="onOpenArchivedChats()">
   </app-chat-history-header>
 
   <div class="sidebar-content" role="region" [attr.aria-label]="translations?.chatList || 'Chat list'">

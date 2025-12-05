@@ -38,6 +38,7 @@
       (chatSelected)="handleChatSelected($event)"
       (newChatRequested)="handleNewChatRequest()"
       (searchRequested)="handleSearchRequested()"
+      (openArchivedChats)="handleOpenArchivedChats()"
       (loadMoreRequested)="loadMoreChats()"
       (contextMenuAction)="handleContextMenuAction($event)"
       (folderAction)="handleFolderAction($event)"
@@ -52,6 +53,14 @@
       [translations]="t"
       (closed)="handleSearchModalClosed()"
       (chatSelected)="handleChatSelected($event)"
+    />
+
+    <app-archived-chats-modal
+      [isOpen]="showArchivedChatsModal()"
+      [translations]="t"
+      (closed)="handleCloseArchivedChatsModal()"
+      (chatUnarchived)="handleChatUnarchived($event)"
+      (chatDeleted)="handleChatDeletedFromArchive($event)"
     />
   }
 

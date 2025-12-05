@@ -16,6 +16,7 @@ import { AskExplainModalComponent } from './ask-explain-modal/ask-explain-modal.
 import { NoteEditorComponent } from './note-editor/note-editor.component';
 import { NotesSidebarComponent } from './notes-sidebar/notes-sidebar.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { ArchivedChatsModalComponent } from './archived-chats-modal/archived-chats-modal.component';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -35,7 +36,8 @@ import { map } from 'rxjs/operators';
     AskExplainModalComponent,
     NoteEditorComponent,
     NotesSidebarComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    ArchivedChatsModalComponent
   ],
   templateUrl: './openwebui-chat.html',
   styleUrls: ['./openwebui-chat.scss']
@@ -103,6 +105,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   public hasMoreChats = signal(true);
   public isLoadingChats = signal(false);
   public showSearchModal = signal(false);
+  public showArchivedChatsModal = signal(false);
   
   public showSelectionMenu = signal(false);
   public selectionMenuX = signal(0);
@@ -1822,6 +1825,45 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
    */
   public handleSearchModalClosed(): void {
     this.showSearchModal.set(false);
+  }
+
+  /**
+   * Handle open archived chats modal
+   */
+  public handleOpenArchivedChats(): void {
+    this.showArchivedChatsModal.set(true);
+  }
+
+  /**
+   * Handle close archived chats modal
+   */
+  public handleCloseArchivedChatsModal(): void {
+    this.showArchivedChatsModal.set(false);
+  }
+
+  /**
+   * Handle chat unarchived from modal
+   */
+  public handleChatUnarchived(chat: ChatHistoryItem): void {
+    this.currentPage.set(1);
+    this.loadChatList();
+    
+    if (this.folders) {
+      this.loadFolders();
+    }
+    
+    if (this.debug) {
+      console.log('[OpenWebUI] Chat unarchived, refreshing lists:', chat.id);
+    }
+  }
+
+  /**
+   * Handle chat deleted from archive modal
+   */
+  public handleChatDeletedFromArchive(chatId: string): void {
+    if (this.debug && this.chatId === chatId) {
+      console.log('[OpenWebUI] Current chat was deleted from archive');
+    }
   }
 
   /**

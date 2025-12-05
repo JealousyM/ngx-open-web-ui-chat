@@ -1,0 +1,96 @@
+<div class="modal-overlay" 
+     *ngIf="isOpen" 
+     (click)="onOverlayClick($event)"
+     (keydown)="onEscapeKey($event)"
+     role="dialog"
+     [attr.aria-modal]="true"
+     [attr.aria-labelledby]="'archived-modal-title'"
+     tabindex="-1">
+  <div class="modal-content" 
+       (click)="$event.stopPropagation()"
+       (keydown)="onModalKeyDown($event)">
+    <div class="modal-header">
+      <h2 id="archived-modal-title">{{ translations?.archiveChat || 'Archived Chats' }}</h2>
+      <button class="close-button" 
+              (click)="closeModal()" 
+              [attr.aria-label]="translations?.close || 'Close'"
+              type="button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="search-section">
+        <div class="search-input-container">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input 
+            #searchInput
+            type="text" 
+            class="search-input"
+            [ngModel]="searchQuery()"
+            (ngModelChange)="onSearchQueryChange($event)"
+            [placeholder]="translations?.searchPlaceholder || 'Search chats...'"
+            [attr.aria-label]="translations?.searchChats || 'Search chats'"
+            role="searchbox"
+            autofocus>
+        </div>
+      </div>
+      
+      <div class="chats-list" role="list">
+        <div *ngIf="!isLoading() && archivedChats().length === 0" class="no-results">
+          {{ translations?.noSearchResults || 'No results found' }}
+        </div>
+
+        <div *ngFor="let chat of archivedChats()" class="chat-item" role="listitem">
+          <div class="chat-info">
+            <div class="chat-title">{{ chat.title }}</div>
+            <div class="chat-date">{{ chat.updated_at * 1000 | date:'short' }}</div>
+          </div>
+          <div class="chat-actions">
+            <button class="action-btn" 
+                    (click)="unarchiveChat(chat)"
+                    [title]="translations?.unarchiveChat || 'Unarchive'"
+                    [attr.aria-label]="translations?.unarchiveChat || 'Unarchive'">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+            </button>
+            <button class="action-btn danger" 
+                    (click)="deleteChat(chat.id)"
+                    [title]="translations?.deleteChat || 'Delete'"
+                    [attr.aria-label]="translations?.deleteChat || 'Delete'">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 6h18"></path>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="isLoading()" class="loading-spinner">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" opacity="0.25"></circle>
+            <path d="M12 2 A10 10 0 0 1 22 12" opacity="0.75">
+              <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/>
+            </path>
+          </svg>
+        </div>
+
+        <button *ngIf="hasMore() && !isLoading()" 
+                class="load-more-btn" 
+                (click)="loadMore()">
+          {{ translations?.loadMore || 'Load More' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

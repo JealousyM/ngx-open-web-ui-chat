@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.14] - 2025-12-05
+
+### Added
+
+- 🗃️ **Archived Chats Modal** - View and manage archived conversations
+  - **View Archived Chats** - Dedicated modal to access all archived chats
+  - **Search Archived** - Search through archived chats with debounced query
+  - **Unarchive Chats** - Restore archived chats to main chat list
+  - **Delete Archived** - Permanently delete archived chats with confirmation
+  - **Pagination** - Load more archived chats with infinite scroll
+  - **Keyboard Navigation** - Focus trap and ESC to close
+  - **Multi-language** - Full translation support for archived chat interface
+- 🌍 **Expanded Translations**
+  - Added `archivedChats` translation key to all 10 supported languages
+
+### Fixed
+
+- 🐛 **Archived Chats Search** - Fixed search functionality in archived chats modal
+- 🐛 **List Refresh** - Fixed archived chats list not refreshing after unarchive
+
+### Technical Details
+- Added `ArchivedChatsModalComponent` with WCAG accessibility features
+- Added `getArchivedChats()` API method with search and pagination
+- Implemented debounced search with RxJS Subject
+- Added focus trap and keyboard navigation for modal accessibility
+
 ## [1.0.13] - 2025-11-30
 
 ### Added
@@ -304,6 +330,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **1.0.14** - Archived chats modal with search, unarchive, and delete functionality
+- **1.0.13** - Notes support with integrated markdown editor
+- **1.0.12** - Folder support with drag & drop organization
 - **1.0.11** - Ask & Explain feature with context menu for selected text
 - **1.0.10** - Chat export (PDF/TXT/JSON) and active chat protection
 - **1.0.9** - Voice input with automatic transcription

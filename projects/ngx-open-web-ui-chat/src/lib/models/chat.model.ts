@@ -174,6 +174,7 @@ export interface ChatHistoryItem {
   pinned?: boolean;
   preview?: string;
   folder_id?: string | null;
+  archived?: boolean;
 }
 
 export interface ChatListResponse {
@@ -184,7 +185,7 @@ export interface ChatListResponse {
 }
 
 export interface ChatContextAction {
-  action: 'pin' | 'unpin' | 'delete' | 'rename' | 'export' | 'move';
+  action: 'pin' | 'unpin' | 'delete' | 'rename' | 'export' | 'move' | 'archive';
   chatId: string;
   data?: any;
   targetFolderId?: string | null;

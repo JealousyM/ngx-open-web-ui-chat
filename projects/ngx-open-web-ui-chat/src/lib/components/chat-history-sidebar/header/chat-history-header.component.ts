@@ -14,6 +14,7 @@ export class ChatHistoryHeaderComponent {
   
   @Output() public newChat = new EventEmitter<void>();
   @Output() public search = new EventEmitter<void>();
+  @Output() public openArchivedChats = new EventEmitter<void>();
 
   public onNewChat(): void {
     this.newChat.emit();
@@ -21,5 +22,9 @@ export class ChatHistoryHeaderComponent {
 
   public onSearch(): void {
     this.search.emit();
+  }
+
+  public onOpenArchivedChats(): void {
+    this.openArchivedChats.emit();
   }
 }

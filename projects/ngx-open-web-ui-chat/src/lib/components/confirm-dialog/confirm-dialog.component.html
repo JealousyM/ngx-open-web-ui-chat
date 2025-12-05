@@ -33,9 +33,9 @@
       </button>
       <button class="confirm-button" 
               (click)="onConfirm()" 
-              [attr.aria-label]="confirmText || (translations?.deleteChat || 'Delete')"
+              [attr.aria-label]="confirmText || (translations?.yes || 'Yes')"
               type="button">
-        {{ confirmText || (translations?.deleteChat || 'Delete') }}
+        {{ confirmText || (translations?.yes || 'Yes') }}
       </button>
     </div>
   </div>

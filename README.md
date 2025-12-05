@@ -35,6 +35,7 @@ Interactive demo showcasing all features:
 - 💬 **Ask & Explain** - Context menu for selected text with AI explanations
 - 📂 **Folder Support** - Organize chats into folders with drag & drop
 - 📝 **Notes Support** - Integrated markdown note editor with sidebar
+- 🗃️ **Archived Chats** - View, search, unarchive, and delete archived conversations
 
 ## 🚀 Quick Start
 
@@ -147,6 +148,7 @@ openwebui-ts-embedded-sdk/
 │       │   │   │   ├── folder-list/
 │       │   │   │   ├── folder-item/
 │       │   │   │   └── folder-context-menu/
+│       │   │   ├── archived-chats-modal/       ← Archived chats modal
 │       │   │   ├── note-editor/            ← Note editor component
 │       │   │   ├── notes-sidebar/          ← Notes sidebar component
 │       │   │   ├── chat-search-modal/
@@ -387,7 +389,7 @@ MIT License - see LICENSE file for details
 
 ---
 
-**Status:** Production-ready v1.0.13
+**Status:** Production-ready v1.0.14
 **Angular Version:** 20.x  
 **Node Required:** >=20.19.0  
 

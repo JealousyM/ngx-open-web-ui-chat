@@ -9,6 +9,7 @@ import { FolderListComponent } from '../folder-list/folder-list.component';
 import { FolderContextMenuComponent } from '../folder-context-menu/folder-context-menu.component';
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { ExportFormatMenuComponent } from '../../export-format-menu/export-format-menu.component';
+
 import { Translation } from '../../../i18n/translations';
 import { OpenWebUIService } from '../../../services/openwebui-api';
 
@@ -39,6 +40,7 @@ export class ChatHistorySidebarComponent implements OnChanges {
   @Output() public folderAction = new EventEmitter<{ action: FolderContextAction; folderId: string }>();
   @Output() public folderRenamed = new EventEmitter<{ folderId: string; newName: string }>();
   @Output() public foldersUpdated = new EventEmitter<FolderItem[]>();
+  @Output() public openArchivedChats = new EventEmitter<void>();
 
   public renamingChatId: string | null = null;
   public showContextMenu = signal(false);
@@ -59,6 +61,8 @@ export class ChatHistorySidebarComponent implements OnChanges {
   
   public showFolderDeleteConfirm = signal(false);
   public folderToDelete = signal<FolderItem | null>(null);
+
+
 
   public connectedDropLists: string[] = [];
 
@@ -146,6 +150,9 @@ export class ChatHistorySidebarComponent implements OnChanges {
         if (action.targetFolderId) {
           this.handleMoveChat(action.chatId, action.targetFolderId);
         }
+        break;
+      case 'archive':
+        this.handleArchiveChat(action.chatId);
         break;
     }
   }
@@ -277,6 +284,33 @@ export class ChatHistorySidebarComponent implements OnChanges {
       },
       error: (error) => {
         console.error('Failed to unpin chat:', error);
+      }
+    });
+  }
+
+  /**
+   * Handle archive chat action
+   */
+  public handleArchiveChat(chatId: string): void {
+    const action: ChatContextAction = {
+      action: 'archive',
+      chatId: chatId
+    };
+    this.contextMenuAction.emit(action);
+
+    this.openWebUIService.archiveChat(chatId).subscribe({
+      next: () => {
+        const updatedChats = this.removeChatFromList(chatId);
+        this.chatsUpdated.emit(updatedChats);
+        if (this.currentChatId === chatId) {
+          this.chatSelected.emit('');
+        }
+      },
+      error: (error) => {
+        console.error('Failed to archive chat:', error);
+        const errorMessage = this.translations?.archiveError || 
+          'Failed to archive chat. Please try again.';
+        alert(errorMessage);
       }
     });
   }
@@ -724,5 +758,9 @@ export class ChatHistorySidebarComponent implements OnChanges {
         this.handleMoveChat(item.id, folderId);
       }
     }
+  }
+
+  public onOpenArchivedChats(): void {
+    this.openArchivedChats.emit();
   }
 }

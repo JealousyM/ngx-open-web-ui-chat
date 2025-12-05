@@ -39,7 +39,7 @@ export class ChatContextMenuComponent {
     }
   }
 
-  public emitAction(actionType: 'pin' | 'unpin' | 'delete' | 'rename' | 'export'): void {
+  public emitAction(actionType: 'pin' | 'unpin' | 'delete' | 'rename' | 'export' | 'archive'): void {
     const contextAction: ChatContextAction = {
       action: actionType,
       chatId: this.chat.id
@@ -77,6 +77,10 @@ export class ChatContextMenuComponent {
 
   public get exportText(): string {
     return this.translations?.exportChat || 'Export Chat';
+  }
+
+  public get archiveText(): string {
+    return this.translations?.archiveChat || 'Archive Chat';
   }
 
   public get moveText(): string {

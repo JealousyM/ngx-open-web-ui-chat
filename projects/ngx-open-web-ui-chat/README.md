@@ -28,9 +28,10 @@ Angular 20 component library for embedding OpenWebUI chat with Socket.IO streami
 ⏹️ **Stop Generation** - Cancel AI response anytime  
 ⭐ **Response Actions** - Continue, regenerate, and rate responses  
 👍 **Rating System** - Comprehensive feedback with good/bad ratings  
-💬 **Ask & Explain** - Context menu for selected text with AI explanations
-📂 **Folder Support** - Organize chats into folders with drag & drop
-📝 **Notes Support** - Integrated markdown note editor with sidebar
+💬 **Ask & Explain** - Context menu for selected text with AI explanations  
+📂 **Folder Support** - Organize chats into folders with drag & drop  
+📝 **Notes Support** - Integrated markdown note editor with sidebar  
+🗃️ **Archived Chats** - View, search, unarchive, and delete archived conversations
 
 
 ## Installation
@@ -329,6 +330,7 @@ src/lib/
 │   │   ├── folder-list/            ← Folder list
 │   │   ├── folder-item/            ← Folder item
 │   │   └── folder-context-menu/    ← Folder context menu
+│   ├── archived-chats-modal/       ← Archived chats modal component
 │   ├── chat-search-modal/          ← Search modal
 │   ├── confirm-dialog/             ← Confirmation dialogs
 │   ├── error-banner/               ← Error display component
@@ -466,14 +468,22 @@ The library uses **Socket.IO** for real-time bidirectional communication with Op
 
 ## Version History
 
-### 1.0.12 (Current)
+### 1.0.14 (Current)
+- ✅ **Archived Chats Modal** - View, search, unarchive, and delete archived chats
+- ✅ **Search Archived** - Debounced search through archived conversations
+- ✅ **Pagination** - Load more archived chats with infinite scroll
+- ✅ **Accessibility** - Focus trap and keyboard navigation for modal
+
+### 1.0.13
+- ✅ **Notes Support** - Integrated markdown note editor
+- ✅ **Notes Sidebar** - Create, edit, and organize notes
+- ✅ **Auto-save** - Notes are automatically saved
+
+### 1.0.12
 - ✅ **Folder Support** - Organize chats into folders with drag & drop
 - ✅ **Drag & Drop** - Improved drag and drop experience for chats and folders
 - ✅ **Context Menus** - Manage folders with right-click context menu
 - ✅ **Nested Folders** - Support for hierarchical folder structures
-
-### 1.0.11
-- ✅ **Ask & Explain** - Context menu for selected text with instant AI explanations
 - ✅ **Text Selection Menu** - Right-click on selected text to ask questions or get explanations
 - ✅ **Ephemeral Completions** - Ask/Explain responses don't clutter chat history
 - ✅ **Full Localization** - All Ask & Explain features translated to 10 languages
@@ -712,8 +722,34 @@ Organize your conversations efficiently with folders:
 ```typescript
 <openwebui-chat
   [folders]="true"
-  ...
->
+  ...>
+</openwebui-chat>
+```
+
+## Archived Chats
+
+Access and manage your archived conversations with the archived chats modal:
+
+### Features
+
+- 🗃️ **View Archived** - Dedicated modal to access all archived chats
+- 🔍 **Search** - Search through archived chats with debounced query
+- 📤 **Unarchive** - Restore chats to your main chat list
+- 🗑️ **Delete** - Permanently delete archived chats with confirmation
+- ♾️ **Pagination** - Load more with infinite scroll
+- ⌨️ **Keyboard Navigation** - Focus trap and ESC to close
+
+### Usage
+
+1. **Enable History**: Set `[history]="true"` to enable chat sidebar
+2. **Archive Chats**: Right-click any chat and select "Archive"
+3. **View Archived**: Click "Archived Chats" in the sidebar header
+4. **Manage**: Search, unarchive, or delete from the modal
+
+```typescript
+<openwebui-chat
+  [history]="true"
+  ...>
 </openwebui-chat>
 ```
 
@@ -724,9 +760,10 @@ Organize your conversations efficiently with folders:
 - [x] Comprehensive rating system
 - [x] Voice input with transcription
 - [x] Export chat history
-- [x] Export chat history
 - [x] Ask & Explain for selected text
 - [x] Folder support (Drag & Drop)
+- [x] Notes support with markdown editor
+- [x] Archived chats modal with search
 
 ## Contributing
 

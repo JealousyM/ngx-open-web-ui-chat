@@ -2191,6 +2191,99 @@ export class OpenWebUIService {
     });
   }
 
+  public archiveChat(chatId: string): Observable<void> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Archiving chat:', chatId);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/chats/${chatId}/archive`;
+
+    return new Observable<void>(observer => {
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          this.debugLog('Chat archived successfully');
+          observer.next();
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Archive chat error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
+  public getArchivedChats(page: number = 1, query: string = ''): Observable<ChatListResponse> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Fetching archived chats, page:', page, 'query:', query);
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    let url = `${endpoint}/api/v1/chats/archived?page=${page}&order_by=updated_at&direction=desc`;
+    if (query) {
+      url += `&query=${encodeURIComponent(query)}`;
+    }
+
+    return new Observable<ChatListResponse>(observer => {
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cfg.apiKey}`,
+          'Content-Type': 'application/json',
+          'Cookie': `token=${cfg.apiKey}`
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          this.debugLog('Archived chats fetched:', data);
+          // Handle both array (all chats) and object (paginated) responses if necessary, 
+          // but assuming standard paginated response or array based on getChats
+          let chats: ChatHistoryItem[] = [];
+          let total = 0;
+          
+          if (Array.isArray(data)) {
+             chats = data;
+             total = data.length;
+          } else if (data && data.chats) {
+             chats = data.chats;
+             total = data.total || chats.length;
+          }
+
+          const response: ChatListResponse = {
+            chats,
+            page,
+            total: total,
+            hasMore: chats.length > 0 // Simplified hasMore logic, ideally backend provides it
+          };
+          observer.next(response);
+          observer.complete();
+        })
+        .catch(error => {
+          this.debugLog('Get archived chats error:', error);
+          observer.error(error);
+        });
+    });
+  }
+
   public renameChat(chatId: string, newTitle: string): Observable<void> {
     const cfg = this.config();
     if (!cfg) {
