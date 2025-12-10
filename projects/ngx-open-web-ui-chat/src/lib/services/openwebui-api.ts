@@ -451,7 +451,7 @@ export class OpenWebUIService {
     });
   }
 
-  public sendMessage(message: string, chatId?: string, conversationHistory?: Array<{ role: string; content: string; id?: string; timestamp?: number }>, files?: any[]): Observable<string> {
+  public sendMessage(message: string, chatId?: string, conversationHistory?: Array<{ role: string; content: string; id?: string; timestamp?: number }>, files?: any[], features?: {image_generation: boolean, web_search: boolean, code_interpreter: boolean}): Observable<string> {
     this.debugLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     this.debugLog('📤 Sending message:', message);
     this.debugLog('Files attached:', files?.length || 0);
@@ -514,7 +514,7 @@ export class OpenWebUIService {
       messages,
       params: {},
       tool_servers: [],
-      features: {
+      features: features || {
         image_generation: false,
         code_interpreter: false,
         web_search: false

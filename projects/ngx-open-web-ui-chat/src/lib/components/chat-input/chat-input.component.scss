@@ -1,14 +1,14 @@
 .chat-input-container {
   border-top: 1px solid #ddd;
   background: white;
-  
+
   .uploaded-files-preview {
     padding: 12px 16px;
     border-bottom: 1px solid #f0f0f0;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    
+
     .file-preview {
       display: flex;
       align-items: center;
@@ -17,18 +17,18 @@
       background: #f5f5f5;
       border-radius: 6px;
       border: 1px solid #e0e0e0;
-      
+
       .file-icon {
         font-size: 18px;
         width: 20px;
         height: 20px;
       }
-      
+
       .file-info {
         display: flex;
         flex-direction: column;
         gap: 2px;
-        
+
         .file-name {
           font-size: 13px;
           font-weight: 500;
@@ -38,13 +38,13 @@
           text-overflow: ellipsis;
           white-space: nowrap;
         }
-        
+
         .file-size {
           font-size: 11px;
           color: #666;
         }
       }
-      
+
       .remove-file-btn {
         background: none;
         border: none;
@@ -59,7 +59,7 @@
         justify-content: center;
         border-radius: 50%;
         transition: all 0.2s;
-        
+
         &:hover {
           background: #e0e0e0;
           color: #666;
@@ -67,17 +67,22 @@
       }
     }
   }
-  
+
   .chat-input {
     display: flex;
     gap: 8px;
     padding: 16px;
     align-items: center;
-    
+
     .input-actions {
       position: relative;
-      
-      .attach-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      .attach-btn,
+      .integrations-btn,
+      .feature-icon-btn {
         background: none;
         border: none;
         font-size: 20px;
@@ -85,23 +90,36 @@
         padding: 8px;
         border-radius: 4px;
         transition: background-color 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
         >svg {
           width: 20px;
           height: 20px;
         }
-        
+
         &:hover:not(:disabled) {
           background: #f5f5f5;
         }
-        
+
         &:disabled {
           opacity: 0.5;
           cursor: not-allowed;
         }
       }
-      
-      .file-menu {
+
+      .feature-icon-btn {
+        color: #00a67e; // Example active color
+
+        &:hover {
+          background: #e6f7f2;
+          color: #dc3545; // Turn red on hover to indicate removal? Or just keep green
+        }
+      }
+
+      .file-menu,
+      .integrations-menu {
         position: absolute;
         bottom: 100%;
         left: 0;
@@ -112,7 +130,7 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         overflow: hidden;
         min-width: 180px;
-        
+
         .menu-item {
           width: 100%;
           padding: 12px 16px;
@@ -123,25 +141,67 @@
           gap: 10px;
           cursor: pointer;
           transition: background-color 0.2s;
-          
+
           &:hover {
             background: #f5f5f5;
           }
-          
+
+          &.toggle-item {
+            justify-content: space-between;
+
+            .menu-item-content {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+            }
+          }
+
           .menu-icon {
             font-size: 18px;
             width: 15px;
             height: 15px;
+            display: flex;
+            align-items: center;
           }
-          
+
           .menu-text {
             font-size: 14px;
             color: #333;
           }
+
+          .toggle-switch {
+            width: 32px;
+            height: 18px;
+            background-color: #e0e0e0;
+            border-radius: 9px;
+            position: relative;
+            transition: background-color 0.2s;
+            flex-shrink: 0;
+
+            .toggle-slider {
+              width: 14px;
+              height: 14px;
+              background-color: white;
+              border-radius: 50%;
+              position: absolute;
+              top: 2px;
+              left: 2px;
+              transition: transform 0.2s;
+              box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            }
+
+            &.checked {
+              background-color: #00a67e;
+
+              .toggle-slider {
+                transform: translateX(14px);
+              }
+            }
+          }
         }
       }
     }
-    
+
     .message-input {
       flex: 1;
       padding: 10px 14px;
@@ -149,17 +209,17 @@
       border-radius: 6px;
       font-size: 14px;
       outline: none;
-      
+
       &:focus {
         border-color: #007bff;
       }
-      
+
       &:disabled {
         background: #f5f5f5;
         cursor: not-allowed;
       }
     }
-    
+
     .voice-input-btn,
     .stop-recording-btn {
       background: none;
@@ -172,75 +232,78 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      
+
       svg {
         width: 24px;
         height: 24px;
         transition: transform 0.2s ease;
       }
-      
+
       &:hover:not(:disabled) {
         background: #f5f5f5;
-        
+
         svg {
           transform: scale(1.1);
         }
       }
-      
+
       &:active:not(:disabled) {
         transform: scale(0.95);
       }
-      
+
       &:disabled {
         opacity: 0.4;
         cursor: not-allowed;
         background: transparent;
       }
     }
-    
+
     .voice-input-btn {
       color: #007bff;
       margin-right: 4px;
-      
+
       &:hover:not(:disabled) {
         background: #e7f3ff;
         color: #0056b3;
       }
-      
+
       &:active:not(:disabled) {
         background: #cce5ff;
       }
-      
+
       &:disabled {
         color: #99c9ff;
       }
     }
-    
+
     .stop-recording-btn {
       color: #dc3545;
       margin-right: 4px;
       animation: pulse 1.5s ease-in-out infinite;
-      
+
       &:hover:not(:disabled) {
         background: #ffe5e5;
         color: #c82333;
         animation: none;
       }
-      
+
       &:active:not(:disabled) {
         background: #ffcccc;
       }
     }
-    
+
     @keyframes pulse {
-      0%, 100% {
+
+      0%,
+      100% {
         opacity: 1;
       }
+
       50% {
         opacity: 0.7;
       }
     }
-    
+
     .send-button,
     .stop-button {
       padding: 10px 20px;
@@ -251,38 +314,38 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    
+
     .send-button {
       background: #007bff;
       color: white;
-      
+
       &:hover:not(:disabled) {
         background: #0056b3;
       }
-      
+
       &:disabled {
         opacity: 0.5;
         cursor: not-allowed;
       }
     }
-    
+
     .stop-button {
       background: #dc3545;
       color: white;
-      
+
       &:hover {
         background: #c82333;
       }
     }
   }
-  
+
   .spectrogram-container {
     padding: 16px;
     border-top: 1px solid #e0e0e0;
     background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
     animation: slideDown 0.3s ease-out;
-    
+
     .spectrogram-canvas {
       width: 100%;
       height: 100px;
@@ -290,24 +353,25 @@
       background: linear-gradient(to bottom, #1a1a2e 0%, #16213e 100%);
       display: block;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15),
-                  inset 0 1px 2px rgba(255, 255, 255, 0.1);
+        inset 0 1px 2px rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(0, 0, 0, 0.2);
     }
   }
-  
+
   @keyframes slideDown {
     from {
       opacity: 0;
       transform: translateY(-10px);
       max-height: 0;
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
       max-height: 150px;
     }
   }
-  
+
   .transcribing-indicator {
     padding: 14px 16px;
     border-top: 1px solid #e0e0e0;
@@ -316,7 +380,7 @@
     align-items: center;
     gap: 12px;
     animation: slideDown 0.3s ease-out;
-    
+
     .spinner {
       width: 20px;
       height: 20px;
@@ -325,20 +389,20 @@
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
-    
+
     .transcribing-text {
       font-size: 14px;
       color: #0056b3;
       font-weight: 500;
     }
   }
-  
+
   @keyframes spin {
     to {
       transform: rotate(360deg);
     }
   }
-  
+
   .error-message {
     padding: 14px 16px;
     border-top: 2px solid;
@@ -348,7 +412,7 @@
     gap: 12px;
     animation: slideDown 0.3s ease-out;
     position: relative;
-    
+
     &::before {
       content: '';
       position: absolute;
@@ -361,15 +425,15 @@
       background-repeat: no-repeat;
       margin-right: 8px;
     }
-    
+
     &.recording-error {
       background: linear-gradient(to right, #f8d7da 0%, #fce4e6 100%);
       border-top-color: #dc3545;
-      
+
       &::before {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23dc3545'%3E%3Cpath fill-rule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z' clip-rule='evenodd'/%3E%3C/svg%3E");
       }
-      
+
       .error-text {
         flex: 1;
         font-size: 14px;
@@ -377,7 +441,7 @@
         font-weight: 500;
         padding-left: 28px;
       }
-      
+
       .dismiss-btn {
         padding: 8px 18px;
         background: #dc3545;
@@ -389,28 +453,28 @@
         cursor: pointer;
         transition: all 0.2s ease;
         box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
-        
+
         &:hover {
           background: #c82333;
           box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
           transform: translateY(-1px);
         }
-        
+
         &:active {
           transform: translateY(0);
           box-shadow: 0 1px 2px rgba(220, 53, 69, 0.2);
         }
       }
     }
-    
+
     &.transcription-error {
       background: linear-gradient(to right, #fff3cd 0%, #fffaeb 100%);
       border-top-color: #ffc107;
-      
+
       &::before {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23ffc107'%3E%3Cpath fill-rule='evenodd' d='M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z' clip-rule='evenodd'/%3E%3C/svg%3E");
       }
-      
+
       .error-text {
         flex: 1;
         font-size: 14px;
@@ -418,7 +482,7 @@
         font-weight: 500;
         padding-left: 28px;
       }
-      
+
       .retry-btn {
         padding: 8px 18px;
         background: #ffc107;
@@ -430,13 +494,13 @@
         cursor: pointer;
         transition: all 0.2s ease;
         box-shadow: 0 2px 4px rgba(255, 193, 7, 0.2);
-        
+
         &:hover {
           background: #e0a800;
           box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
           transform: translateY(-1px);
         }
-        
+
         &:active {
           transform: translateY(0);
           box-shadow: 0 1px 2px rgba(255, 193, 7, 0.2);

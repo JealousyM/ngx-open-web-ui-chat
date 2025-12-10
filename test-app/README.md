@@ -1,6 +1,6 @@
 # OpenWebUI Chat Test Application
 
-Modern test application for demonstrating the `ngx-open-web-ui-chat` library.
+Modern test application for demonstrating the `ngx-open-web-ui-chat` library features including the new integrations support.
 
 ## 🎨 Features
 
@@ -23,6 +23,11 @@ Modern test application for demonstrating the `ngx-open-web-ui-chat` library.
 - View archived conversations
 - Search through archived chats
 - Unarchive or delete chats
+
+### 5. **Integrations**
+- Toggle Web Search
+- Toggle Code Interpreter
+- Real-time feature management
 
 ### 5. **Smart Model Loading**
 - "Show Models" button active only when Host and API Key are provided

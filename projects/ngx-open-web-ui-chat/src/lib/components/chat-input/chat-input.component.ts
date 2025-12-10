@@ -1,4 +1,4 @@
-import { Component, input, output, signal, ViewChild, ElementRef, AfterViewChecked, effect, untracked } from '@angular/core';
+import { Component, input, output, signal, ViewChild, ElementRef, AfterViewChecked, effect, untracked, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Translation } from '../../i18n/translations';
@@ -21,10 +21,26 @@ export class ChatInputComponent implements AfterViewChecked {
   public recordingError = input<string | null>(null);
   public transcriptionError = input<string | null>(null);
   public messageText = input<string>('');
+  public integrations = input<boolean>(false);
   
   private _inputMessage = signal('');
   public showFileMenu = signal(false);
+  public showIntegrationsMenu = signal(false);
   
+  public webSearchRequested = output<void>();
+  public codeInterpreterRequested = output<void>();
+  
+  public webSearchEnabled = signal(false);
+  public codeInterpreterEnabled = signal(false);
+  
+  public features = computed(() => ({
+    image_generation: false,
+    web_search: this.webSearchEnabled(),
+    code_interpreter: this.codeInterpreterEnabled()
+  }));
+  
+  public featuresChanged = output<{image_generation: boolean, web_search: boolean, code_interpreter: boolean}>();
+
   public get inputMessage(): string {
     return this._inputMessage();
   }
@@ -40,6 +56,13 @@ export class ChatInputComponent implements AfterViewChecked {
         if (text !== this._inputMessage()) {
           this._inputMessage.set(text);
         }
+      });
+    });
+    
+    effect(() => {
+      const feats = this.features();
+      untracked(() => {
+        this.featuresChanged.emit(feats);
       });
     });
   }
@@ -69,6 +92,34 @@ export class ChatInputComponent implements AfterViewChecked {
   
   public toggleFileMenu(): void {
     this.showFileMenu.update(v => !v);
+    if (this.showFileMenu()) {
+      this.showIntegrationsMenu.set(false);
+    }
+  }
+
+  public toggleIntegrationsMenu(): void {
+    this.showIntegrationsMenu.update(v => !v);
+    if (this.showIntegrationsMenu()) {
+      this.showFileMenu.set(false);
+    }
+  }
+
+  public toggleWebSearch(event?: Event): void {
+    if (event) event.stopPropagation();
+    this.webSearchEnabled.update(v => !v);
+    if (this.webSearchEnabled()) {
+       this.webSearchRequested.emit();
+    }
+    this.showIntegrationsMenu.set(false);
+  }
+
+  public toggleCodeInterpreter(event?: Event): void {
+    if (event) event.stopPropagation();
+    this.codeInterpreterEnabled.update(v => !v);
+    if (this.codeInterpreterEnabled()) {
+      this.codeInterpreterRequested.emit();
+    }
+    this.showIntegrationsMenu.set(false);
   }
   
   public triggerFileUpload(): void {

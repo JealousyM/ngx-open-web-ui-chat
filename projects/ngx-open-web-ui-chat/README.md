@@ -31,7 +31,8 @@ Angular 20 component library for embedding OpenWebUI chat with Socket.IO streami
 💬 **Ask & Explain** - Context menu for selected text with AI explanations  
 📂 **Folder Support** - Organize chats into folders with drag & drop  
 📝 **Notes Support** - Integrated markdown note editor with sidebar  
-🗃️ **Archived Chats** - View, search, unarchive, and delete archived conversations
+🗃️ **Archived Chats** - View, search, unarchive, and delete archived conversations  
+🔌 **Integrations** - Toggle Web Search and Code Interpreter capabilities
 
 
 ## Installation
@@ -113,6 +114,7 @@ export class AppComponent {}
 | `history` | `boolean` | ❌ | `false` | Enable chat history sidebar |
 | `folders` | `boolean` | ❌ | `false` | Enable folder support |
 | `notes` | `boolean` | ❌ | `false` | Enable notes feature |
+| `integrations` | `boolean` | ❌ | `false` | Enable integrations menu |
 | `style` | `Partial<CSSStyleDeclaration>` | ❌ | - | Custom CSS styles |
 
 ### Outputs
@@ -468,7 +470,13 @@ The library uses **Socket.IO** for real-time bidirectional communication with Op
 
 ## Version History
 
-### 1.0.14 (Current)
+### 1.0.15 (Current)
+- ✅ **Integrations Support** - Toggle external capabilities
+- ✅ **Web Search** - Enable/disable web search
+- ✅ **Code Interpreter** - Enable/disable code execution
+- ✅ **Translations** - Added support for integration keys
+
+### 1.0.14
 - ✅ **Archived Chats Modal** - View, search, unarchive, and delete archived chats
 - ✅ **Search Archived** - Debounced search through archived conversations
 - ✅ **Pagination** - Load more archived chats with infinite scroll

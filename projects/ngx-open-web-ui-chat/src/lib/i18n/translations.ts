@@ -167,6 +167,10 @@ export interface Translation {
   unarchiveError?: string;
   loadMore?: string;
   yes?: string;
+  webSearch?: string;
+  codeInterpreter?: string;
+  webSearchEnabled?: string;
+  codeInterpreterEnabled?: string;
 }
 
 export interface Translations {
@@ -339,7 +343,11 @@ export const translations: Translations = {
     unarchiveChat: 'Unarchive',
     archiveError: 'Failed to archive chat. Please try again.',
     unarchiveError: 'Failed to unarchive chat. Please try again.',
-    loadMore: 'Load More'
+    loadMore: 'Load More',
+    webSearch: 'Web Search',
+    codeInterpreter: 'Code Interpreter',
+    webSearchEnabled: 'Web Search Enabled',
+    codeInterpreterEnabled: 'Code Interpreter Enabled'
   },
   zh: {
     send: '发送',
@@ -474,7 +482,11 @@ export const translations: Translations = {
     unarchiveChat: '取消归档',
     archiveError: '归档对话失败。请重试。',
     unarchiveError: '取消归档对话失败。请重试。',
-    loadMore: '加载更多'
+    loadMore: '加载更多',
+    webSearch: '网页搜索',
+    codeInterpreter: '代码解释器',
+    webSearchEnabled: '网页搜索已启用',
+    codeInterpreterEnabled: '代码解释器已启用',
   },
   hi: {
     send: 'भेजें',
@@ -610,6 +622,10 @@ export const translations: Translations = {
     unarchiveError: 'चैट को आर्काइव से निकालने में विफल। कृपया पुनः प्रयास करें।',
     loadMore: 'और लोड करें',
     yes: 'हाँ',
+    webSearch: 'वेब खोज',
+    codeInterpreter: 'कोड इंटरप्रेटर',
+    webSearchEnabled: 'वेब खोज अनुमति',
+    codeInterpreterEnabled: 'कोड इंटरप्रेटर अनुमति'
   },
   es: {
     send: 'Enviar',
@@ -745,6 +761,10 @@ export const translations: Translations = {
     unarchiveError: 'Error al desarchivar el chat. Por favor, inténtalo de nuevo.',
     loadMore: 'Cargar más',
     yes: 'Sí',
+    webSearch: 'Búsqueda web',
+    codeInterpreter: 'Intérprete de código',
+    webSearchEnabled: 'Búsqueda web habilitada',
+    codeInterpreterEnabled: 'Intérprete de código habilitado'
   },
   ar: {
     send: 'إرسال',
@@ -880,6 +900,10 @@ export const translations: Translations = {
     unarchiveError: 'فشل إلغاء أرشفة المحادثة. يرجى المحاولة مرة أخرى.',
     loadMore: 'تحميل المزيد',
     yes: 'نعم',
+    webSearch: 'بحث الويب',
+    codeInterpreter: 'مفسر التعليمات البرمجية',
+    webSearchEnabled: 'بحث الويب مفعل',
+    codeInterpreterEnabled: 'مفسر التعليمات البرمجية مفعل'
   },
   fr: {
     send: 'Envoyer',
@@ -1015,6 +1039,10 @@ export const translations: Translations = {
     unarchiveError: 'Échec du désarchivage du chat. Veuillez réessayer.',
     loadMore: 'Charger plus',
     yes: 'Oui',
+    webSearch: 'Recherche Web',
+    codeInterpreter: 'Interpréteur de code',
+    webSearchEnabled: 'Recherche Web activée',
+    codeInterpreterEnabled: 'Interpréteur de code activé'
   },
   pt: {
     send: 'Enviar',
@@ -1150,6 +1178,10 @@ export const translations: Translations = {
     unarchiveError: 'Falha ao desarquivar chat. Por favor, tente novamente.',
     loadMore: 'Carregar mais',
     yes: 'Sim',
+    webSearch: 'Pesquisa na Web',
+    codeInterpreter: 'Intérprete de código',
+    webSearchEnabled: 'Pesquisa na Web ativada',
+    codeInterpreterEnabled: 'Intérprete de código ativado'
   },
   ru: {
     send: 'Отправить',
@@ -1301,6 +1333,10 @@ export const translations: Translations = {
     unarchiveError: 'Не удалось разархивировать чат. Попробуйте снова.',
     loadMore: 'Загрузить еще',
     yes: 'Да',
+    webSearch: 'Веб-поиск',
+    codeInterpreter: 'Интерпретатор кода',
+    webSearchEnabled: 'Веб-поиск включен',
+    codeInterpreterEnabled: 'Интерпретатор кода включен'
   },
   bn: {
     send: 'পাঠান',
@@ -1436,6 +1472,10 @@ export const translations: Translations = {
     unarchiveError: 'চ্যাট আনআর্কাইভ করতে ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন।',
     loadMore: 'আরও লোড করুন',
     yes: 'হ্যাঁ',
+    webSearch: 'ওয়েব অনুসন্ধান',
+    codeInterpreter: 'কোড ইন্টারপ্রেটার',
+    webSearchEnabled: 'ওয়েব অনুসন্ধান অনুমতি',
+    codeInterpreterEnabled: 'কোড ইন্টারপ্রেটার অনুমতি'
   },
   ja: {
     send: '送信',
@@ -1572,6 +1612,10 @@ export const translations: Translations = {
     archiveError: 'チャットのアーカイブに失敗しました。もう一度お試しください。',
     unarchiveError: 'チャットのアーカイブ解除に失敗しました。もう一度お試しください。',
     loadMore: 'さらに読み込む',
+    webSearch: 'ウェブ検索',
+    codeInterpreter: 'コードインタープリタ',
+    webSearchEnabled: 'ウェブ検索有効',
+    codeInterpreterEnabled: 'コードインタープリタ有効'
   }
 };
 

@@ -36,6 +36,7 @@ Interactive demo showcasing all features:
 - 📂 **Folder Support** - Organize chats into folders with drag & drop
 - 📝 **Notes Support** - Integrated markdown note editor with sidebar
 - 🗃️ **Archived Chats** - View, search, unarchive, and delete archived conversations
+- 🔌 **Integrations** - Toggle Web Search and Code Interpreter capabilities
 
 ## 🚀 Quick Start
 
@@ -200,6 +201,7 @@ openwebui-ts-embedded-sdk/
 | `history` | `boolean` | ❌ | `false` | Enable chat history sidebar |
 | `folders` | `boolean` | ❌ | `false` | Enable folder support |
 | `notes` | `boolean` | ❌ | `false` | Enable notes feature |
+| `integrations` | `boolean` | ❌ | `false` | Enable integrations support |
 
 ### Outputs
 

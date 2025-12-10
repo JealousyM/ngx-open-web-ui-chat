@@ -53,10 +53,13 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   @Input() history = false;
   @Input() folders = false;
   @Input() notes = false;
+  @Input() integrations = false;
 
   @Output() chatInitialized = new EventEmitter<void>();
   @Output() messagesChanged = new EventEmitter<number>();
   @Output() newChatCreated = new EventEmitter<string>();
+  @Output() codeInterpreterRequested = new EventEmitter<void>();
+  @Output() featuresChanged = new EventEmitter<{image_generation: boolean, web_search: boolean, code_interpreter: boolean}>();
 
   public messages = signal<ChatMessage[]>([]);
   public isLoading = signal(false);
@@ -73,6 +76,11 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   private audioRecorder?: AudioRecorder;
   private lastAudioBlob?: Blob;
   private animationFrameId?: number;
+  public features = signal<{image_generation: boolean, web_search: boolean, code_interpreter: boolean}>({
+    image_generation: false,
+    web_search: false,
+    code_interpreter: false
+  });
   
   public showRegenerateMenu = signal(false);
   public regenerateMenuTarget = signal<ChatMessage | null>(null);
@@ -207,7 +215,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
     this.uploadedFiles.set([]);
     this.inputMessage = '';
 
-    this.openWebUIService.sendMessage(message, this.chatId, history, currentFiles.length > 0 ? currentFiles : undefined).subscribe({
+    this.openWebUIService.sendMessage(message, this.chatId, history, currentFiles.length > 0 ? currentFiles : undefined, this.features()).subscribe({
       next: (chunk) => {
         this.currentResponse.update(current => current + chunk);
       },

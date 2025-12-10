@@ -22,6 +22,7 @@
 | `history` | `boolean` | `false` | Enable chat history sidebar |
 | `folders` | `boolean` | `false` | Enable folder support for organizing chats |
 | `notes` | `boolean` | `false` | Enable notes feature with markdown editor |
+| `integrations` | `boolean` | `false` | Enable integrations (web search, code interpreter) menu |
 | `style` | `Partial<CSSStyleDeclaration>` | `undefined` | Custom inline styles for the component |
 
 ### Outputs (Events)
