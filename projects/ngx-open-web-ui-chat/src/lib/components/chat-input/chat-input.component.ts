@@ -1,8 +1,9 @@
-import { Component, input, output, signal, ViewChild, ElementRef, AfterViewChecked, effect, untracked, computed } from '@angular/core';
+import { Component, input, output, signal, ViewChild, ElementRef, AfterViewChecked, OnInit, OnDestroy, effect, untracked, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Translation } from '../../i18n/translations';
-import { UploadedFile } from '../../models/chat.model';
+import { UploadedFile, ToolItem } from '../../models/chat.model';
+import { OpenWebUIService } from '../../services/openwebui-api';
 
 @Component({
   selector: 'openwebui-chat-input',
@@ -11,8 +12,9 @@ import { UploadedFile } from '../../models/chat.model';
   templateUrl: './chat-input.component.html',
   styleUrls: ['./chat-input.component.scss']
 })
-export class ChatInputComponent implements AfterViewChecked {
+export class ChatInputComponent implements OnInit, OnDestroy, AfterViewChecked {
   private canvasEmitted = false;
+  private openWebUIService = inject(OpenWebUIService);
   public isLoading = input<boolean>(false);
   public uploadedFiles = input<UploadedFile[]>([]);
   public translations = input.required<Translation>();
@@ -22,8 +24,25 @@ export class ChatInputComponent implements AfterViewChecked {
   public transcriptionError = input<string | null>(null);
   public messageText = input<string>('');
   public integrations = input<boolean>(false);
+  public tools = input<boolean>(false);
   
   private _inputMessage = signal('');
+  
+  // Tools-related signals
+  public availableTools = signal<ToolItem[]>([]);
+  public selectedToolIds = signal<string[]>([]);
+  public showToolsSubmenu = signal<boolean>(false);
+  public isLoadingTools = signal<boolean>(false);
+  public toolsError = signal<string | null>(null);
+  
+  // Tools caching
+  private toolsCache: ToolItem[] | null = null;
+  private toolsCacheTimestamp: number | null = null;
+  private readonly TOOLS_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+  
+  // Timers for menu management
+  private toolsMenuLeaveTimer: any = null;
+  private toolsSubmenuLeaveTimer: any = null;
   public showFileMenu = signal(false);
   public showIntegrationsMenu = signal(false);
   
@@ -40,6 +59,7 @@ export class ChatInputComponent implements AfterViewChecked {
   }));
   
   public featuresChanged = output<{image_generation: boolean, web_search: boolean, code_interpreter: boolean}>();
+  public toolsChanged = output<string[]>();
 
   public get inputMessage(): string {
     return this._inputMessage();
@@ -65,6 +85,23 @@ export class ChatInputComponent implements AfterViewChecked {
         this.featuresChanged.emit(feats);
       });
     });
+  }
+
+  public ngOnInit(): void {
+    // Prefetch tools if tools functionality is enabled
+    if (this.tools()) {
+      this.fetchTools();
+    }
+  }
+
+  public ngOnDestroy(): void {
+    // Clear any pending timers
+    if (this.toolsMenuLeaveTimer) {
+      clearTimeout(this.toolsMenuLeaveTimer);
+    }
+    if (this.toolsSubmenuLeaveTimer) {
+      clearTimeout(this.toolsSubmenuLeaveTimer);
+    }
   }
 
   
@@ -94,6 +131,7 @@ export class ChatInputComponent implements AfterViewChecked {
     this.showFileMenu.update(v => !v);
     if (this.showFileMenu()) {
       this.showIntegrationsMenu.set(false);
+      this.showToolsSubmenu.set(false);
     }
   }
 
@@ -101,6 +139,8 @@ export class ChatInputComponent implements AfterViewChecked {
     this.showIntegrationsMenu.update(v => !v);
     if (this.showIntegrationsMenu()) {
       this.showFileMenu.set(false);
+    } else {
+      this.showToolsSubmenu.set(false);
     }
   }
 
@@ -120,6 +160,112 @@ export class ChatInputComponent implements AfterViewChecked {
       this.codeInterpreterRequested.emit();
     }
     this.showIntegrationsMenu.set(false);
+  }
+
+  public toggleTool(toolId: string): void {
+    this.selectedToolIds.update(ids => {
+      const index = ids.indexOf(toolId);
+      if (index === -1) {
+        return [...ids, toolId];
+      } else {
+        return ids.filter(id => id !== toolId);
+      }
+    });
+    this.toolsChanged.emit(this.selectedToolIds());
+  }
+
+  public onToolsMenuClick(event: Event): void {
+    event.stopPropagation();
+    this.showToolsSubmenu.update(v => !v);
+    if (this.showToolsSubmenu() && this.availableTools().length === 0 && !this.isLoadingTools()) {
+      this.fetchTools();
+    }
+  }
+
+  public onToolsMenuHover(): void {
+    // Clear any pending close timer
+    if (this.toolsMenuLeaveTimer) {
+      clearTimeout(this.toolsMenuLeaveTimer);
+      this.toolsMenuLeaveTimer = null;
+    }
+    
+    if (!this.showToolsSubmenu()) {
+      this.showToolsSubmenu.set(true);
+      if (this.availableTools().length === 0 && !this.isLoadingTools()) {
+        this.fetchTools();
+      }
+    }
+  }
+
+  public onToolsMenuLeave(): void {
+    // Set a timer to close the submenu after a delay
+    this.toolsMenuLeaveTimer = setTimeout(() => {
+      if (!this.showToolsSubmenu()) {
+        return;
+      }
+      this.showToolsSubmenu.set(false);
+    }, 300);
+  }
+
+  public onToolIndicatorClick(): void {
+    this.showToolsSubmenu.update(v => !v);
+    if (this.showToolsSubmenu() && this.availableTools().length === 0 && !this.isLoadingTools()) {
+      this.fetchTools();
+    }
+  }
+
+  public onToolsSubmenuEnter(): void {
+    // Clear any pending close timers
+    if (this.toolsMenuLeaveTimer) {
+      clearTimeout(this.toolsMenuLeaveTimer);
+      this.toolsMenuLeaveTimer = null;
+    }
+    if (this.toolsSubmenuLeaveTimer) {
+      clearTimeout(this.toolsSubmenuLeaveTimer);
+      this.toolsSubmenuLeaveTimer = null;
+    }
+    
+    // Keep submenu open when mouse enters it
+    this.showToolsSubmenu.set(true);
+  }
+
+  public onToolsSubmenuLeave(): void {
+    // Set a timer to close the submenu after a delay
+    this.toolsSubmenuLeaveTimer = setTimeout(() => {
+      this.showToolsSubmenu.set(false);
+    }, 200);
+  }
+
+  public async fetchTools(): Promise<void> {
+    if (this.isLoadingTools()) {
+      return;
+    }
+    
+    // Check if we have valid cached tools
+    const now = Date.now();
+    if (this.toolsCache && 
+        this.toolsCacheTimestamp && 
+        (now - this.toolsCacheTimestamp) < this.TOOLS_CACHE_DURATION) {
+      this.availableTools.set(this.toolsCache);
+      return;
+    }
+    
+    this.isLoadingTools.set(true);
+    this.toolsError.set(null);
+    
+    try {
+      const tools = await this.openWebUIService.getTools();
+      this.availableTools.set(tools);
+      
+      // Cache the tools
+      this.toolsCache = tools;
+      this.toolsCacheTimestamp = now;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch tools';
+      this.toolsError.set(errorMessage);
+    } finally {
+      this.isLoadingTools.set(false);
+    }
   }
   
   public triggerFileUpload(): void {

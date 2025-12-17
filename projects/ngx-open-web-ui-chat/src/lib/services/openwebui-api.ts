@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { lexer } from 'marked';
-import { ChatSession, OpenWebUIChatConfig, Model, ChatHistoryItem, ChatListResponse, FolderItem, FolderListResponse, NoteItem } from '../models/chat.model';
+import { ChatSession, OpenWebUIChatConfig, Model, ChatHistoryItem, ChatListResponse, FolderItem, FolderListResponse, NoteItem, ToolItem } from '../models/chat.model';
 
 export interface ChatEvent {
   chat_id: string;
@@ -451,10 +451,11 @@ export class OpenWebUIService {
     });
   }
 
-  public sendMessage(message: string, chatId?: string, conversationHistory?: Array<{ role: string; content: string; id?: string; timestamp?: number }>, files?: any[], features?: {image_generation: boolean, web_search: boolean, code_interpreter: boolean}): Observable<string> {
+  public sendMessage(message: string, chatId?: string, conversationHistory?: Array<{ role: string; content: string; id?: string; timestamp?: number }>, files?: any[], features?: {image_generation: boolean, web_search: boolean, code_interpreter: boolean}, toolIds?: string[]): Observable<string> {
     this.debugLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     this.debugLog('📤 Sending message:', message);
     this.debugLog('Files attached:', files?.length || 0);
+    this.debugLog('Tools selected:', toolIds?.length || 0);
     this.debugLog('Socket.IO connected:', this.socketConnected());
     
     this.abortController = new AbortController();
@@ -521,6 +522,10 @@ export class OpenWebUIService {
       },
       variables: this.getCurrentDateTime()
     };
+
+    if (toolIds && toolIds.length > 0) {
+      request.tool_ids = toolIds;
+    }
 
     if (chatId && sessionId) {
       request.session_id = sessionId;
@@ -784,6 +789,34 @@ export class OpenWebUIService {
     const data = await response.json();
     this.debugLog('Models fetched:', data);
     return data;
+  }
+
+  public async getTools(): Promise<ToolItem[]> {
+    const cfg = this.config();
+    if (!cfg) {
+      throw new Error('OpenWebUIService not configured');
+    }
+
+    this.debugLog('Fetching tools list');
+    const endpoint = cfg.endpoint?.replace(/\/$/, '') || '';
+    const url = `${endpoint}/api/v1/tools/`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${cfg.apiKey}`,
+        'Content-Type': 'application/json',
+        'Cookie': `token=${cfg.apiKey}`
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    this.debugLog('Tools fetched:', data);
+    return data as ToolItem[];
   }
 
   public async getModelById(modelId: string): Promise<any> {

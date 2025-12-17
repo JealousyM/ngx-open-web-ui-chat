@@ -124,6 +124,7 @@
     [transcriptionError]="transcriptionError()"
     [messageText]="inputMessage"
     [integrations]="integrations"
+    [tools]="tools"
     (sendMessage)="sendMessage($event)"
     (stopGeneration)="stopGeneration()"
     (fileSelected)="onFileSelected($event)"
@@ -137,6 +138,7 @@
     (spectrogramCanvasReady)="onSpectrogramCanvasReady($event)"
     (codeInterpreterRequested)="codeInterpreterRequested.emit()"
     (featuresChanged)="featuresChanged.emit($event); features.set($event)"
+    (toolsChanged)="handleToolsChanged($event)"
   />
 
   @if (showSelectionMenu()) {

@@ -171,6 +171,11 @@ export interface Translation {
   codeInterpreter?: string;
   webSearchEnabled?: string;
   codeInterpreterEnabled?: string;
+  tools?: string;
+  noToolsAvailable?: string;
+  toolsEnabled?: string;
+  loadingTools?: string;
+  toolsError?: string;
 }
 
 export interface Translations {
@@ -347,7 +352,12 @@ export const translations: Translations = {
     webSearch: 'Web Search',
     codeInterpreter: 'Code Interpreter',
     webSearchEnabled: 'Web Search Enabled',
-    codeInterpreterEnabled: 'Code Interpreter Enabled'
+    codeInterpreterEnabled: 'Code Interpreter Enabled',
+    tools: 'Tools',
+    noToolsAvailable: 'No tools available',
+    toolsEnabled: 'Tools Enabled',
+    loadingTools: 'Loading tools...',
+    toolsError: 'Failed to load tools'
   },
   zh: {
     send: '发送',
@@ -487,6 +497,11 @@ export const translations: Translations = {
     codeInterpreter: '代码解释器',
     webSearchEnabled: '网页搜索已启用',
     codeInterpreterEnabled: '代码解释器已启用',
+    tools: '工具',
+    noToolsAvailable: '没有可用工具',
+    toolsEnabled: '工具已启用',
+    loadingTools: '加载工具中...',
+    toolsError: '加载工具失败'
   },
   hi: {
     send: 'भेजें',
@@ -625,7 +640,12 @@ export const translations: Translations = {
     webSearch: 'वेब खोज',
     codeInterpreter: 'कोड इंटरप्रेटर',
     webSearchEnabled: 'वेब खोज अनुमति',
-    codeInterpreterEnabled: 'कोड इंटरप्रेटर अनुमति'
+    codeInterpreterEnabled: 'कोड इंटरप्रेटर अनुमति',
+    tools: 'उपकरण',
+    noToolsAvailable: 'कोई उपकरण उपलब्ध नहीं',
+    toolsEnabled: 'उपकरण सक्षम',
+    loadingTools: 'उपकरण लोड हो रहे हैं...',
+    toolsError: 'उपकरण लोड करने में विफल'
   },
   es: {
     send: 'Enviar',
@@ -764,7 +784,12 @@ export const translations: Translations = {
     webSearch: 'Búsqueda web',
     codeInterpreter: 'Intérprete de código',
     webSearchEnabled: 'Búsqueda web habilitada',
-    codeInterpreterEnabled: 'Intérprete de código habilitado'
+    codeInterpreterEnabled: 'Intérprete de código habilitado',
+    tools: 'Herramientas',
+    noToolsAvailable: 'No hay herramientas disponibles',
+    toolsEnabled: 'Herramientas habilitadas',
+    loadingTools: 'Cargando herramientas...',
+    toolsError: 'Error al cargar herramientas'
   },
   ar: {
     send: 'إرسال',
@@ -903,7 +928,12 @@ export const translations: Translations = {
     webSearch: 'بحث الويب',
     codeInterpreter: 'مفسر التعليمات البرمجية',
     webSearchEnabled: 'بحث الويب مفعل',
-    codeInterpreterEnabled: 'مفسر التعليمات البرمجية مفعل'
+    codeInterpreterEnabled: 'مفسر التعليمات البرمجية مفعل',
+    tools: 'أدوات',
+    noToolsAvailable: 'لا توجد أدوات متاحة',
+    toolsEnabled: 'الأدوات مفعلة',
+    loadingTools: 'جار تحميل الأدوات...',
+    toolsError: 'فشل تحميل الأدوات'
   },
   fr: {
     send: 'Envoyer',
@@ -1042,7 +1072,12 @@ export const translations: Translations = {
     webSearch: 'Recherche Web',
     codeInterpreter: 'Interpréteur de code',
     webSearchEnabled: 'Recherche Web activée',
-    codeInterpreterEnabled: 'Interpréteur de code activé'
+    codeInterpreterEnabled: 'Interpréteur de code activé',
+    tools: 'Outils',
+    noToolsAvailable: 'Aucun outil disponible',
+    toolsEnabled: 'Outils activés',
+    loadingTools: 'Chargement des outils...',
+    toolsError: 'Échec du chargement des outils'
   },
   pt: {
     send: 'Enviar',
@@ -1181,7 +1216,12 @@ export const translations: Translations = {
     webSearch: 'Pesquisa na Web',
     codeInterpreter: 'Intérprete de código',
     webSearchEnabled: 'Pesquisa na Web ativada',
-    codeInterpreterEnabled: 'Intérprete de código ativado'
+    codeInterpreterEnabled: 'Intérprete de código ativado',
+    tools: 'Ferramentas',
+    noToolsAvailable: 'Nenhuma ferramenta disponível',
+    toolsEnabled: 'Ferramentas ativadas',
+    loadingTools: 'Carregando ferramentas...',
+    toolsError: 'Falha ao carregar ferramentas'
   },
   ru: {
     send: 'Отправить',
@@ -1336,7 +1376,12 @@ export const translations: Translations = {
     webSearch: 'Веб-поиск',
     codeInterpreter: 'Интерпретатор кода',
     webSearchEnabled: 'Веб-поиск включен',
-    codeInterpreterEnabled: 'Интерпретатор кода включен'
+    codeInterpreterEnabled: 'Интерпретатор кода включен',
+    tools: 'Инструменты',
+    noToolsAvailable: 'Нет доступных инструментов',
+    toolsEnabled: 'Инструменты включены',
+    loadingTools: 'Загрузка инструментов...',
+    toolsError: 'Не удалось загрузить инструменты'
   },
   bn: {
     send: 'পাঠান',
@@ -1475,7 +1520,12 @@ export const translations: Translations = {
     webSearch: 'ওয়েব অনুসন্ধান',
     codeInterpreter: 'কোড ইন্টারপ্রেটার',
     webSearchEnabled: 'ওয়েব অনুসন্ধান অনুমতি',
-    codeInterpreterEnabled: 'কোড ইন্টারপ্রেটার অনুমতি'
+    codeInterpreterEnabled: 'কোড ইন্টারপ্রেটার অনুমতি',
+    tools: 'সরঞ্জাম',
+    noToolsAvailable: 'কোনো সরঞ্জাম উপলব্ধ নেই',
+    toolsEnabled: 'সরঞ্জাম সক্রিয়',
+    loadingTools: 'সরঞ্জাম লোড হচ্ছে...',
+    toolsError: 'সরঞ্জাম লোড করতে ব্যর্থ'
   },
   ja: {
     send: '送信',
@@ -1615,7 +1665,12 @@ export const translations: Translations = {
     webSearch: 'ウェブ検索',
     codeInterpreter: 'コードインタープリタ',
     webSearchEnabled: 'ウェブ検索有効',
-    codeInterpreterEnabled: 'コードインタープリタ有効'
+    codeInterpreterEnabled: 'コードインタープリタ有効',
+    tools: 'ツール',
+    noToolsAvailable: '利用可能なツールがありません',
+    toolsEnabled: 'ツール有効',
+    loadingTools: 'ツールを読み込み中...',
+    toolsError: 'ツールの読み込みに失敗しました'
   }
 };
 

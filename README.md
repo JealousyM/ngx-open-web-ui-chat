@@ -37,6 +37,7 @@ Interactive demo showcasing all features:
 - 📝 **Notes Support** - Integrated markdown note editor with sidebar
 - 🗃️ **Archived Chats** - View, search, unarchive, and delete archived conversations
 - 🔌 **Integrations** - Toggle Web Search and Code Interpreter capabilities
+- 🛠️ **Tools Support** - Access and enable server-side tools from Open WebUI API
 
 ## 🚀 Quick Start
 
@@ -150,8 +151,9 @@ openwebui-ts-embedded-sdk/
 │       │   │   │   ├── folder-item/
 │       │   │   │   └── folder-context-menu/
 │       │   │   ├── archived-chats-modal/       ← Archived chats modal
-│       │   │   ├── note-editor/            ← Note editor component
-│       │   │   ├── notes-sidebar/          ← Notes sidebar component
+│       │   │   ├── note-editor/                ← Note editor component
+│       │   │   ├── notes-sidebar/              ← Notes sidebar component
+│       │   │   ├── tools-menu/                 ← Tools selection submenu
 │       │   │   ├── chat-search-modal/
 │       │   │   ├── confirm-dialog/
 │       │   │   ├── error-banner/
@@ -202,6 +204,7 @@ openwebui-ts-embedded-sdk/
 | `folders` | `boolean` | ❌ | `false` | Enable folder support |
 | `notes` | `boolean` | ❌ | `false` | Enable notes feature |
 | `integrations` | `boolean` | ❌ | `false` | Enable integrations support |
+| `tools` | `boolean` | ❌ | `false` | Enable tools selection menu |
 
 ### Outputs
 
@@ -391,7 +394,7 @@ MIT License - see LICENSE file for details
 
 ---
 
-**Status:** Production-ready v1.0.14
+**Status:** Production-ready v1.0.16
 **Angular Version:** 20.x  
 **Node Required:** >=20.19.0  
 

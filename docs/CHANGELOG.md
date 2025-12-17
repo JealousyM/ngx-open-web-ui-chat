@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.0.16] - 2025-12-17
+
+### Added
+
+- 🛠️ **Tools Support** - Access and enable server-side tools from Open WebUI API
+  - **Tools Menu** - New "Tools" option in the "+" dropdown menu
+  - **Tool Selection** - Select/deselect tools with visual checkmarks
+  - **Tool Indicator** - Visual badge showing enabled tools in input area
+  - **API Integration** - Fetches available tools from `/api/v1/tools/` endpoint
+  - **Completion Request** - Selected tool IDs included in `tool_ids` array
+  - **Prefetch Optimization** - Tools list prefetched on component init for faster display
+- 🌍 **Tools Translations**
+  - Added `tools`, `noToolsAvailable`, `toolsEnabled`, `loadingTools`, `toolsError` translation keys
+  - Translations for all 10 supported languages
+
+### Technical Details
+- Added `ToolItem` and `ToolSpec` interfaces to chat.model.ts
+- Added `getTools()` method to OpenWebUIService
+- Extended ChatInputComponent with tools state management signals
+- Added `toolsChanged` EventEmitter for tool selection changes
+- Updated `sendMessage` to include `tool_ids` in completion request payload
+
 ## [1.0.15] - 2025-12-10
 
 ### Added
@@ -341,6 +363,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **1.0.16** - Tools support with API integration and selection menu
+- **1.0.15** - Integrations support (web search, code interpreter)
 - **1.0.14** - Archived chats modal with search, unarchive, and delete functionality
 - **1.0.13** - Notes support with integrated markdown editor
 - **1.0.12** - Folder support with drag & drop organization
@@ -354,6 +378,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **1.0.1** - Initial release
 
 ## Migration Guides
+
+### Upgrading to 1.0.16
+
+No breaking changes. Simply update:
+
+```bash
+npm update ngx-open-web-ui-chat
+```
+
+**What's new:**
+- Tools menu automatically appears in the "+" dropdown when `[tools]="true"`
+- Select tools to include them in completion requests
+- Tool indicator badge shows when tools are enabled
+- All features work out of the box with no configuration needed
+
+**To enable tools:**
+```typescript
+<openwebui-chat
+  [tools]="true"
+  ...>
+</openwebui-chat>
+```
+
+**No code changes required** - tools functionality is automatically available when enabled.
 
 ### Upgrading to 1.0.9
 

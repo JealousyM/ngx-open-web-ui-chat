@@ -9,6 +9,7 @@ This folder contains all project documentation files.
 | File | Description |
 |------|-------------|
 | **[API.md](./API.md)** | Complete API reference for the component |
+| **[CHANGELOG.md](./CHANGELOG.md)** | Version history and release notes |
 
 ### Feature Guides
 
@@ -29,9 +30,9 @@ This folder contains all project documentation files.
 docs/
 ├── README.md                        ← You are here
 ├── API.md                           ← API Reference
+├── CHANGELOG.md                     ← Version History
 ├── MARKDOWN.md                      ← Markdown Features
 ├── I18N.md                          ← Multi-language
-├── SETUP.md                         ← Installation
 ```
 
 ## 🔍 Finding Information
@@ -46,6 +47,7 @@ docs/
 
 - **Markdown**: [MARKDOWN.md](./MARKDOWN.md)
 - **Languages**: [I18N.md](./I18N.md)
+- **Changelog**: [CHANGELOG.md](./CHANGELOG.md)
 
 ## 📝 Contributing to Documentation
 

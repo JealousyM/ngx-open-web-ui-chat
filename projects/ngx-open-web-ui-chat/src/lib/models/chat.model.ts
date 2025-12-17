@@ -277,3 +277,39 @@ export interface NoteContextMenuEvent {
   mouseEvent: MouseEvent;
 }
 
+// Tool interfaces
+export interface ToolManifest {
+  title: string;
+  description: string;
+  repository?: string;
+  author?: string;
+  author_url?: string;
+  version?: string;
+}
+
+export interface ToolMeta {
+  description: string;
+  manifest?: ToolManifest;
+}
+
+export interface ToolSpec {
+  name: string;
+  description: string;
+  parameters: {
+    properties: Record<string, any>;
+    required?: string[];
+    type: string;
+  };
+}
+
+export interface ToolItem {
+  id: string;
+  user_id: string;
+  name: string;
+  meta: ToolMeta;
+  access_control?: Record<string, any>;
+  updated_at: number;
+  created_at: number;
+  specs?: ToolSpec[];
+}
+

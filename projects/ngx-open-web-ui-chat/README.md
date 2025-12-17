@@ -32,7 +32,8 @@ Angular 20 component library for embedding OpenWebUI chat with Socket.IO streami
 📂 **Folder Support** - Organize chats into folders with drag & drop  
 📝 **Notes Support** - Integrated markdown note editor with sidebar  
 🗃️ **Archived Chats** - View, search, unarchive, and delete archived conversations  
-🔌 **Integrations** - Toggle Web Search and Code Interpreter capabilities
+🔌 **Integrations** - Toggle Web Search and Code Interpreter capabilities  
+🛠️ **Tools Support** - Access and enable server-side tools from Open WebUI API
 
 
 ## Installation
@@ -115,6 +116,7 @@ export class AppComponent {}
 | `folders` | `boolean` | ❌ | `false` | Enable folder support |
 | `notes` | `boolean` | ❌ | `false` | Enable notes feature |
 | `integrations` | `boolean` | ❌ | `false` | Enable integrations menu |
+| `tools` | `boolean` | ❌ | `false` | Enable tools selection menu |
 | `style` | `Partial<CSSStyleDeclaration>` | ❌ | - | Custom CSS styles |
 
 ### Outputs
@@ -470,7 +472,14 @@ The library uses **Socket.IO** for real-time bidirectional communication with Op
 
 ## Version History
 
-### 1.0.15 (Current)
+### 1.0.16 (Current)
+- ✅ **Tools Support** - Access and enable server-side tools from Open WebUI API
+- ✅ **Tools Menu** - Select/deselect tools with visual checkmarks
+- ✅ **Tool Indicator** - Visual badge showing enabled tools
+- ✅ **API Integration** - Fetches tools from `/api/v1/tools/` endpoint
+- ✅ **Translations** - Added tools-related translation keys
+
+### 1.0.15
 - ✅ **Integrations Support** - Toggle external capabilities
 - ✅ **Web Search** - Enable/disable web search
 - ✅ **Code Interpreter** - Enable/disable code execution
@@ -734,6 +743,40 @@ Organize your conversations efficiently with folders:
 </openwebui-chat>
 ```
 
+## Tools Support
+
+Access and enable server-side tools from the Open WebUI API:
+
+### Features
+
+- 🛠️ **Tools Menu** - Access tools via the "+" dropdown menu
+- ✅ **Selection** - Select/deselect tools with visual checkmarks
+- 🔵 **Tool Indicator** - Badge showing enabled tools in input area
+- ⚡ **Prefetch** - Tools list prefetched on init for faster display
+- 🔗 **API Integration** - Selected tool IDs sent in completion requests
+
+### Usage
+
+1. **Enable Tools**: Set `[tools]="true"` in your component
+2. **Access Menu**: Click "+" button and select "Tools"
+3. **Select Tools**: Click tools to toggle selection
+4. **Send Message**: Selected tools are automatically included in requests
+
+```typescript
+<openwebui-chat
+  [tools]="true"
+  ...>
+</openwebui-chat>
+```
+
+### How It Works
+
+1. Component fetches available tools from `/api/v1/tools/`
+2. Tools appear in a submenu with name and description
+3. Selected tools show a checkmark indicator
+4. Tool indicator badge appears when tools are enabled
+5. `tool_ids` array is included in completion request payload
+
 ## Archived Chats
 
 Access and manage your archived conversations with the archived chats modal:
@@ -772,6 +815,7 @@ Access and manage your archived conversations with the archived chats modal:
 - [x] Folder support (Drag & Drop)
 - [x] Notes support with markdown editor
 - [x] Archived chats modal with search
+- [x] Tools support with API integration
 
 ## Contributing
 

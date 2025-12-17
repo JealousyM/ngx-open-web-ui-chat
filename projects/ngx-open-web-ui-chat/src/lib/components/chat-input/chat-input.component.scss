@@ -116,10 +116,35 @@
           background: #e6f7f2;
           color: #dc3545; // Turn red on hover to indicate removal? Or just keep green
         }
+
+        &.tools-active {
+          color: #00a67e;
+          background: rgba(0, 166, 126, 0.1);
+          border: 1px solid rgba(0, 166, 126, 0.2);
+
+          &:hover {
+            background: #e6f7f2;
+            color: #00a67e;
+            border-color: rgba(0, 166, 126, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 166, 126, 0.2);
+          }
+
+          &:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 166, 126, 0.15);
+          }
+
+          &:focus {
+            outline: 2px solid rgba(0, 166, 126, 0.4);
+            outline-offset: 2px;
+          }
+        }
       }
 
       .file-menu,
-      .integrations-menu {
+      .integrations-menu,
+      .tools-submenu {
         position: absolute;
         bottom: 100%;
         left: 0;
@@ -169,6 +194,17 @@
             color: #333;
           }
 
+          .arrow-icon {
+            font-size: 16px;
+            color: #999;
+            transition: transform 0.2s ease;
+          }
+
+          &:hover .arrow-icon {
+            transform: translateX(2px);
+            color: #666;
+          }
+
           .toggle-switch {
             width: 32px;
             height: 18px;
@@ -196,6 +232,118 @@
               .toggle-slider {
                 transform: translateX(14px);
               }
+            }
+          }
+        }
+      }
+
+      .tools-submenu {
+        left: 200px; // Position to the right of integrations menu
+        min-width: 200px;
+      }
+
+      .tools-submenu {
+        // Enhanced positioning and container styling
+        z-index: 1000;
+        max-height: 300px;
+        overflow-y: auto;
+        animation: slideInUp 0.2s ease-out;
+        
+        // Custom scrollbar styling
+        &::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        &::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 3px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+          background: #c1c1c1;
+          border-radius: 3px;
+          
+          &:hover {
+            background: #a8a8a8;
+          }
+        }
+
+        .menu-item {
+          // Enhanced loading state styling
+          &.loading-item {
+            pointer-events: none;
+            opacity: 0.8;
+            background: #f8f9fa;
+            border-left: 3px solid #007bff;
+
+            .spinner {
+              width: 16px;
+              height: 16px;
+              border: 2px solid #e0e0e0;
+              border-top-color: #007bff;
+              border-radius: 50%;
+              animation: spin 0.8s linear infinite;
+              margin-right: 8px;
+            }
+            
+            .menu-text {
+              color: #6c757d;
+              font-style: italic;
+            }
+          }
+
+          // Enhanced error state styling
+          &.error-item {
+            pointer-events: none;
+            color: #dc3545;
+            background: #f8d7da;
+            border-left: 3px solid #dc3545;
+
+            .menu-icon {
+              color: #dc3545;
+              font-size: 16px;
+            }
+            
+            .menu-text {
+              font-weight: 500;
+            }
+          }
+
+          // Enhanced disabled/empty state styling
+          &.disabled-item {
+            pointer-events: none;
+            opacity: 0.6;
+            color: #6c757d;
+            background: #f8f9fa;
+            font-style: italic;
+            text-align: center;
+            
+            .menu-text {
+              color: #6c757d;
+            }
+          }
+
+          // Enhanced tool item styling
+          &.tool-item {
+            .menu-item-content {
+              .menu-text {
+                font-weight: 500;
+                color: #333;
+                transition: color 0.2s ease;
+              }
+            }
+
+            // Enhanced hover states
+            &:hover {
+              .menu-item-content .menu-text {
+                color: #007bff;
+              }
+            }
+            
+            // Focus state for accessibility
+            &:focus {
+              outline: 2px solid #007bff;
+              outline-offset: -2px;
             }
           }
         }
@@ -400,6 +548,17 @@
   @keyframes spin {
     to {
       transform: rotate(360deg);
+    }
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 

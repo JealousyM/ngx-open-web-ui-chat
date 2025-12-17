@@ -29,7 +29,12 @@ Modern test application for demonstrating the `ngx-open-web-ui-chat` library fea
 - Toggle Code Interpreter
 - Real-time feature management
 
-### 5. **Smart Model Loading**
+### 6. **Tools Support**
+- Access server-side tools from Open WebUI API
+- Select/deselect tools with visual indicators
+- Tools included in completion requests
+
+### 7. **Smart Model Loading**
 - "Show Models" button active only when Host and API Key are provided
 - Automatic loading of available models list
 - Loading indicator

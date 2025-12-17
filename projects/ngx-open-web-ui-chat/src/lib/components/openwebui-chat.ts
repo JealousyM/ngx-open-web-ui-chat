@@ -54,6 +54,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   @Input() folders = false;
   @Input() notes = false;
   @Input() integrations = false;
+  @Input() tools = false;
 
   @Output() chatInitialized = new EventEmitter<void>();
   @Output() messagesChanged = new EventEmitter<number>();
@@ -67,6 +68,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   public inputMessage = '';
   public uploadedFiles = signal<UploadedFile[]>([]);
   public isUploadingFile = signal(false);
+  public selectedToolIds = signal<string[]>([]);
   
   public isRecording = signal(false);
   public recordingError = signal<string | null>(null);
@@ -190,10 +192,15 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
     });
   }
 
+  public handleToolsChanged(toolIds: string[]): void {
+    this.selectedToolIds.set(toolIds);
+  }
+
   public sendMessage(message: string): void {
     if (!message.trim()) return;
 
     const currentFiles = [...this.uploadedFiles()];
+    const currentToolIds = [...this.selectedToolIds()];
     
     const history = this.messages().map(msg => ({ role: msg.role, content: msg.content, id: msg.id }));
     
@@ -215,7 +222,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
     this.uploadedFiles.set([]);
     this.inputMessage = '';
 
-    this.openWebUIService.sendMessage(message, this.chatId, history, currentFiles.length > 0 ? currentFiles : undefined, this.features()).subscribe({
+    this.openWebUIService.sendMessage(message, this.chatId, history, currentFiles.length > 0 ? currentFiles : undefined, this.features(), currentToolIds.length > 0 ? currentToolIds : undefined).subscribe({
       next: (chunk) => {
         this.currentResponse.update(current => current + chunk);
       },
@@ -604,7 +611,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
     this.startRegeneration(message.id!);
     this.closeRegenerateMenu();
 
-    this.openWebUIService.sendMessage(prompt, this.chatId, conversationHistory).subscribe({
+    this.openWebUIService.sendMessage(prompt, this.chatId, conversationHistory, undefined, this.features(), this.selectedToolIds().length > 0 ? this.selectedToolIds() : undefined).subscribe({
       next: (chunk) => {
         this.currentResponse.update(current => current + chunk);
         
@@ -860,7 +867,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
     this.startRegeneration(message.id!);
     this.closeRegenerateMenu();
 
-    this.openWebUIService.sendMessage(customInput, this.chatId, conversationHistory).subscribe({
+    this.openWebUIService.sendMessage(customInput, this.chatId, conversationHistory, undefined, this.features(), this.selectedToolIds().length > 0 ? this.selectedToolIds() : undefined).subscribe({
       next: (chunk) => {
         this.currentResponse.update(current => current + chunk);
         
@@ -998,7 +1005,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
     this.startRegeneration(message.id!);
     this.closeRegenerateMenu();
 
-    this.openWebUIService.sendMessage(previousUserMessage.content, this.chatId, conversationHistory).subscribe({
+    this.openWebUIService.sendMessage(previousUserMessage.content, this.chatId, conversationHistory, undefined, this.features(), this.selectedToolIds().length > 0 ? this.selectedToolIds() : undefined).subscribe({
       next: (chunk) => {
         this.currentResponse.update(current => current + chunk);
         

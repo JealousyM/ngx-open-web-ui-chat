@@ -23,6 +23,7 @@
 | `folders` | `boolean` | `false` | Enable folder support for organizing chats |
 | `notes` | `boolean` | `false` | Enable notes feature with markdown editor |
 | `integrations` | `boolean` | `false` | Enable integrations (web search, code interpreter) menu |
+| `tools` | `boolean` | `false` | Enable tools selection menu for server-side tools |
 | `style` | `Partial<CSSStyleDeclaration>` | `undefined` | Custom inline styles for the component |
 
 ### Outputs (Events)
@@ -356,6 +357,41 @@ interface OpenWebUIChatConfig {
   endpoint: string;
   style?: Partial<CSSStyleDeclaration>;
   debug?: boolean;
+}
+```
+
+### ToolItem
+
+```typescript
+interface ToolItem {
+  id: string;
+  user_id: string;
+  name: string;
+  meta: {
+    description: string;
+    manifest?: {
+      title: string;
+      description: string;
+      repository?: string;
+      author?: string;
+      author_url?: string;
+      version?: string;
+    };
+  };
+  access_control?: Record<string, any>;
+  updated_at: number;
+  created_at: number;
+  specs?: ToolSpec[];
+}
+
+interface ToolSpec {
+  name: string;
+  description: string;
+  parameters: {
+    properties: Record<string, any>;
+    required?: string[];
+    type: string;
+  };
 }
 ```
 
