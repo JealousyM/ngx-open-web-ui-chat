@@ -24,6 +24,7 @@
 | `notes` | `boolean` | `false` | Enable notes feature with markdown editor |
 | `integrations` | `boolean` | `false` | Enable integrations (web search, code interpreter) menu |
 | `tools` | `boolean` | `false` | Enable tools selection menu for server-side tools |
+| `showReferenceChats` | `boolean` | `false` | Enable reference chat selection menu |
 | `style` | `Partial<CSSStyleDeclaration>` | `undefined` | Custom inline styles for the component |
 
 ### Outputs (Events)
@@ -392,6 +393,17 @@ interface ToolSpec {
     required?: string[];
     type: string;
   };
+}
+```
+
+### ReferenceChatFile
+
+```typescript
+interface ReferenceChatFile {
+  id: string;
+  type: 'chat';
+  name: string;
+  status: 'processed';
 }
 ```
 

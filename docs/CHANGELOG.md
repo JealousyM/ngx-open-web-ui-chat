@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.0.17] - 2025-12-22
+
+### Added
+
+- 💬 **Reference Chat Support** - Reference previous conversations in new messages
+  - **Reference Chat Menu** - New "Reference Chat" option in the "+" dropdown menu
+  - **Chat Selection** - Browse and select from existing chats to reference
+  - **Visual Indicator** - Referenced chats appear as badges in the input area
+  - **Pagination** - Load more chats with infinite scroll in selection menu
+  - **API Integration** - Referenced chat IDs included in completion requests
+  - **Prefetch Optimization** - Chats list loaded on menu open for faster display
+- 🌍 **Reference Chat Translations**
+  - Added `referenceChat`, `selectReferenceChat`, `noChatsAvailable` translation keys
+  - Translations for all 10 supported languages
+
+### Technical Details
+- Added `ReferenceChatFile` interface to chat.model.ts
+- Added `getChatsForReference()` method to OpenWebUIService
+- Extended ChatInputComponent with reference chat state management signals
+- Added `referenceChatSelected` EventEmitter for chat selection changes
+- Added `showReferenceChats` input to enable/disable the feature
+- Updated `sendMessage` to include referenced chats in request payload
+
 ## [1.0.16] - 2025-12-17
 
 ### Added
@@ -363,6 +386,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **1.0.17** - Reference Chat support for referencing previous conversations
 - **1.0.16** - Tools support with API integration and selection menu
 - **1.0.15** - Integrations support (web search, code interpreter)
 - **1.0.14** - Archived chats modal with search, unarchive, and delete functionality
@@ -378,6 +402,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **1.0.1** - Initial release
 
 ## Migration Guides
+
+### Upgrading to 1.0.17
+
+No breaking changes. Simply update:
+
+```bash
+npm update ngx-open-web-ui-chat
+```
+
+**What's new:**
+- Reference Chat menu automatically appears in the "+" dropdown when `[showReferenceChats]="true"`
+- Select previous chats to reference them in your messages
+- Referenced chats appear as badges in the input area
+- All features work out of the box with no configuration needed
+
+**To enable reference chats:**
+```typescript
+<openwebui-chat
+  [showReferenceChats]="true"
+  ...>
+</openwebui-chat>
+```
+
+**No code changes required** - reference chat functionality is automatically available when enabled.
 
 ### Upgrading to 1.0.16
 

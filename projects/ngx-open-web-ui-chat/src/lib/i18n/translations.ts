@@ -176,6 +176,10 @@ export interface Translation {
   toolsEnabled?: string;
   loadingTools?: string;
   toolsError?: string;
+  // Reference Chat
+  referenceChat?: string;
+  selectReferenceChat?: string;
+  noChatsAvailable?: string;
 }
 
 export interface Translations {
@@ -357,7 +361,10 @@ export const translations: Translations = {
     noToolsAvailable: 'No tools available',
     toolsEnabled: 'Tools Enabled',
     loadingTools: 'Loading tools...',
-    toolsError: 'Failed to load tools'
+    toolsError: 'Failed to load tools',
+    referenceChat: 'Reference Chat',
+    selectReferenceChat: 'Select a chat',
+    noChatsAvailable: 'No chats available'
   },
   zh: {
     send: '发送',
@@ -501,7 +508,10 @@ export const translations: Translations = {
     noToolsAvailable: '没有可用工具',
     toolsEnabled: '工具已启用',
     loadingTools: '加载工具中...',
-    toolsError: '加载工具失败'
+    toolsError: '加载工具失败',
+    referenceChat: '引用对话',
+    selectReferenceChat: '选择一个对话',
+    noChatsAvailable: '没有可用的对话'
   },
   hi: {
     send: 'भेजें',
@@ -645,7 +655,10 @@ export const translations: Translations = {
     noToolsAvailable: 'कोई उपकरण उपलब्ध नहीं',
     toolsEnabled: 'उपकरण सक्षम',
     loadingTools: 'उपकरण लोड हो रहे हैं...',
-    toolsError: 'उपकरण लोड करने में विफल'
+    toolsError: 'उपकरण लोड करने में विफल',
+    referenceChat: 'संदर्भ चैट',
+    selectReferenceChat: 'एक चैट चुनें',
+    noChatsAvailable: 'कोई चैट उपलब्ध नहीं'
   },
   es: {
     send: 'Enviar',
@@ -789,7 +802,10 @@ export const translations: Translations = {
     noToolsAvailable: 'No hay herramientas disponibles',
     toolsEnabled: 'Herramientas habilitadas',
     loadingTools: 'Cargando herramientas...',
-    toolsError: 'Error al cargar herramientas'
+    toolsError: 'Error al cargar herramientas',
+    referenceChat: 'Chat de referencia',
+    selectReferenceChat: 'Selecciona un chat',
+    noChatsAvailable: 'No hay chats disponibles'
   },
   ar: {
     send: 'إرسال',
@@ -933,7 +949,10 @@ export const translations: Translations = {
     noToolsAvailable: 'لا توجد أدوات متاحة',
     toolsEnabled: 'الأدوات مفعلة',
     loadingTools: 'جار تحميل الأدوات...',
-    toolsError: 'فشل تحميل الأدوات'
+    toolsError: 'فشل تحميل الأدوات',
+    referenceChat: 'محادثة مرجعية',
+    selectReferenceChat: 'اختر محادثة',
+    noChatsAvailable: 'لا توجد محادثات متاحة'
   },
   fr: {
     send: 'Envoyer',
@@ -1077,7 +1096,10 @@ export const translations: Translations = {
     noToolsAvailable: 'Aucun outil disponible',
     toolsEnabled: 'Outils activés',
     loadingTools: 'Chargement des outils...',
-    toolsError: 'Échec du chargement des outils'
+    toolsError: 'Échec du chargement des outils',
+    referenceChat: 'Chat de référence',
+    selectReferenceChat: 'Sélectionner un chat',
+    noChatsAvailable: 'Aucun chat disponible'
   },
   pt: {
     send: 'Enviar',
@@ -1221,7 +1243,10 @@ export const translations: Translations = {
     noToolsAvailable: 'Nenhuma ferramenta disponível',
     toolsEnabled: 'Ferramentas ativadas',
     loadingTools: 'Carregando ferramentas...',
-    toolsError: 'Falha ao carregar ferramentas'
+    toolsError: 'Falha ao carregar ferramentas',
+    referenceChat: 'Chat de referência',
+    selectReferenceChat: 'Selecione um chat',
+    noChatsAvailable: 'Nenhum chat disponível'
   },
   ru: {
     send: 'Отправить',
@@ -1381,7 +1406,10 @@ export const translations: Translations = {
     noToolsAvailable: 'Нет доступных инструментов',
     toolsEnabled: 'Инструменты включены',
     loadingTools: 'Загрузка инструментов...',
-    toolsError: 'Не удалось загрузить инструменты'
+    toolsError: 'Не удалось загрузить инструменты',
+    referenceChat: 'Ссылка на чат',
+    selectReferenceChat: 'Выберите чат',
+    noChatsAvailable: 'Нет доступных чатов'
   },
   bn: {
     send: 'পাঠান',
@@ -1525,7 +1553,10 @@ export const translations: Translations = {
     noToolsAvailable: 'কোনো সরঞ্জাম উপলব্ধ নেই',
     toolsEnabled: 'সরঞ্জাম সক্রিয়',
     loadingTools: 'সরঞ্জাম লোড হচ্ছে...',
-    toolsError: 'সরঞ্জাম লোড করতে ব্যর্থ'
+    toolsError: 'সরঞ্জাম লোড করতে ব্যর্থ',
+    referenceChat: 'রেফারেন্স চ্যাট',
+    selectReferenceChat: 'একটি চ্যাট নির্বাচন করুন',
+    noChatsAvailable: 'কোনো চ্যাট উপলব্ধ নেই'
   },
   ja: {
     send: '送信',
@@ -1670,7 +1701,10 @@ export const translations: Translations = {
     noToolsAvailable: '利用可能なツールがありません',
     toolsEnabled: 'ツール有効',
     loadingTools: 'ツールを読み込み中...',
-    toolsError: 'ツールの読み込みに失敗しました'
+    toolsError: 'ツールの読み込みに失敗しました',
+    referenceChat: '参照チャット',
+    selectReferenceChat: 'チャットを選択',
+    noChatsAvailable: '利用可能なチャットがありません'
   }
 };
 

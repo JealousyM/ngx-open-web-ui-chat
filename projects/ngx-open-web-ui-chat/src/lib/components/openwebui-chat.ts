@@ -1,5 +1,5 @@
 import { Component, signal, Input, OnInit, Output, EventEmitter, inject, HostListener, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { ChatMessage, OpenWebUIChatConfig, UploadedFile, ChatHistoryItem, ChatContextAction, FolderItem, FolderContextAction, NoteItem } from '../models/chat.model';
+import { ChatMessage, OpenWebUIChatConfig, UploadedFile, ChatHistoryItem, ChatContextAction, FolderItem, FolderContextAction, NoteItem, ReferenceChatFile } from '../models/chat.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OpenWebUIService } from '../services/openwebui-api';
@@ -55,6 +55,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   @Input() notes = false;
   @Input() integrations = false;
   @Input() tools = false;
+  @Input() showReferenceChats = false;
 
   @Output() chatInitialized = new EventEmitter<void>();
   @Output() messagesChanged = new EventEmitter<number>();
@@ -470,6 +471,28 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
 
   public removeFile(fileId: string): void {
     this.uploadedFiles.update(files => files.filter(f => f.id !== fileId));
+  }
+
+  /**
+   * Handle reference chat selection from ChatInputComponent
+   * Adds the reference chat to uploadedFiles as a file with type "chat"
+   */
+  public handleReferenceChatSelected(referenceChatFile: ReferenceChatFile): void {
+    // Convert ReferenceChatFile to UploadedFile-compatible format with type "chat"
+    const chatFile: UploadedFile & { type: 'chat'; name: string; status: 'processed' } = {
+      id: referenceChatFile.id,
+      type: 'chat',
+      name: referenceChatFile.name,
+      filename: referenceChatFile.name,
+      user_id: '',
+      status: 'processed' as const
+    } as any;
+    
+    this.uploadedFiles.update(files => [...files, chatFile]);
+    
+    if (this.debug) {
+      console.log('[OpenWebUI] Reference chat attached:', referenceChatFile);
+    }
   }
 
   public formatFileSize(bytes: number): string {

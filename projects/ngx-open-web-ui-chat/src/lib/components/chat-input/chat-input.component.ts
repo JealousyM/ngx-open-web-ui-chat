@@ -2,7 +2,7 @@ import { Component, input, output, signal, ViewChild, ElementRef, AfterViewCheck
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Translation } from '../../i18n/translations';
-import { UploadedFile, ToolItem } from '../../models/chat.model';
+import { UploadedFile, ToolItem, ChatHistoryItem, ReferenceChatFile } from '../../models/chat.model';
 import { OpenWebUIService } from '../../services/openwebui-api';
 
 @Component({
@@ -25,6 +25,7 @@ export class ChatInputComponent implements OnInit, OnDestroy, AfterViewChecked {
   public messageText = input<string>('');
   public integrations = input<boolean>(false);
   public tools = input<boolean>(false);
+  public showReferenceChats = input<boolean>(false);
   
   private _inputMessage = signal('');
   
@@ -34,6 +35,14 @@ export class ChatInputComponent implements OnInit, OnDestroy, AfterViewChecked {
   public showToolsSubmenu = signal<boolean>(false);
   public isLoadingTools = signal<boolean>(false);
   public toolsError = signal<string | null>(null);
+  
+  // Reference chat signals
+  public showReferenceChatMenu = signal<boolean>(false);
+  public availableChatsForReference = signal<ChatHistoryItem[]>([]);
+  public isLoadingReferenceChats = signal<boolean>(false);
+  public referenceChatPage = signal<number>(1);
+  public hasMoreReferenceChats = signal<boolean>(true);
+  public referenceChatError = signal<string | null>(null);
   
   // Tools caching
   private toolsCache: ToolItem[] | null = null;
@@ -48,6 +57,7 @@ export class ChatInputComponent implements OnInit, OnDestroy, AfterViewChecked {
   
   public webSearchRequested = output<void>();
   public codeInterpreterRequested = output<void>();
+  public referenceChatSelected = output<ReferenceChatFile>();
   
   public webSearchEnabled = signal(false);
   public codeInterpreterEnabled = signal(false);
@@ -330,6 +340,69 @@ export class ChatInputComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
     } else if (!this.isRecording()) {
       this.canvasEmitted = false;
+    }
+  }
+
+  // Reference Chat Menu Methods
+
+  public toggleReferenceChatMenu(): void {
+    this.showReferenceChatMenu.update(v => !v);
+    if (this.showReferenceChatMenu() && this.availableChatsForReference().length === 0) {
+      this.fetchReferenceChats();
+    }
+  }
+
+  public fetchReferenceChats(page: number = 1): void {
+    if (this.isLoadingReferenceChats()) {
+      return;
+    }
+
+    this.isLoadingReferenceChats.set(true);
+    this.referenceChatError.set(null);
+
+    this.openWebUIService.getChatsForReference(page).subscribe({
+      next: (response) => {
+        if (page === 1) {
+          this.availableChatsForReference.set(response.chats);
+        } else {
+          this.availableChatsForReference.update(chats => [...chats, ...response.chats]);
+        }
+        this.referenceChatPage.set(page);
+        this.hasMoreReferenceChats.set(response.hasMore);
+        this.isLoadingReferenceChats.set(false);
+      },
+      error: (error) => {
+        this.referenceChatError.set('Failed to load chats');
+        this.isLoadingReferenceChats.set(false);
+      }
+    });
+  }
+
+  public selectReferenceChat(chat: ChatHistoryItem): void {
+    const referenceChatFile: ReferenceChatFile = {
+      id: chat.id,
+      type: 'chat',
+      name: chat.title,
+      status: 'processed'
+    };
+    this.referenceChatSelected.emit(referenceChatFile);
+    this.showReferenceChatMenu.set(false);
+    this.showFileMenu.set(false);
+  }
+
+  public loadMoreReferenceChats(): void {
+    if (this.hasMoreReferenceChats() && !this.isLoadingReferenceChats()) {
+      this.fetchReferenceChats(this.referenceChatPage() + 1);
+    }
+  }
+
+  public onReferenceChatScroll(event: Event): void {
+    const element = event.target as HTMLElement;
+    const threshold = 50; // pixels from bottom to trigger load
+    const isNearBottom = element.scrollHeight - element.scrollTop - element.clientHeight < threshold;
+    
+    if (isNearBottom) {
+      this.loadMoreReferenceChats();
     }
   }
 }

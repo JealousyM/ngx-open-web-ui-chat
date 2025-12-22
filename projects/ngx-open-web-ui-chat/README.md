@@ -33,7 +33,8 @@ Angular 20 component library for embedding OpenWebUI chat with Socket.IO streami
 📝 **Notes Support** - Integrated markdown note editor with sidebar  
 🗃️ **Archived Chats** - View, search, unarchive, and delete archived conversations  
 🔌 **Integrations** - Toggle Web Search and Code Interpreter capabilities  
-🛠️ **Tools Support** - Access and enable server-side tools from Open WebUI API
+🛠️ **Tools Support** - Access and enable server-side tools from Open WebUI API  
+💬 **Reference Chats** - Reference previous conversations in new messages
 
 
 ## Installation
@@ -117,6 +118,7 @@ export class AppComponent {}
 | `notes` | `boolean` | ❌ | `false` | Enable notes feature |
 | `integrations` | `boolean` | ❌ | `false` | Enable integrations menu |
 | `tools` | `boolean` | ❌ | `false` | Enable tools selection menu |
+| `showReferenceChats` | `boolean` | ❌ | `false` | Enable reference chat selection |
 | `style` | `Partial<CSSStyleDeclaration>` | ❌ | - | Custom CSS styles |
 
 ### Outputs
@@ -472,7 +474,14 @@ The library uses **Socket.IO** for real-time bidirectional communication with Op
 
 ## Version History
 
-### 1.0.16 (Current)
+### 1.0.17 (Current)
+- ✅ **Reference Chat Support** - Reference previous conversations in new messages
+- ✅ **Reference Chat Menu** - Browse and select chats to reference
+- ✅ **Visual Indicator** - Referenced chats appear as badges
+- ✅ **Pagination** - Load more chats with infinite scroll
+- ✅ **Translations** - Added reference chat translation keys
+
+### 1.0.16
 - ✅ **Tools Support** - Access and enable server-side tools from Open WebUI API
 - ✅ **Tools Menu** - Select/deselect tools with visual checkmarks
 - ✅ **Tool Indicator** - Visual badge showing enabled tools
@@ -777,6 +786,40 @@ Access and enable server-side tools from the Open WebUI API:
 4. Tool indicator badge appears when tools are enabled
 5. `tool_ids` array is included in completion request payload
 
+## Reference Chat Support
+
+Reference previous conversations to provide context for new messages:
+
+### Features
+
+- 💬 **Reference Chat Menu** - Access via the "+" dropdown menu
+- 📋 **Chat Selection** - Browse and select from existing chats
+- 🏷️ **Visual Indicator** - Referenced chats appear as badges in input area
+- ♾️ **Pagination** - Load more chats with infinite scroll
+- 🔗 **API Integration** - Referenced chat IDs included in completion requests
+
+### Usage
+
+1. **Enable Reference Chats**: Set `[showReferenceChats]="true"` in your component
+2. **Access Menu**: Click "+" button and select "Reference Chat"
+3. **Select Chat**: Click a chat to reference it
+4. **Send Message**: Referenced chat context is automatically included
+
+```typescript
+<openwebui-chat
+  [showReferenceChats]="true"
+  ...>
+</openwebui-chat>
+```
+
+### How It Works
+
+1. Click "+" button and select "Reference Chat"
+2. Browse available chats with pagination support
+3. Select a chat to reference - it appears as a badge
+4. Send your message - the referenced chat provides context
+5. AI can access the referenced conversation for better responses
+
 ## Archived Chats
 
 Access and manage your archived conversations with the archived chats modal:
@@ -816,6 +859,7 @@ Access and manage your archived conversations with the archived chats modal:
 - [x] Notes support with markdown editor
 - [x] Archived chats modal with search
 - [x] Tools support with API integration
+- [x] Reference chat support for conversation context
 
 ## Contributing
 

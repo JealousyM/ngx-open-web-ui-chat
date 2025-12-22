@@ -313,3 +313,11 @@ export interface ToolItem {
   specs?: ToolSpec[];
 }
 
+// Reference Chat interface for attaching existing chats as file references
+export interface ReferenceChatFile {
+  id: string;
+  type: 'chat';
+  name: string;
+  status: 'processed';
+}
+

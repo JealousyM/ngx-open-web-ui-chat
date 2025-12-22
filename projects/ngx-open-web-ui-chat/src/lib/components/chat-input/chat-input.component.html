@@ -52,6 +52,52 @@
             <span class="menu-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4"><path d="M21.4383 11.6622L12.2483 20.8522C11.1225 21.9781 9.59552 22.6106 8.00334 22.6106C6.41115 22.6106 4.88418 21.9781 3.75834 20.8522C2.63249 19.7264 2 18.1994 2 16.6072C2 15.015 2.63249 13.4881 3.75834 12.3622L12.9483 3.17222C13.6989 2.42166 14.7169 2 15.7783 2C16.8398 2 17.8578 2.42166 18.6083 3.17222C19.3589 3.92279 19.7806 4.94077 19.7806 6.00222C19.7806 7.06368 19.3589 8.08166 18.6083 8.83222L9.40834 18.0222C9.03306 18.3975 8.52406 18.6083 7.99334 18.6083C7.46261 18.6083 6.95362 18.3975 6.57834 18.0222C6.20306 17.6469 5.99222 17.138 5.99222 16.6072C5.99222 16.0765 6.20306 15.5675 6.57834 15.1922L15.0683 6.71222" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
             <span class="menu-text">{{ translations().uploadFiles ?? 'Upload Files' }}</span>
           </button>
+          @if (showReferenceChats()) {
+            <button class="menu-item" (click)="toggleReferenceChatMenu()" type="button">
+              <span class="menu-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" /></svg></span>
+              <span class="menu-text">{{ translations().referenceChat ?? 'Reference Chat' }}</span>
+              <span class="arrow-icon">›</span>
+            </button>
+          }
+        </div>
+      }
+
+      @if (showReferenceChatMenu()) {
+        <div class="reference-chat-submenu">
+          <div class="submenu-header">
+            {{ translations().selectReferenceChat ?? 'Select a chat' }}
+          </div>
+          <div class="chat-list" (scroll)="onReferenceChatScroll($event)">
+            @if (isLoadingReferenceChats() && availableChatsForReference().length === 0) {
+              <div class="menu-item loading-item">
+                <div class="spinner"></div>
+                <span class="menu-text">{{ translations().loadingChats ?? 'Loading...' }}</span>
+              </div>
+            }
+            @if (referenceChatError()) {
+              <div class="menu-item error-item">
+                <span class="menu-icon">⚠️</span>
+                <span class="menu-text">{{ referenceChatError() }}</span>
+              </div>
+            }
+            @for (chat of availableChatsForReference(); track chat.id) {
+              <button class="menu-item chat-item" (click)="selectReferenceChat(chat)" type="button">
+                <span class="menu-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" /></svg></span>
+                <span class="menu-text">{{ chat.title }}</span>
+              </button>
+            }
+            @if (availableChatsForReference().length === 0 && !isLoadingReferenceChats() && !referenceChatError()) {
+              <div class="menu-item disabled-item">
+                <span class="menu-text">{{ translations().noChatsAvailable ?? 'No chats available' }}</span>
+              </div>
+            }
+            @if (isLoadingReferenceChats() && availableChatsForReference().length > 0) {
+              <div class="menu-item loading-more-item">
+                <div class="spinner"></div>
+                <span class="menu-text">{{ translations().loadMore ?? 'Loading more...' }}</span>
+              </div>
+            }
+          </div>
         </div>
       }
 

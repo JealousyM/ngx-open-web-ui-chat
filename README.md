@@ -38,6 +38,7 @@ Interactive demo showcasing all features:
 - 🗃️ **Archived Chats** - View, search, unarchive, and delete archived conversations
 - 🔌 **Integrations** - Toggle Web Search and Code Interpreter capabilities
 - 🛠️ **Tools Support** - Access and enable server-side tools from Open WebUI API
+- 💬 **Reference Chats** - Reference previous conversations in new messages
 
 ## 🚀 Quick Start
 
@@ -205,6 +206,7 @@ openwebui-ts-embedded-sdk/
 | `notes` | `boolean` | ❌ | `false` | Enable notes feature |
 | `integrations` | `boolean` | ❌ | `false` | Enable integrations support |
 | `tools` | `boolean` | ❌ | `false` | Enable tools selection menu |
+| `showReferenceChats` | `boolean` | ❌ | `false` | Enable reference chat selection |
 
 ### Outputs
 
@@ -394,7 +396,7 @@ MIT License - see LICENSE file for details
 
 ---
 
-**Status:** Production-ready v1.0.16
+**Status:** Production-ready v1.0.17
 **Angular Version:** 20.x  
 **Node Required:** >=20.19.0  
 
