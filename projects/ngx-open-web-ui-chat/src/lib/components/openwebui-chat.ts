@@ -1,5 +1,5 @@
 import { Component, signal, Input, OnInit, Output, EventEmitter, inject, HostListener, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { ChatMessage, OpenWebUIChatConfig, UploadedFile, ChatHistoryItem, ChatContextAction, FolderItem, FolderContextAction, NoteItem, ReferenceChatFile } from '../models/chat.model';
+import { ChatMessage, OpenWebUIChatConfig, UploadedFile, ChatHistoryItem, ChatContextAction, FolderItem, FolderContextAction, NoteItem, ReferenceChatFile, ReferenceNoteFile } from '../models/chat.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OpenWebUIService } from '../services/openwebui-api';
@@ -56,6 +56,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   @Input() integrations = false;
   @Input() tools = false;
   @Input() showReferenceChats = false;
+  @Input() showReferenceNotes = false;
 
   @Output() chatInitialized = new EventEmitter<void>();
   @Output() messagesChanged = new EventEmitter<number>();
@@ -492,6 +493,28 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
     
     if (this.debug) {
       console.log('[OpenWebUI] Reference chat attached:', referenceChatFile);
+    }
+  }
+
+  /**
+   * Handle reference note selection from ChatInputComponent
+   * Adds the reference note to uploadedFiles as a file with type "note"
+   */
+  public handleReferenceNoteSelected(referenceNoteFile: ReferenceNoteFile): void {
+    // Convert ReferenceNoteFile to UploadedFile-compatible format with type "note"
+    const noteFile: UploadedFile & { type: 'note'; name: string; status: 'processed' } = {
+      id: referenceNoteFile.id,
+      type: 'note',
+      name: referenceNoteFile.name,
+      filename: referenceNoteFile.name,
+      user_id: '',
+      status: 'processed' as const
+    } as any;
+    
+    this.uploadedFiles.update(files => [...files, noteFile]);
+    
+    if (this.debug) {
+      console.log('[OpenWebUI] Reference note attached:', referenceNoteFile);
     }
   }
 

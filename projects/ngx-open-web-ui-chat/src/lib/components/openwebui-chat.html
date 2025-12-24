@@ -126,6 +126,7 @@
     [integrations]="integrations"
     [tools]="tools"
     [showReferenceChats]="showReferenceChats"
+    [showReferenceNotes]="showReferenceNotes"
     (sendMessage)="sendMessage($event)"
     (stopGeneration)="stopGeneration()"
     (fileSelected)="onFileSelected($event)"
@@ -141,6 +142,7 @@
     (featuresChanged)="featuresChanged.emit($event); features.set($event)"
     (toolsChanged)="handleToolsChanged($event)"
     (referenceChatSelected)="handleReferenceChatSelected($event)"
+    (referenceNoteSelected)="handleReferenceNoteSelected($event)"
   />
 
   @if (showSelectionMenu()) {

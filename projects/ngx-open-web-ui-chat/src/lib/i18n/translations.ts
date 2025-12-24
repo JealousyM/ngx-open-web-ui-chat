@@ -180,6 +180,10 @@ export interface Translation {
   referenceChat?: string;
   selectReferenceChat?: string;
   noChatsAvailable?: string;
+  // Reference Note
+  referenceNote?: string;
+  selectReferenceNote?: string;
+  noNotesAvailable?: string;
 }
 
 export interface Translations {
@@ -364,7 +368,10 @@ export const translations: Translations = {
     toolsError: 'Failed to load tools',
     referenceChat: 'Reference Chat',
     selectReferenceChat: 'Select a chat',
-    noChatsAvailable: 'No chats available'
+    noChatsAvailable: 'No chats available',
+    referenceNote: 'Reference Note',
+    selectReferenceNote: 'Select a note',
+    noNotesAvailable: 'No notes available'
   },
   zh: {
     send: '发送',
@@ -511,7 +518,10 @@ export const translations: Translations = {
     toolsError: '加载工具失败',
     referenceChat: '引用对话',
     selectReferenceChat: '选择一个对话',
-    noChatsAvailable: '没有可用的对话'
+    noChatsAvailable: '没有可用的对话',
+    referenceNote: '引用笔记',
+    selectReferenceNote: '选择一个笔记',
+    noNotesAvailable: '没有可用的笔记'
   },
   hi: {
     send: 'भेजें',
@@ -658,7 +668,10 @@ export const translations: Translations = {
     toolsError: 'उपकरण लोड करने में विफल',
     referenceChat: 'संदर्भ चैट',
     selectReferenceChat: 'एक चैट चुनें',
-    noChatsAvailable: 'कोई चैट उपलब्ध नहीं'
+    noChatsAvailable: 'कोई चैट उपलब्ध नहीं',
+    referenceNote: 'संदर्भ नोट',
+    selectReferenceNote: 'एक नोट चुनें',
+    noNotesAvailable: 'कोई नोट उपलब्ध नहीं'
   },
   es: {
     send: 'Enviar',
@@ -805,7 +818,10 @@ export const translations: Translations = {
     toolsError: 'Error al cargar herramientas',
     referenceChat: 'Chat de referencia',
     selectReferenceChat: 'Selecciona un chat',
-    noChatsAvailable: 'No hay chats disponibles'
+    noChatsAvailable: 'No hay chats disponibles',
+    referenceNote: 'Nota de referencia',
+    selectReferenceNote: 'Selecciona una nota',
+    noNotesAvailable: 'No hay notas disponibles'
   },
   ar: {
     send: 'إرسال',
@@ -952,7 +968,10 @@ export const translations: Translations = {
     toolsError: 'فشل تحميل الأدوات',
     referenceChat: 'محادثة مرجعية',
     selectReferenceChat: 'اختر محادثة',
-    noChatsAvailable: 'لا توجد محادثات متاحة'
+    noChatsAvailable: 'لا توجد محادثات متاحة',
+    referenceNote: 'ملاحظة مرجعية',
+    selectReferenceNote: 'اختر ملاحظة',
+    noNotesAvailable: 'لا توجد ملاحظات متاحة'
   },
   fr: {
     send: 'Envoyer',
@@ -1099,7 +1118,10 @@ export const translations: Translations = {
     toolsError: 'Échec du chargement des outils',
     referenceChat: 'Chat de référence',
     selectReferenceChat: 'Sélectionner un chat',
-    noChatsAvailable: 'Aucun chat disponible'
+    noChatsAvailable: 'Aucun chat disponible',
+    referenceNote: 'Note de référence',
+    selectReferenceNote: 'Sélectionner une note',
+    noNotesAvailable: 'Aucune note disponible'
   },
   pt: {
     send: 'Enviar',
@@ -1246,7 +1268,10 @@ export const translations: Translations = {
     toolsError: 'Falha ao carregar ferramentas',
     referenceChat: 'Chat de referência',
     selectReferenceChat: 'Selecione um chat',
-    noChatsAvailable: 'Nenhum chat disponível'
+    noChatsAvailable: 'Nenhum chat disponível',
+    referenceNote: 'Nota de referência',
+    selectReferenceNote: 'Selecione uma nota',
+    noNotesAvailable: 'Nenhuma nota disponível'
   },
   ru: {
     send: 'Отправить',
@@ -1409,7 +1434,10 @@ export const translations: Translations = {
     toolsError: 'Не удалось загрузить инструменты',
     referenceChat: 'Ссылка на чат',
     selectReferenceChat: 'Выберите чат',
-    noChatsAvailable: 'Нет доступных чатов'
+    noChatsAvailable: 'Нет доступных чатов',
+    referenceNote: 'Ссылка на заметку',
+    selectReferenceNote: 'Выберите заметку',
+    noNotesAvailable: 'Нет доступных заметок'
   },
   bn: {
     send: 'পাঠান',
@@ -1556,7 +1584,10 @@ export const translations: Translations = {
     toolsError: 'সরঞ্জাম লোড করতে ব্যর্থ',
     referenceChat: 'রেফারেন্স চ্যাট',
     selectReferenceChat: 'একটি চ্যাট নির্বাচন করুন',
-    noChatsAvailable: 'কোনো চ্যাট উপলব্ধ নেই'
+    noChatsAvailable: 'কোনো চ্যাট উপলব্ধ নেই',
+    referenceNote: 'রেফারেন্স নোট',
+    selectReferenceNote: 'একটি নোট নির্বাচন করুন',
+    noNotesAvailable: 'কোনো নোট উপলব্ধ নেই'
   },
   ja: {
     send: '送信',
@@ -1704,7 +1735,10 @@ export const translations: Translations = {
     toolsError: 'ツールの読み込みに失敗しました',
     referenceChat: '参照チャット',
     selectReferenceChat: 'チャットを選択',
-    noChatsAvailable: '利用可能なチャットがありません'
+    noChatsAvailable: '利用可能なチャットがありません',
+    referenceNote: '参照ノート',
+    selectReferenceNote: 'ノートを選択',
+    noNotesAvailable: '利用可能なノートがありません'
   }
 };
 

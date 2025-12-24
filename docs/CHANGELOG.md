@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.0.18] - 2025-12-24
+
+### Added
+
+- 📝 **Reference Notes Support** - Reference notes in new messages
+  - **Reference Note Menu** - New "Reference Note" option in the "+" dropdown menu
+  - **Note Selection** - Browse and select from existing notes to reference
+  - **Visual Indicator** - Referenced notes appear as badges in the input area
+  - **API Integration** - Referenced note IDs included in completion requests
+  - **Prefetch Optimization** - Notes list loaded on menu open for faster display
+- 🌍 **Reference Note Translations**
+  - Added `referenceNote`, `selectReferenceNote`, `noNotesAvailable` translation keys
+  - Translations for all 10 supported languages
+
+### Technical Details
+- Added `ReferenceNoteFile` interface to chat.model.ts
+- Added `referenceNoteSelected` EventEmitter for note selection changes
+- Added `showReferenceNotes` input to enable/disable the feature
+- Extended ChatInputComponent with reference note state management signals
+- Updated `sendMessage` to include referenced notes in request payload
+
 ## [1.0.17] - 2025-12-22
 
 ### Added
@@ -386,6 +407,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **1.0.18** - Reference Notes support for referencing notes in messages
 - **1.0.17** - Reference Chat support for referencing previous conversations
 - **1.0.16** - Tools support with API integration and selection menu
 - **1.0.15** - Integrations support (web search, code interpreter)
@@ -402,6 +424,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **1.0.1** - Initial release
 
 ## Migration Guides
+
+### Upgrading to 1.0.18
+
+No breaking changes. Simply update:
+
+```bash
+npm update ngx-open-web-ui-chat
+```
+
+**What's new:**
+- Reference Note menu automatically appears in the "+" dropdown when `[showReferenceNotes]="true"`
+- Select notes to reference them in your messages
+- Referenced notes appear as badges in the input area
+- All features work out of the box with no configuration needed
+
+**To enable reference notes:**
+```typescript
+<openwebui-chat
+  [showReferenceNotes]="true"
+  ...>
+</openwebui-chat>
+```
+
+**No code changes required** - reference note functionality is automatically available when enabled.
 
 ### Upgrading to 1.0.17
 

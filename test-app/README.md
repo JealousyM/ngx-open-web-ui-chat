@@ -39,28 +39,33 @@ Modern test application for demonstrating the `ngx-open-web-ui-chat` library fea
 - Browse and select from existing chats
 - Referenced chats appear as badges in input area
 
-### 8. **Smart Model Loading**
+### 8. **Reference Notes Support**
+- Reference notes in new messages
+- Browse and select from existing notes
+- Referenced notes appear as badges in input area
+
+### 9. **Smart Model Loading**
 - "Show Models" button active only when Host and API Key are provided
 - Automatic loading of available models list
 - Loading indicator
 
-### 9. **Progressive Connection Flow**
+### 10. **Progressive Connection Flow**
 1. ✅ Enter Host URL and API Key
 2. ✅ Load models (Show Models)
 3. ✅ Select model from list
 4. ✅ Connect to chat (Connect Chat)
 
-### 10. **Conditional UI**
+### 11. **Conditional UI**
 - **Chat available** only after model selection and connection
 - **Clear Chat** active only when there are messages
 - **Disconnect** to reset all settings
 
-### 11. **Modern Layout**
+### 12. **Modern Layout**
 - **Sidebar** (left panel): Configuration, models, controls
 - **Chat Area** (right panel): Chat interface
 - **Placeholder**: Beautiful user guide
 
-### 12. **Responsive Design**
+### 13. **Responsive Design**
 - Adaptive layout for mobile devices
 - SCSS with modern features (nesting, variables)
 

@@ -2,7 +2,7 @@ import { Component, input, output, signal, ViewChild, ElementRef, AfterViewCheck
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Translation } from '../../i18n/translations';
-import { UploadedFile, ToolItem, ChatHistoryItem, ReferenceChatFile } from '../../models/chat.model';
+import { UploadedFile, ToolItem, ChatHistoryItem, ReferenceChatFile, NoteItem, ReferenceNoteFile } from '../../models/chat.model';
 import { OpenWebUIService } from '../../services/openwebui-api';
 
 @Component({
@@ -26,6 +26,7 @@ export class ChatInputComponent implements OnInit, OnDestroy, AfterViewChecked {
   public integrations = input<boolean>(false);
   public tools = input<boolean>(false);
   public showReferenceChats = input<boolean>(false);
+  public showReferenceNotes = input<boolean>(false);
   
   private _inputMessage = signal('');
   
@@ -44,6 +45,12 @@ export class ChatInputComponent implements OnInit, OnDestroy, AfterViewChecked {
   public hasMoreReferenceChats = signal<boolean>(true);
   public referenceChatError = signal<string | null>(null);
   
+  // Reference note signals
+  public showReferenceNoteMenu = signal<boolean>(false);
+  public availableNotesForReference = signal<NoteItem[]>([]);
+  public isLoadingReferenceNotes = signal<boolean>(false);
+  public referenceNoteError = signal<string | null>(null);
+  
   // Tools caching
   private toolsCache: ToolItem[] | null = null;
   private toolsCacheTimestamp: number | null = null;
@@ -58,6 +65,7 @@ export class ChatInputComponent implements OnInit, OnDestroy, AfterViewChecked {
   public webSearchRequested = output<void>();
   public codeInterpreterRequested = output<void>();
   public referenceChatSelected = output<ReferenceChatFile>();
+  public referenceNoteSelected = output<ReferenceNoteFile>();
   
   public webSearchEnabled = signal(false);
   public codeInterpreterEnabled = signal(false);
@@ -404,5 +412,46 @@ export class ChatInputComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (isNearBottom) {
       this.loadMoreReferenceChats();
     }
+  }
+
+  // Reference Note Menu Methods
+
+  public toggleReferenceNoteMenu(): void {
+    this.showReferenceNoteMenu.update(v => !v);
+    if (this.showReferenceNoteMenu() && this.availableNotesForReference().length === 0) {
+      this.fetchReferenceNotes();
+    }
+  }
+
+  public fetchReferenceNotes(): void {
+    if (this.isLoadingReferenceNotes()) {
+      return;
+    }
+
+    this.isLoadingReferenceNotes.set(true);
+    this.referenceNoteError.set(null);
+
+    this.openWebUIService.getNotes().subscribe({
+      next: (notes) => {
+        this.availableNotesForReference.set(notes);
+        this.isLoadingReferenceNotes.set(false);
+      },
+      error: (error) => {
+        this.referenceNoteError.set('Failed to load notes');
+        this.isLoadingReferenceNotes.set(false);
+      }
+    });
+  }
+
+  public selectReferenceNote(note: NoteItem): void {
+    const referenceNoteFile: ReferenceNoteFile = {
+      id: note.id,
+      type: 'note',
+      name: note.title,
+      status: 'processed'
+    };
+    this.referenceNoteSelected.emit(referenceNoteFile);
+    this.showReferenceNoteMenu.set(false);
+    this.showFileMenu.set(false);
   }
 }

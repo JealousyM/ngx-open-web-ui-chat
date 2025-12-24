@@ -39,6 +39,7 @@ Interactive demo showcasing all features:
 - 🔌 **Integrations** - Toggle Web Search and Code Interpreter capabilities
 - 🛠️ **Tools Support** - Access and enable server-side tools from Open WebUI API
 - 💬 **Reference Chats** - Reference previous conversations in new messages
+- 📝 **Reference Notes** - Reference notes in new messages
 
 ## 🚀 Quick Start
 
@@ -207,6 +208,7 @@ openwebui-ts-embedded-sdk/
 | `integrations` | `boolean` | ❌ | `false` | Enable integrations support |
 | `tools` | `boolean` | ❌ | `false` | Enable tools selection menu |
 | `showReferenceChats` | `boolean` | ❌ | `false` | Enable reference chat selection |
+| `showReferenceNotes` | `boolean` | ❌ | `false` | Enable reference note selection |
 
 ### Outputs
 
@@ -396,7 +398,7 @@ MIT License - see LICENSE file for details
 
 ---
 
-**Status:** Production-ready v1.0.17
+**Status:** Production-ready v1.0.18
 **Angular Version:** 20.x  
 **Node Required:** >=20.19.0  
 

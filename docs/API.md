@@ -25,6 +25,7 @@
 | `integrations` | `boolean` | `false` | Enable integrations (web search, code interpreter) menu |
 | `tools` | `boolean` | `false` | Enable tools selection menu for server-side tools |
 | `showReferenceChats` | `boolean` | `false` | Enable reference chat selection menu |
+| `showReferenceNotes` | `boolean` | `false` | Enable reference note selection menu |
 | `style` | `Partial<CSSStyleDeclaration>` | `undefined` | Custom inline styles for the component |
 
 ### Outputs (Events)
@@ -402,6 +403,17 @@ interface ToolSpec {
 interface ReferenceChatFile {
   id: string;
   type: 'chat';
+  name: string;
+  status: 'processed';
+}
+```
+
+### ReferenceNoteFile
+
+```typescript
+interface ReferenceNoteFile {
+  id: string;
+  type: 'note';
   name: string;
   status: 'processed';
 }

@@ -34,7 +34,8 @@ Angular 20 component library for embedding OpenWebUI chat with Socket.IO streami
 🗃️ **Archived Chats** - View, search, unarchive, and delete archived conversations  
 🔌 **Integrations** - Toggle Web Search and Code Interpreter capabilities  
 🛠️ **Tools Support** - Access and enable server-side tools from Open WebUI API  
-💬 **Reference Chats** - Reference previous conversations in new messages
+💬 **Reference Chats** - Reference previous conversations in new messages  
+📝 **Reference Notes** - Reference notes in new messages
 
 
 ## Installation
@@ -119,6 +120,7 @@ export class AppComponent {}
 | `integrations` | `boolean` | ❌ | `false` | Enable integrations menu |
 | `tools` | `boolean` | ❌ | `false` | Enable tools selection menu |
 | `showReferenceChats` | `boolean` | ❌ | `false` | Enable reference chat selection |
+| `showReferenceNotes` | `boolean` | ❌ | `false` | Enable reference note selection |
 | `style` | `Partial<CSSStyleDeclaration>` | ❌ | - | Custom CSS styles |
 
 ### Outputs
@@ -474,7 +476,13 @@ The library uses **Socket.IO** for real-time bidirectional communication with Op
 
 ## Version History
 
-### 1.0.17 (Current)
+### 1.0.18 (Current)
+- ✅ **Reference Notes Support** - Reference notes in new messages
+- ✅ **Reference Note Menu** - Browse and select notes to reference
+- ✅ **Visual Indicator** - Referenced notes appear as badges
+- ✅ **Translations** - Added reference note translation keys
+
+### 1.0.17
 - ✅ **Reference Chat Support** - Reference previous conversations in new messages
 - ✅ **Reference Chat Menu** - Browse and select chats to reference
 - ✅ **Visual Indicator** - Referenced chats appear as badges
@@ -819,6 +827,39 @@ Reference previous conversations to provide context for new messages:
 3. Select a chat to reference - it appears as a badge
 4. Send your message - the referenced chat provides context
 5. AI can access the referenced conversation for better responses
+
+## Reference Notes Support
+
+Reference notes to provide context for new messages:
+
+### Features
+
+- 📝 **Reference Note Menu** - Access via the "+" dropdown menu
+- 📋 **Note Selection** - Browse and select from existing notes
+- 🏷️ **Visual Indicator** - Referenced notes appear as badges in input area
+- 🔗 **API Integration** - Referenced note IDs included in completion requests
+
+### Usage
+
+1. **Enable Reference Notes**: Set `[showReferenceNotes]="true"` in your component
+2. **Access Menu**: Click "+" button and select "Reference Note"
+3. **Select Note**: Click a note to reference it
+4. **Send Message**: Referenced note context is automatically included
+
+```typescript
+<openwebui-chat
+  [showReferenceNotes]="true"
+  ...>
+</openwebui-chat>
+```
+
+### How It Works
+
+1. Click "+" button and select "Reference Note"
+2. Browse available notes
+3. Select a note to reference - it appears as a badge
+4. Send your message - the referenced note provides context
+5. AI can access the referenced note content for better responses
 
 ## Archived Chats
 

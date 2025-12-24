@@ -321,3 +321,11 @@ export interface ReferenceChatFile {
   status: 'processed';
 }
 
+// Reference Note interface for attaching existing notes as file references
+export interface ReferenceNoteFile {
+  id: string;
+  type: 'note';
+  name: string;
+  status: 'processed';
+}
+
