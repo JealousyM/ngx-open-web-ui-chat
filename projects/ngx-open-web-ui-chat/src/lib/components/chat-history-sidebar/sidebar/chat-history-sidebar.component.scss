@@ -1,15 +1,17 @@
+@use '../../../styles/variables' as *;
+
 .sidebar-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity $timing-smooth, visibility $timing-smooth;
   z-index: 998;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(8px);
 
   &.open {
     opacity: 1;
@@ -27,10 +29,12 @@
   left: 0;
   width: 280px;
   height: 100%;
-  background-color: #ffffff;
-  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+  background: $glass-bg;
+  backdrop-filter: blur($glass-blur);
+  box-shadow: $shadow-2xl;
+  border-right: 1px solid $glass-border;
   transform: translateX(-100%);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  transition: transform $timing-smooth, box-shadow $timing-smooth;
   z-index: 999;
   display: flex;
   flex-direction: column;
@@ -38,7 +42,7 @@
 
   &.open {
     transform: translateX(0);
-    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.2);
+    box-shadow: $shadow-2xl, 8px 0 32px rgba(0, 0, 0, 0.25);
   }
 
   @media (max-width: 767px) {
@@ -53,10 +57,11 @@
 
 .sidebar-header {
   display: flex;
-  gap: 8px;
-  padding: 16px;
-  border-bottom: 1px solid #e5e7eb;
-  background-color: #f9fafb;
+  gap: $spacing-sm;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $glass-border;
+  background: $glass-bg-light;
+  backdrop-filter: blur($glass-blur);
 }
 
 .new-chat-btn,
@@ -65,28 +70,43 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 10px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  background-color: #ffffff;
-  color: #374151;
-  font-size: 14px;
-  font-weight: 500;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-lg;
+  border: 1px solid $glass-border;
+  border-radius: $radius-lg;
+  background: $glass-bg-light;
+  backdrop-filter: blur(20px);
+  color: $color-text-primary;
+  font-size: $font-size-sm;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all $timing-bounce;
+  letter-spacing: 0.02em;
 
   &:hover {
-    background-color: #f3f4f6;
-    border-color: #9ca3af;
+    background: $color-primary-surface;
+    border-color: $color-primary-from;
+    color: $color-primary-from;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: $shadow-sm;
   }
 
   &:active {
-    transform: scale(0.98);
+    transform: translateY(0) scale(0.98);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-border-focus;
+    outline-offset: 2px;
   }
 
   svg {
     flex-shrink: 0;
+    transition: transform $timing-bounce;
+  }
+
+  &:hover svg {
+    transform: scale(1.1);
   }
 
   span {
@@ -96,7 +116,7 @@
 
 .search-btn {
   flex: 0 0 auto;
-  padding: 10px;
+  padding: $spacing-sm;
 
   span {
     display: none;
@@ -110,24 +130,24 @@
 }
 
 .folders-section {
-  border-bottom: 1px solid #e5e7eb;
-  margin-bottom: 8px;
-  padding-bottom: 8px;
+  border-bottom: 1px solid $glass-border;
+  margin-bottom: $spacing-sm;
+  padding-bottom: $spacing-sm;
 }
 
 .section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px 8px;
+  padding: $spacing-md $spacing-lg $spacing-sm;
 
   h3 {
     margin: 0;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: $font-size-xs;
+    font-weight: 700;
     text-transform: uppercase;
-    color: #6b7280;
-    letter-spacing: 0.05em;
+    color: $color-text-secondary;
+    letter-spacing: 0.1em;
   }
 }
 
@@ -139,19 +159,25 @@
   height: 24px;
   padding: 0;
   border: none;
-  border-radius: 6px;
+  border-radius: $radius-md;
   background-color: transparent;
-  color: #6b7280;
+  color: $color-text-secondary;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all $timing-bounce;
 
   &:hover {
-    background-color: #f3f4f6;
-    color: #111827;
+    background-color: $glass-bg-light;
+    color: $color-primary-from;
+    transform: scale(1.1) rotate(90deg);
   }
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.95) rotate(90deg);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-border-focus;
+    outline-offset: 2px;
   }
 
   svg {
@@ -160,13 +186,14 @@
 }
 
 .empty-folders {
-  padding: 16px;
+  padding: $spacing-lg;
   text-align: center;
-  color: #9ca3af;
-  font-size: 13px;
+  color: $color-text-tertiary;
+  font-size: $font-size-sm;
 
   p {
     margin: 0;
+    font-style: italic;
   }
 }
 
@@ -176,39 +203,40 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px 24px;
+  padding: $spacing-3xl $spacing-xl;
   text-align: center;
-  color: #6b7280;
-  animation: fadeIn 0.3s ease-in;
+  color: $color-text-secondary;
+  animation: fadeIn $timing-smooth;
 
   p {
-    margin: 8px 0 0;
-    font-size: 14px;
-    line-height: 1.5;
+    margin: $spacing-sm 0 0;
+    font-size: $font-size-sm;
+    line-height: $line-height-relaxed;
   }
 
   .empty-hint {
-    font-size: 12px;
-    color: #9ca3af;
-    margin-top: 4px;
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    margin-top: $spacing-xs;
+    font-style: italic;
   }
 }
 
 .spinner {
   width: 32px;
   height: 32px;
-  border: 3px solid #e5e7eb;
-  border-top-color: #3b82f6;
-  border-radius: 50%;
+  border: 3px solid $color-surface-tertiary;
+  border-top-color: $color-primary-from;
+  border-radius: $radius-full;
   animation: spin 0.8s linear infinite;
 }
 
 .spinner-small {
   width: 20px;
   height: 20px;
-  border: 2px solid #e5e7eb;
-  border-top-color: #3b82f6;
-  border-radius: 50%;
+  border: 2px solid $color-surface-tertiary;
+  border-top-color: $color-primary-from;
+  border-radius: $radius-full;
   animation: spin 0.8s linear infinite;
 }
 
@@ -222,7 +250,6 @@
   from {
     opacity: 0;
   }
-
   to {
     opacity: 1;
   }
@@ -230,33 +257,33 @@
 
 // Skeleton loading screens
 .skeleton-list {
-  padding: 8px;
+  padding: $spacing-sm;
 }
 
 .skeleton-item {
-  padding: 12px;
-  margin-bottom: 8px;
-  border-radius: 8px;
+  padding: $spacing-md;
+  margin-bottom: $spacing-sm;
+  border-radius: $radius-lg;
   background: linear-gradient(90deg,
-      #f0f0f0 0%,
-      #f8f8f8 50%,
-      #f0f0f0 100%);
+      $color-surface-secondary 0%,
+      $color-surface-tertiary 50%,
+      $color-surface-secondary 100%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 
   .skeleton-title {
     height: 16px;
     width: 70%;
-    background-color: #e0e0e0;
-    border-radius: 4px;
-    margin-bottom: 8px;
+    background-color: $color-surface-tertiary;
+    border-radius: $radius-sm;
+    margin-bottom: $spacing-sm;
   }
 
   .skeleton-meta {
     height: 12px;
     width: 40%;
-    background-color: #e8e8e8;
-    border-radius: 4px;
+    background-color: $color-border-secondary;
+    border-radius: $radius-sm;
   }
 }
 
@@ -264,25 +291,25 @@
   0% {
     background-position: -200% 0;
   }
-
   100% {
     background-position: 200% 0;
   }
 }
 
 .chat-list {
-  padding: 8px;
-  animation: fadeIn 0.3s ease-in;
+  padding: $spacing-sm;
+  animation: fadeIn $timing-smooth;
 }
 
 .chat-item {
-  padding: 12px;
-  margin-bottom: 4px;
-  border-radius: 8px;
+  padding: $spacing-md;
+  margin-bottom: $spacing-xs;
+  border-radius: $radius-lg;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all $timing-bounce;
   position: relative;
   overflow: hidden;
+  background: transparent;
 
   &::before {
     content: '';
@@ -291,60 +318,66 @@
     left: 0;
     width: 3px;
     height: 100%;
-    background-color: #3b82f6;
+    background: $color-primary-gradient;
     transform: scaleY(0);
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform $timing-bounce;
+    border-radius: 0 $radius-sm $radius-sm 0;
   }
 
   &:hover {
-    background-color: #f3f4f6;
-    transform: translateX(2px);
+    background: $glass-bg-light;
+    backdrop-filter: blur(20px);
+    transform: translateX(4px);
+    box-shadow: $shadow-xs;
 
     &::before {
-      transform: scaleY(0.3);
+      transform: scaleY(0.4);
     }
   }
 
   &:active {
-    transform: translateX(1px) scale(0.99);
+    transform: translateX(2px) scale(0.99);
   }
 
   &.active {
-    background-color: #eff6ff;
+    background: $color-primary-surface;
+    backdrop-filter: blur(20px);
+    box-shadow: $shadow-sm;
 
     &::before {
       transform: scaleY(1);
     }
 
     .chat-title {
-      color: #3b82f6;
-      font-weight: 600;
+      color: $color-primary-from;
+      font-weight: 700;
     }
   }
 }
 
 .chat-title {
-  font-size: 14px;
-  font-weight: 500;
-  color: #111827;
-  margin-bottom: 4px;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transition: color 0.2s ease;
+  transition: color $timing-smooth;
 }
 
 .chat-meta {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: #6b7280;
+  gap: $spacing-sm;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
 }
 
 .pin-indicator {
-  font-size: 12px;
-  animation: fadeIn 0.2s ease-in;
+  font-size: $font-size-xs;
+  animation: fadeIn $timing-smooth;
+  color: $color-warning;
 }
 
 .chat-date {
@@ -356,30 +389,30 @@
 .loading-more {
   display: flex;
   justify-content: center;
-  padding: 16px;
-  animation: fadeIn 0.3s ease-in;
+  padding: $spacing-lg;
+  animation: fadeIn $timing-smooth;
 }
 
-// Smooth scrollbar styling
+// Custom scrollbar styling
 .sidebar-content {
   scrollbar-width: thin;
-  scrollbar-color: #d1d5db #f9fafb;
+  scrollbar-color: $color-border-secondary transparent;
 
   &::-webkit-scrollbar {
     width: 6px;
   }
 
   &::-webkit-scrollbar-track {
-    background: #f9fafb;
+    background: transparent;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: #d1d5db;
-    border-radius: 3px;
-    transition: background-color 0.2s ease;
+    background-color: $color-border-secondary;
+    border-radius: $radius-sm;
+    transition: background-color $timing-smooth;
 
     &:hover {
-      background-color: #9ca3af;
+      background-color: $color-border-primary;
     }
   }
 }
@@ -389,9 +422,14 @@
   outline: none;
 }
 
+// Button focus states
+button:focus-visible {
+  outline: 2px solid $color-border-focus;
+  outline-offset: 2px;
+}
+
 // Reduced motion support
 @media (prefers-reduced-motion: reduce) {
-
   .sidebar,
   .sidebar-overlay,
   .chat-item,
@@ -399,135 +437,99 @@
   .loading-state,
   .empty-state,
   .spinner,
-  .spinner-small {
+  .spinner-small,
+  .new-chat-btn,
+  .search-btn,
+  .create-folder-btn {
     animation: none !important;
+    transition: none !important;
+  }
+
+  .chat-item::before {
     transition: none !important;
   }
 }
 
-// Dark mode support
+// Dark mode enhancements (building on existing dark mode support)
 @media (prefers-color-scheme: dark) {
   .sidebar {
-    background-color: #1f2937;
-    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.4);
+    background: $glass-bg;
+    backdrop-filter: blur($glass-blur);
+    box-shadow: $shadow-2xl;
+    border-right-color: $glass-border;
 
     &.open {
-      box-shadow: 2px 0 20px rgba(0, 0, 0, 0.5);
+      box-shadow: $shadow-2xl, 8px 0 32px rgba(0, 0, 0, 0.5);
     }
   }
 
-  .folders-section {
-    border-bottom-color: #374151;
-  }
-
-  .section-header h3 {
-    color: #9ca3af;
-  }
-
-  .create-folder-btn {
-    color: #9ca3af;
-
-    &:hover {
-      background-color: #374151;
-      color: #f9fafb;
-    }
-  }
-
-  .empty-folders {
-    color: #6b7280;
-  }
-
-  .sidebar-content {
-    scrollbar-color: #4b5563 #1f2937;
-
-    &::-webkit-scrollbar-track {
-      background: #1f2937;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: #4b5563;
-
-      &:hover {
-        background-color: #6b7280;
-      }
-    }
+  .sidebar-overlay {
+    background-color: rgba(0, 0, 0, 0.8);
   }
 
   .sidebar-header {
-    background-color: #111827;
-    border-bottom-color: #374151;
+    background: $glass-bg-light;
+    border-bottom-color: $glass-border;
   }
 
   .new-chat-btn,
   .search-btn {
-    background-color: #374151;
-    border-color: #4b5563;
-    color: #f9fafb;
+    background: $glass-bg-light;
+    border-color: $glass-border;
+    color: $color-text-primary;
 
     &:hover {
-      background-color: #4b5563;
-      border-color: #6b7280;
+      background: $color-primary-surface;
+      border-color: $color-primary-from;
+      color: $color-primary-from;
     }
   }
 
   .chat-item {
     &::before {
-      background-color: #60a5fa;
+      background: $color-primary-gradient;
     }
 
     &:hover {
-      background-color: #374151;
+      background: $glass-bg-light;
     }
 
     &.active {
-      background-color: #1e3a8a;
+      background: $color-primary-surface;
 
       .chat-title {
-        color: #60a5fa;
+        color: $color-primary-from;
       }
     }
   }
 
-  .chat-title {
-    color: #f9fafb;
-  }
-
-  .chat-meta {
-    color: #9ca3af;
-  }
-
-  .loading-state,
-  .empty-state {
-    color: #9ca3af;
-
-    .empty-hint {
-      color: #6b7280;
-    }
-  }
-
-  .spinner {
-    border-color: #374151;
-    border-top-color: #60a5fa;
-  }
-
-  .spinner-small {
-    border-color: #374151;
-    border-top-color: #60a5fa;
-  }
-
   .skeleton-item {
     background: linear-gradient(90deg,
-        #374151 0%,
-        #4b5563 50%,
-        #374151 100%);
+        $color-surface-secondary 0%,
+        $color-surface-tertiary 50%,
+        $color-surface-secondary 100%);
     background-size: 200% 100%;
+  }
+}
 
-    .skeleton-title {
-      background-color: #4b5563;
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .sidebar {
+    border-right: 2px solid $color-border-primary;
+  }
+
+  .chat-item {
+    &::before {
+      width: 4px;
     }
 
-    .skeleton-meta {
-      background-color: #6b7280;
+    &.active {
+      border: 2px solid $color-primary-from;
     }
+  }
+
+  .new-chat-btn,
+  .search-btn {
+    border-width: 2px;
   }
 }

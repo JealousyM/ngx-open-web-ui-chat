@@ -1,52 +1,116 @@
+@use '../../styles/variables' as *;
+
 .message-actions {
   display: flex;
-  gap: 6px;
-  margin-top: 8px;
+  gap: $spacing-xs;
+  margin-top: $spacing-sm;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.2s, visibility 0.2s;
-  
+  transition: opacity $timing-smooth, visibility $timing-smooth;
+
   &.always-visible {
     opacity: 1;
     visibility: visible;
   }
-  
+
   &.hover-visible {
     opacity: 0;
     visibility: hidden;
   }
-  
+
   .action-btn {
-    padding: 6px 8px;
-    background: #f5f5f5;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
+    padding: $spacing-xs $spacing-sm;
+    background: $glass-bg-light;
+    backdrop-filter: blur(20px);
+    border: 1px solid $glass-border;
+    border-radius: $radius-md;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
-    color: #666;
-    
+    transition: all $timing-bounce;
+    color: $color-text-secondary;
+    box-shadow: $shadow-xs;
+
     &:hover:not(:disabled) {
-      background: #e8e8e8;
-      border-color: #ccc;
+      background: $color-primary-surface;
+      border-color: $color-primary-from;
+      color: $color-primary-from;
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: $shadow-sm;
     }
-    
+
+    &:active:not(:disabled) {
+      transform: translateY(0) scale(0.98);
+      box-shadow: $shadow-xs;
+    }
+
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+      transform: none;
     }
-    
+
     &.active {
-      background: #e3f2fd;
-      border-color: #2196f3;
-      color: #2196f3;
+      background: $color-primary-surface;
+      border-color: $color-primary-from;
+      color: $color-primary-from;
+      box-shadow: $shadow-primary;
     }
-    
+
+    &:focus-visible {
+      outline: 2px solid $color-border-focus;
+      outline-offset: 2px;
+    }
+
     svg {
       width: 16px;
       height: 16px;
+      transition: transform $timing-bounce;
+    }
+
+    &:hover:not(:disabled) svg {
+      transform: scale(1.1);
+    }
+  }
+}
+
+// Entrance animation when actions become visible
+@keyframes actionsSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-actions.always-visible {
+  animation: actionsSlideIn $timing-smooth forwards;
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .message-actions,
+  .action-btn {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .action-btn svg {
+    transition: none !important;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .action-btn {
+    border-width: 2px;
+
+    &.active {
+      border-width: 2px;
     }
   }
 }

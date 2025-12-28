@@ -1,11 +1,13 @@
+@use '../../styles/variables' as *;
+
 .note-editor-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--bg-primary, #ffffff);
-  z-index: 1000;
+  background: $color-bg-primary;
+  z-index: $z-index-modal;
   display: flex;
   flex-direction: column;
 }
@@ -21,64 +23,67 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--border-color, #e5e7eb);
-  background: var(--bg-secondary, #f9fafb);
+  padding: $spacing-xl $spacing-2xl;
+  border-bottom: 1px solid $color-border-primary;
+  background: $color-surface-primary;
+  backdrop-filter: blur($glass-blur);
 }
 
 .note-editor-title-container {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: $spacing-md;
   flex: 1;
   max-width: 600px;
 }
 
 .note-icon {
-  width: 1.5rem;
-  height: 1.5rem;
-  color: var(--text-secondary, #6b7280);
+  width: $spacing-xl;
+  height: $spacing-xl;
+  color: $color-text-secondary;
   flex-shrink: 0;
 }
 
 .note-title-input {
   flex: 1;
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
   border: none;
   background: transparent;
-  color: var(--text-primary, #111827);
+  color: $color-text-primary;
   outline: none;
-  padding: 0.5rem;
-  border-radius: 0.375rem;
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  transition: all $transition-base;
 
   &:focus {
-    background: var(--bg-primary, #ffffff);
-    box-shadow: 0 0 0 2px var(--primary-color, #3b82f6);
+    background: $color-surface-secondary;
+    box-shadow: 0 0 0 3px $color-primary-surface;
   }
 
   &::placeholder {
-    color: var(--text-muted, #9ca3af);
+    color: $color-text-tertiary;
   }
 }
 
 .note-editor-actions {
   display: flex;
-  gap: 0.75rem;
+  gap: $spacing-md;
 }
 
 .btn-primary,
 .btn-secondary {
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+  padding: $spacing-md $spacing-xl;
+  border-radius: $radius-lg;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all $transition-base;
   border: none;
 
   &:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
   }
 
   &:active {
@@ -87,65 +92,70 @@
 }
 
 .btn-primary {
-  background: var(--primary-color, #3b82f6);
-  color: white;
+  background: $color-primary-gradient;
+  color: $color-text-on-primary;
 
   &:hover {
-    background: var(--primary-hover, #2563eb);
+    box-shadow: $shadow-primary-lg;
   }
 }
 
 .btn-secondary {
-  background: var(--bg-tertiary, #e5e7eb);
-  color: var(--text-primary, #111827);
+  background: $color-surface-secondary;
+  color: $color-text-primary;
+  border: 1px solid $color-border-primary;
 
   &:hover {
-    background: var(--bg-hover, #d1d5db);
+    background: $color-surface-hover;
   }
 }
 
 .note-editor-tabs {
-  background: var(--bg-secondary, #f9fafb);
-  border-bottom: 1px solid var(--border-color, #e5e7eb);
+  background: $color-surface-primary;
+  border-bottom: 1px solid $color-border-primary;
+  backdrop-filter: blur($glass-blur);
 }
 
 .tab-header {
   display: flex;
-  padding: 0 1rem;
-  gap: 0.5rem;
+  padding: 0 $spacing-lg;
+  gap: $spacing-sm;
 }
 
 .tab-btn {
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-secondary, #6b7280);
+  padding: $spacing-md $spacing-lg;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-secondary;
   background: transparent;
   border: 1px solid transparent;
   border-bottom: none;
-  border-radius: 0.375rem 0.375rem 0 0;
+  border-radius: $radius-md $radius-md 0 0;
   cursor: pointer;
   margin-bottom: -1px;
+  transition: all $transition-base;
 
   &:hover {
-    color: var(--text-primary, #111827);
+    color: $color-text-primary;
+    background: $color-surface-secondary;
   }
 
   &.active {
-    background: var(--bg-primary, #ffffff);
-    border-color: var(--border-color, #e5e7eb);
-    border-bottom-color: var(--bg-primary, #ffffff);
-    color: var(--text-primary, #111827);
+    background: $color-bg-primary;
+    border-color: $color-border-primary;
+    border-bottom-color: $color-bg-primary;
+    color: $color-text-primary;
+    box-shadow: $shadow-sm;
   }
 }
 
 .editor-toolbar {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.5rem 1rem;
-  border-top: 1px solid var(--border-color, #e5e7eb);
-  background: var(--bg-secondary, #f9fafb);
+  gap: $spacing-xs;
+  padding: $spacing-md $spacing-lg;
+  border-top: 1px solid $color-border-primary;
+  background: $color-surface-primary;
   overflow-x: auto;
 }
 
@@ -153,32 +163,37 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: $spacing-2xl;
+  height: $spacing-2xl;
   padding: 0;
   border: none;
   background: transparent;
-  color: var(--text-secondary, #6b7280);
-  border-radius: 0.25rem;
+  color: $color-text-secondary;
+  border-radius: $radius-sm;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all $transition-base;
 
   &:hover {
-    background: var(--bg-tertiary, #e5e7eb);
-    color: var(--primary-color, #3b82f6);
+    background: $color-surface-secondary;
+    color: $color-primary-start;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 
   svg {
-    width: 1rem;
-    height: 1rem;
+    width: $spacing-lg;
+    height: $spacing-lg;
   }
 }
 
 .toolbar-divider {
   width: 1px;
-  height: 1.25rem;
-  background: var(--border-color, #e5e7eb);
-  margin: 0 0.25rem;
+  height: $spacing-xl;
+  background: $color-border-primary;
+  margin: 0 $spacing-xs;
 }
 
 .note-editor-content {
@@ -186,24 +201,24 @@
   display: flex;
   overflow: hidden;
   padding: 0;
-  background: var(--bg-primary, #ffffff);
+  background: $color-bg-primary;
 }
 
 .note-content-textarea {
   width: 100%;
   height: 100%;
   border: none;
-  padding: 1rem;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 0.875rem;
-  line-height: 1.6;
-  color: var(--text-primary, #111827);
-  background: var(--bg-primary, #ffffff);
+  padding: $spacing-xl;
+  font-family: $font-family-mono;
+  font-size: $font-size-sm;
+  line-height: $line-height-relaxed;
+  color: $color-text-primary;
+  background: $color-bg-primary;
   resize: none;
   outline: none;
 
   &::placeholder {
-    color: var(--text-muted, #9ca3af);
+    color: $color-text-tertiary;
   }
 }
 
@@ -211,8 +226,8 @@
   width: 100%;
   height: 100%;
   overflow-y: auto;
-  padding: 1.5rem;
-  color: var(--text-primary, #111827);
+  padding: $spacing-2xl;
+  color: $color-text-primary;
 
   ::ng-deep {
 
@@ -224,19 +239,20 @@
     h6 {
       margin-top: 1.5em;
       margin-bottom: 0.5em;
-      font-weight: 600;
-      line-height: 1.25;
+      font-weight: $font-weight-semibold;
+      line-height: $line-height-tight;
+      color: $color-text-primary;
     }
 
     h1 {
       font-size: 2em;
-      border-bottom: 1px solid var(--border-color, #e5e7eb);
+      border-bottom: 2px solid $color-border-primary;
       padding-bottom: 0.3em;
     }
 
     h2 {
       font-size: 1.5em;
-      border-bottom: 1px solid var(--border-color, #e5e7eb);
+      border-bottom: 1px solid $color-border-primary;
       padding-bottom: 0.3em;
     }
 
@@ -246,6 +262,7 @@
 
     p {
       margin-bottom: 1em;
+      line-height: $line-height-relaxed;
     }
 
     ul,
@@ -256,47 +273,55 @@
 
     blockquote {
       margin: 0 0 1em;
-      padding: 0 1em;
-      color: var(--text-secondary, #6b7280);
-      border-left: 0.25em solid var(--border-color, #e5e7eb);
+      padding: $spacing-lg $spacing-xl;
+      color: $color-text-secondary;
+      border-left: 4px solid $color-primary-start;
+      background: $color-surface-secondary;
+      border-radius: $radius-md;
     }
 
     code {
-      padding: 0.2em 0.4em;
+      padding: $spacing-xs $spacing-sm;
       margin: 0;
       font-size: 85%;
-      background-color: var(--bg-tertiary, #f3f4f6);
-      border-radius: 6px;
-      font-family: monospace;
+      background: $color-surface-secondary;
+      border-radius: $radius-sm;
+      font-family: $font-family-mono;
+      color: $color-primary-start;
     }
 
     pre {
-      padding: 16px;
+      padding: $spacing-lg;
       overflow: auto;
       font-size: 85%;
       line-height: 1.45;
-      background-color: var(--bg-tertiary, #f3f4f6);
-      border-radius: 6px;
+      background: $color-surface-secondary;
+      border-radius: $radius-md;
       margin-bottom: 1em;
+      border: 1px solid $color-border-primary;
 
       code {
-        background-color: transparent;
+        background: transparent;
         padding: 0;
+        color: $color-text-primary;
       }
     }
 
     a {
-      color: var(--primary-color, #3b82f6);
+      color: $color-primary-start;
       text-decoration: none;
+      transition: all $transition-fast;
 
       &:hover {
         text-decoration: underline;
+        color: $color-primary-end;
       }
     }
 
     img {
       max-width: 100%;
       box-sizing: content-box;
+      border-radius: $radius-md;
     }
 
     table {
@@ -304,127 +329,28 @@
       border-collapse: collapse;
       margin-bottom: 1em;
       width: 100%;
+      border-radius: $radius-md;
+      overflow: hidden;
 
       th,
       td {
-        padding: 6px 13px;
-        border: 1px solid var(--border-color, #e5e7eb);
+        padding: $spacing-md $spacing-lg;
+        border: 1px solid $color-border-primary;
+      }
+
+      th {
+        background: $color-surface-secondary;
+        font-weight: $font-weight-semibold;
       }
 
       tr:nth-child(2n) {
-        background-color: var(--bg-secondary, #f9fafb);
+        background: $color-surface-primary;
       }
     }
 
     input[type="checkbox"] {
-      margin-right: 0.5em;
+      margin-right: $spacing-sm;
     }
   }
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .note-editor-overlay {
-    background: var(--bg-primary, #111827);
-  }
-
-  .note-editor-header {
-    border-bottom-color: var(--border-color, #374151);
-    background: var(--bg-secondary, #1f2937);
-  }
-
-  .note-editor-tabs {
-    background: var(--bg-secondary, #1f2937);
-    border-bottom-color: var(--border-color, #374151);
-  }
-
-  .tab-btn {
-    color: var(--text-secondary, #9ca3af);
-
-    &:hover {
-      color: var(--text-primary, #f9fafb);
-    }
-
-    &.active {
-      background: var(--bg-primary, #111827);
-      border-color: var(--border-color, #374151);
-      border-bottom-color: var(--bg-primary, #111827);
-      color: var(--text-primary, #f9fafb);
-    }
-  }
-
-  .editor-toolbar {
-    background: var(--bg-secondary, #1f2937);
-    border-top-color: var(--border-color, #374151);
-  }
-
-  .toolbar-btn {
-    color: var(--text-secondary, #9ca3af);
-
-    &:hover {
-      background: var(--bg-tertiary, #374151);
-    }
-  }
-
-  .toolbar-divider {
-    background: var(--border-color, #374151);
-  }
-
-  .note-editor-content {
-    background: var(--bg-primary, #111827);
-  }
-
-  .note-title-input,
-  .note-content-textarea,
-  .note-content-preview {
-    color: var(--text-primary, #f9fafb);
-    background: var(--bg-primary, #111827);
-  }
-
-  .note-title-input:focus {
-    background: var(--bg-secondary, #1f2937);
-  }
-
-  .note-content-preview ::ng-deep {
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      border-bottom-color: var(--border-color, #374151);
-    }
-
-    blockquote {
-      border-left-color: var(--border-color, #374151);
-      color: var(--text-secondary, #9ca3af);
-    }
-
-    code,
-    pre {
-      background-color: var(--bg-tertiary, #374151);
-    }
-
-    table {
-
-      th,
-      td {
-        border-color: var(--border-color, #374151);
-      }
-
-      tr:nth-child(2n) {
-        background-color: var(--bg-secondary, #1f2937);
-      }
-    }
-  }
-
-  .btn-secondary {
-    background: var(--bg-tertiary, #374151);
-    color: var(--text-primary, #f9fafb);
-
-    &:hover {
-      background: var(--bg-hover, #4b5563);
-    }
-  }
-}

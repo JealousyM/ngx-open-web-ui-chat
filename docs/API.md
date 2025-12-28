@@ -1,32 +1,38 @@
 # API Documentation
 
+Complete API reference for the `ngx-open-web-ui-chat` component library.
+
 ## Component: `openwebui-chat`
 
 ### Inputs (Properties)
 
 #### Required Inputs
 
-| Name | Type | Description |
-|------|------|-------------|
-| `endpoint` | `string` | The URL of your OpenWebUI instance (e.g., `https://ai.example.com`) |
-| `modelId` | `string` | The identifier of the AI model to use (e.g., `llama3`, `gpt-4`) |
-| `apiKey` | `string` | API authentication key for OpenWebUI access |
+These inputs are mandatory for the component to function:
+
+| Name | Type | Description | Example |
+|------|------|-------------|---------|
+| `endpoint` | `string` | The URL of your OpenWebUI instance | `https://ai.example.com` |
+| `modelId` | `string` | The identifier of the AI model to use | `llama3`, `gpt-4` |
+| `apiKey` | `string` | API authentication key for OpenWebUI access | `sk-abc123...` |
 
 #### Optional Inputs
+
+These inputs are optional and have default values:
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
 | `enableMarkdown` | `boolean` | `true` | Enable/disable markdown rendering for messages |
 | `debug` | `boolean` | `false` | Enable debug logging to console |
-| `language` | `string` | `'en'` | UI language code (en, ru, zh, etc.) |
-| `history` | `boolean` | `false` | Enable chat history sidebar |
+| `language` | `string` | `'en'` | UI language code (`en`, `zh`, `hi`, `es`, `ar`, `fr`, `pt`, `ru`, `bn`, `ja`) |
+| `history` | `boolean` | `false` | Enable chat history sidebar with search and organization |
 | `folders` | `boolean` | `false` | Enable folder support for organizing chats |
 | `notes` | `boolean` | `false` | Enable notes feature with markdown editor |
-| `integrations` | `boolean` | `false` | Enable integrations (web search, code interpreter) menu |
+| `integrations` | `boolean` | `false` | Enable integrations menu (web search, code interpreter) |
 | `tools` | `boolean` | `false` | Enable tools selection menu for server-side tools |
-| `showReferenceChats` | `boolean` | `false` | Enable reference chat selection menu |
-| `showReferenceNotes` | `boolean` | `false` | Enable reference note selection menu |
-| `style` | `Partial<CSSStyleDeclaration>` | `undefined` | Custom inline styles for the component |
+| `showReferenceChats` | `boolean` | `false` | Enable reference chat selection in message input |
+| `showReferenceNotes` | `boolean` | `false` | Enable reference note selection in message input |
+| `style` | `Partial<CSSStyleDeclaration>` | `undefined` | Custom inline styles for the component container |
 
 ### Outputs (Events)
 

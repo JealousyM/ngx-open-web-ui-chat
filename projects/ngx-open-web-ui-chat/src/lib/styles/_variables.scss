@@ -1,0 +1,201 @@
+// 2026 Design System - Sass Variables
+// Modern design tokens following 2026 UI/UX trends
+// Using Sass variables instead of CSS custom properties for Angular library compatibility
+
+// ===== Color Palette =====
+// Primary gradient colors
+$color-primary-start: #667eea;
+$color-primary-end: #764ba2;
+$color-primary-gradient: linear-gradient(135deg, $color-primary-start 0%, $color-primary-end 100%);
+$color-primary-from: $color-primary-start; // Alias for convenience
+$color-primary-to: $color-primary-end;
+
+// Secondary gradient colors
+$color-secondary-start: #f093fb;
+$color-secondary-end: #f5576c;
+$color-secondary-gradient: linear-gradient(135deg, $color-secondary-start 0%, $color-secondary-end 100%);
+
+// Accent gradient colors
+$color-accent-start: #4facfe;
+$color-accent-end: #00f2fe;
+$color-accent-gradient: linear-gradient(135deg, $color-accent-start 0%, $color-accent-end 100%);
+$color-accent-from: $color-accent-start; // Alias for convenience
+$color-accent-to: $color-accent-end; // Alias for convenience
+
+// Success gradient
+$color-success-start: #56ab2f;
+$color-success-end: #a8e063;
+$color-success-gradient: linear-gradient(135deg, $color-success-start 0%, $color-success-end 100%);
+$color-success: $color-success-start;
+
+// Warning gradient
+$color-warning-start: #f2994a;
+$color-warning-end: #f2c94c;
+$color-warning-gradient: linear-gradient(135deg, $color-warning-start 0%, $color-warning-end 100%);
+$color-warning: $color-warning-start;
+
+// Error gradient
+$color-error-start: #eb3349;
+$color-error-end: #f45c43;
+$color-error-gradient: linear-gradient(135deg, $color-error-start 0%, $color-error-end 100%);
+$color-error: $color-error-start;
+
+// ===== Neutral Colors (Dark Mode First) =====
+$color-bg-primary: #0f0f1e;
+$color-bg-secondary: #1a1a2e;
+$color-bg-tertiary: #16213e;
+$color-bg-elevated: #1e1e3f;
+
+$color-surface-primary: rgba(255, 255, 255, 0.05);
+$color-surface-secondary: rgba(255, 255, 255, 0.08);
+$color-surface-tertiary: rgba(255, 255, 255, 0.12);
+$color-surface-hover: rgba(255, 255, 255, 0.15);
+
+$color-text-primary: #ffffff;
+$color-text-secondary: rgba(255, 255, 255, 0.75);
+$color-text-tertiary: rgba(255, 255, 255, 0.5);
+$color-text-disabled: rgba(255, 255, 255, 0.3);
+$color-text-on-primary: #ffffff;
+
+$color-border-primary: rgba(255, 255, 255, 0.1);
+$color-border-secondary: rgba(255, 255, 255, 0.05);
+$color-border-focus: rgba(102, 126, 234, 0.5);
+
+// Surface colors for states
+$color-primary-surface: rgba(102, 126, 234, 0.1);
+$color-success-surface: rgba(86, 171, 47, 0.1);
+$color-warning-surface: rgba(242, 153, 74, 0.1);
+$color-error-surface: rgba(235, 51, 73, 0.1);
+
+// Border colors for states
+$color-success-border: rgba(86, 171, 47, 0.3);
+
+// ===== Glassmorphism =====
+$glass-bg: rgba(255, 255, 255, 0.05);
+$glass-bg-light: rgba(255, 255, 255, 0.08);
+$glass-bg-hover: rgba(255, 255, 255, 0.08);
+$glass-border: rgba(255, 255, 255, 0.1);
+$glass-blur: 20px;
+$glass-blur-strong: 40px;
+
+// ===== Shadows (Multi-layered for depth) =====
+$shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-sm:
+  0 2px 4px rgba(0, 0, 0, 0.1),
+  0 1px 2px rgba(0, 0, 0, 0.06);
+$shadow-md:
+  0 4px 6px rgba(0, 0, 0, 0.1),
+  0 2px 4px rgba(0, 0, 0, 0.06),
+  0 1px 2px rgba(0, 0, 0, 0.04);
+$shadow-lg:
+  0 10px 15px rgba(0, 0, 0, 0.15),
+  0 4px 6px rgba(0, 0, 0, 0.1),
+  0 2px 4px rgba(0, 0, 0, 0.06);
+$shadow-xl:
+  0 20px 25px rgba(0, 0, 0, 0.15),
+  0 10px 10px rgba(0, 0, 0, 0.04),
+  0 4px 6px rgba(0, 0, 0, 0.06);
+$shadow-2xl:
+  0 25px 50px rgba(0, 0, 0, 0.25),
+  0 15px 20px rgba(0, 0, 0, 0.1),
+  0 5px 10px rgba(0, 0, 0, 0.08);
+
+// Colored shadows for CTAs
+$shadow-primary:
+  0 8px 16px rgba(102, 126, 234, 0.3),
+  0 4px 8px rgba(102, 126, 234, 0.2);
+$shadow-primary-lg:
+  0 12px 24px rgba(102, 126, 234, 0.4),
+  0 6px 12px rgba(102, 126, 234, 0.25);
+$shadow-success:
+  0 8px 16px rgba(86, 171, 47, 0.3),
+  0 4px 8px rgba(86, 171, 47, 0.2);
+$shadow-success-lg:
+  0 12px 24px rgba(86, 171, 47, 0.4),
+  0 6px 12px rgba(86, 171, 47, 0.25);
+$shadow-error:
+  0 8px 16px rgba(235, 51, 73, 0.3),
+  0 4px 8px rgba(235, 51, 73, 0.2);
+$shadow-error-lg:
+  0 12px 24px rgba(235, 51, 73, 0.4),
+  0 6px 12px rgba(235, 51, 73, 0.25);
+$shadow-warning:
+  0 8px 16px rgba(242, 153, 74, 0.3),
+  0 4px 8px rgba(242, 153, 74, 0.2);
+$shadow-warning-lg:
+  0 12px 24px rgba(242, 153, 74, 0.4),
+  0 6px 12px rgba(242, 153, 74, 0.25);
+
+// ===== Border Radius (Increased for 2026) =====
+$radius-xs: 6px;
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$radius-xl: 20px;
+$radius-2xl: 24px;
+$radius-3xl: 32px;
+$radius-full: 9999px;
+
+// ===== Spacing (Generous whitespace) =====
+$spacing-2xs: 2px;
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
+$spacing-2xl: 32px;
+$spacing-3xl: 48px;
+$spacing-4xl: 64px;
+
+// ===== Typography =====
+$font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+$font-family-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+
+$font-size-2xs: 0.625rem;  // 10px
+$font-size-xs: 0.75rem;    // 12px
+$font-size-sm: 0.875rem;   // 14px
+$font-size-md: 1rem;       // 16px
+$font-size-lg: 1.125rem;   // 18px
+$font-size-xl: 1.25rem;    // 20px
+$font-size-2xl: 1.5rem;    // 24px
+$font-size-3xl: 1.875rem;  // 30px
+$font-size-4xl: 2.25rem;   // 36px
+
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+$line-height-tight: 1.25;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.75;
+
+// ===== Animations & Transitions =====
+$transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+$timing-smooth: 250ms cubic-bezier(0.4, 0, 0.2, 1); // Alias
+$timing-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55); // Alias
+
+// Spring physics
+$spring-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+$spring-smooth: cubic-bezier(0.34, 1.56, 0.64, 1);
+$ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+$ease-in-out-back: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+// ===== Z-Index Scale =====
+$z-index-dropdown: 1000;
+$z-index-sticky: 1020;
+$z-index-fixed: 1030;
+$z-index-modal-backdrop: 1040;
+$z-index-modal: 1050;
+$z-index-popover: 1060;
+$z-index-tooltip: 1070;
+
+// ===== Component-specific =====
+$chat-message-max-width: 75%;
+$sidebar-width: 320px;
+$input-height: 48px;
+$button-height: 44px;

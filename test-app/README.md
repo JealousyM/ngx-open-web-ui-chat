@@ -1,73 +1,94 @@
 # OpenWebUI Chat Test Application
 
-Modern test application for demonstrating the `ngx-open-web-ui-chat` library features including the new integrations support.
+Modern Angular 20 test application showcasing all features of the `ngx-open-web-ui-chat` library with a beautiful, responsive interface.
 
-## 🎨 Features
+## ✨ Features
 
-### 1. **Dynamic Configuration**
+### Core Features
+
+#### 🔧 Dynamic Configuration
 - Real-time Host URL and API Key input
-- Secure API key storage (input type="password")
-- Lock changes after connection
+- Secure password-masked API key field
+- Configuration locked after connection
+- Validation and error handling
 
-### 2. **Folder Support**
-- Organize chats into folders
-- Drag & drop interface
-- Context menu for management
+#### 🤖 Smart Model Management
+- Load models on-demand with "Show Models" button
+- Model dropdown with search/filter
+- Loading states and error handling
+- Model switching support
 
-### 3. **Notes Support**
+#### 💬 Advanced Chat Interface
+- Real-time streaming responses
+- Markdown rendering with syntax highlighting
+- File upload support
+- Voice input with transcription
+- Stop generation at any time
+- Message actions (continue, regenerate, rate)
+
+### Organization Features
+
+#### 📂 Folder Management
+- Create and organize chat folders
+- Drag & drop chats into folders
+- Nested folder support
+- Context menu for folder operations
+- Visual folder indicators
+
+#### 📝 Notes System
 - Integrated markdown editor
-- Create, edit, and organize notes
+- Rich text formatting toolbar
 - Auto-save functionality
+- Search through notes
+- Reference notes in chats
 
-### 4. **Archived Chats**
-- View archived conversations
-- Search through archived chats
-- Unarchive or delete chats
+#### 🗃️ Archive Management
+- Archive old conversations
+- Search archived chats
+- Unarchive or permanently delete
+- Pagination for large archives
 
-### 5. **Integrations**
-- Toggle Web Search
-- Toggle Code Interpreter
-- Real-time feature management
+### Advanced Features
 
-### 6. **Tools Support**
-- Access server-side tools from Open WebUI API
-- Select/deselect tools with visual indicators
-- Tools included in completion requests
+#### 🔌 Integrations
+- Web Search toggle
+- Code Interpreter toggle
+- Real-time capability management
+- Visual integration indicators
 
-### 7. **Reference Chat Support**
-- Reference previous conversations in new messages
-- Browse and select from existing chats
-- Referenced chats appear as badges in input area
+#### 🛠️ Tools Support
+- Access server-side tools
+- Select/deselect tools with checkmarks
+- Tool descriptions and metadata
+- Tools included in API requests
 
-### 8. **Reference Notes Support**
-- Reference notes in new messages
-- Browse and select from existing notes
-- Referenced notes appear as badges in input area
+#### 🔗 Reference System
+- Reference previous chats in new messages
+- Reference notes for context
+- Visual badge indicators
+- Browse and select references
 
-### 9. **Smart Model Loading**
-- "Show Models" button active only when Host and API Key are provided
-- Automatic loading of available models list
-- Loading indicator
+### User Experience
 
-### 10. **Progressive Connection Flow**
+#### 🎨 Modern UI/UX
+- Clean, intuitive interface
+- Responsive design (mobile-friendly)
+- Smooth animations and transitions
+- Loading states and feedback
+- Error handling with user-friendly messages
+
+#### ⌨️ Progressive Connection Flow
 1. ✅ Enter Host URL and API Key
-2. ✅ Load models (Show Models)
-3. ✅ Select model from list
-4. ✅ Connect to chat (Connect Chat)
+2. ✅ Load available models
+3. ✅ Select desired model
+4. ✅ Connect to chat session
+5. ✅ Start chatting!
 
-### 11. **Conditional UI**
-- **Chat available** only after model selection and connection
-- **Clear Chat** active only when there are messages
-- **Disconnect** to reset all settings
-
-### 12. **Modern Layout**
-- **Sidebar** (left panel): Configuration, models, controls
-- **Chat Area** (right panel): Chat interface
-- **Placeholder**: Beautiful user guide
-
-### 13. **Responsive Design**
-- Adaptive layout for mobile devices
-- SCSS with modern features (nesting, variables)
+#### 🎯 Conditional UI Elements
+- Chat interface enabled only after connection
+- Clear Chat button active when messages exist
+- Disconnect button to reset configuration
+- Context-aware button states
 
 ## 🏗️ Architecture
 

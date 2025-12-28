@@ -4,6 +4,8 @@ dist/
 .DS_Store
 .angular/
 .idea/
+.claude/
+CLAUDE.md
 .playwright-mcp/
 test-results/
 .vscode/

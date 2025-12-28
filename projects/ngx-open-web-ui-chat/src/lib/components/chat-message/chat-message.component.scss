@@ -1,70 +1,194 @@
+@use '../../styles/variables' as *;
+
 :host {
   display: block;
   position: relative;
+  animation: messageSlideIn $timing-smooth forwards;
+}
+
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .message {
-  margin-bottom: 16px;
-  padding: 12px;
-  border-radius: 8px;
+  margin-bottom: $spacing-lg;
+  padding: $spacing-md $spacing-lg;
+  border-radius: $radius-xl;
   max-width: 80%;
   position: relative;
   overflow: visible;
+  transition: transform $timing-smooth,
+              box-shadow $timing-smooth;
+  will-change: transform, box-shadow;
 
   &.user {
-    background: #007bff;
-    color: white;
+    background: $color-primary-gradient;
+    color: $color-text-on-primary;
     margin-left: auto;
+    box-shadow: $shadow-primary;
+
+    // Micro-interaction
+    &:hover {
+      transform: translateY(-1px) scale(1.01);
+      box-shadow: $shadow-primary-lg;
+    }
   }
 
   &.assistant {
-    background: white;
-    border: 1px solid #e0e0e0;
+    background: $glass-bg;
+    backdrop-filter: blur($glass-blur);
+    border: 1px solid $glass-border;
+    box-shadow: $shadow-md;
+    color: $color-text-primary;
     overflow: visible;
-    
-    &:hover ::ng-deep openwebui-message-actions .message-actions.hover-visible {
-      opacity: 1;
-      visibility: visible;
+
+    // Micro-interaction
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $shadow-lg;
+      border-color: $color-border-focus;
+
+      // Show message actions on hover
+      ::ng-deep openwebui-message-actions .message-actions.hover-visible {
+        opacity: 1;
+        visibility: visible;
+      }
     }
   }
 
   .message-files {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-sm;
 
     .file-badge {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      background: rgba(0, 0, 0, 0.05);
-      border-radius: 6px;
-      font-size: 12px;
+      gap: $spacing-xs;
+      padding: $spacing-xs $spacing-sm;
+      background: $glass-bg-light;
+      backdrop-filter: blur(20px);
+      border-radius: $radius-md;
+      border: 1px solid $glass-border;
+      font-size: $font-size-xs;
+      transition: all $timing-bounce;
+      animation: fileBadgeSlideIn $timing-smooth forwards;
+
+      &:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: $shadow-sm;
+        border-color: $color-border-focus;
+      }
 
       .file-icon {
-        font-size: 16px;
+        font-size: $font-size-md;
+        color: $color-accent-from;
       }
 
       .file-name {
-        font-weight: 500;
+        font-weight: 600;
         max-width: 150px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        color: $color-text-primary;
       }
 
       .file-size {
-        color: rgba(0, 0, 0, 0.5);
-        font-size: 11px;
+        color: $color-text-secondary;
+        font-size: $font-size-2xs;
       }
+    }
+  }
+
+  @keyframes fileBadgeSlideIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
     }
   }
 
   .message-content {
     word-wrap: break-word;
-    line-height: 1.5;
+    line-height: $line-height-relaxed;
+    color: inherit;
+
+    // Enhanced typography
+    p {
+      margin: $spacing-sm 0;
+
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    code {
+      padding: 2px $spacing-xs;
+      background: $color-surface-tertiary;
+      border-radius: $radius-sm;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.9em;
+      border: 1px solid $color-border-secondary;
+    }
+
+    pre {
+      background: $color-surface-tertiary;
+      padding: $spacing-md;
+      border-radius: $radius-lg;
+      overflow-x: auto;
+      border: 1px solid $color-border-secondary;
+      box-shadow: $shadow-sm;
+
+      code {
+        padding: 0;
+        background: transparent;
+        border: none;
+      }
+    }
+
+    a {
+      color: $color-accent-from;
+      text-decoration: none;
+      position: relative;
+      transition: color $timing-smooth;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: $color-accent-gradient;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform $timing-bounce;
+      }
+
+      &:hover {
+        color: $color-accent-to;
+
+        &::after {
+          transform: scaleX(1);
+        }
+      }
+    }
   }
 }
 
@@ -74,10 +198,48 @@
     display: block;
     position: relative;
   }
-  
+
   openwebui-regenerate-menu,
   openwebui-rating-form {
     display: block;
     position: relative;
   }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .message {
+    max-width: 90%;
+    padding: $spacing-sm $spacing-md;
+
+    .message-files {
+      .file-badge {
+        .file-name {
+          max-width: 100px;
+        }
+      }
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  :host,
+  .message,
+  .file-badge,
+  .message-content a {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .message-content a::after {
+    transition: none !important;
+  }
+}
+
+// Focus states for accessibility
+.message:focus-within {
+  outline: 2px solid $color-border-focus;
+  outline-offset: 2px;
+  border-radius: $radius-xl;
 }

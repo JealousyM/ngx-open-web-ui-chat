@@ -17,71 +17,63 @@ Interactive demo showcasing all features:
 
 ## 📖 How to Use the Application
 
-### Step 1: Initial Configuration
+### Quick Start Guide
 
-When you first launch the application, you'll see the configuration screen:
+#### Step 1: Initial Configuration
+
+When you first launch the application, enter your OpenWebUI server details:
 
 ![Initial Screen](./docs/images/app-initial-state.png)
 
-Enter:
-1. **Host URL** - your OpenWebUI server address (e.g., `http://localhost:8080`)
-2. **API Key** - your API key for authentication
+**Required:**
+1. **Host URL** - Your OpenWebUI server address (e.g., `http://localhost:8080`)
+2. **API Key** - Your API authentication key
 
-### Step 2: Load Models
+#### Step 2: Load Available Models
 
-Click the **"Show Models"** button to load available AI models:
+Click **"Show Models"** to fetch the list of AI models from your server:
 
 ![Models Loaded](./docs/images/app-models-loaded.png)
 
-### Step 3: Select Model
+#### Step 3: Select Your Model
 
-Choose a model from the dropdown list:
+Choose an AI model from the dropdown menu:
 
 ![Model Selected](./docs/images/app-model-selected.png)
 
-### Step 4: Connect to Chat
+#### Step 4: Connect to Chat
 
-Click the **"Connect Chat"** button to initialize the chat session:
+Click **"Connect Chat"** to initialize your chat session:
 
 ![Chat Connected](./docs/images/app-chat-connected.png)
 
-### Step 5: Send Messages
+#### Step 5: Start Chatting
 
-Type your message in the input field and click **"Send"**:
+Type your message and click **"Send"** or press Enter:
 
 ![Typing Message](./docs/images/app-typing-message.png)
 
-### Step 6: Receive Responses
 
-The AI will process your message and provide a response:
-
-![Chat Conversation](./docs/images/app-chat-conversation.png)
-
-### Additional Features
-
-#### Chat History
-
-Click the history icon to view all your conversations:
-
-![Chat History](./docs/images/app-chat-history.png)
-
-Features:
-- View all chats
-- Organize into folders
-- Pinned chats
+**Features:**
+- View all conversations
+- Organize chats into folders
+- Pin important chats
 - Search through history
+- Archive old conversations
+- Export chats (PDF, TXT, JSON)
 
-#### Notes
+#### 📝 Notes Management
 
-Click the **"Notes"** button to work with notes:
+Create and manage notes with a built-in markdown editor:
 
 ![Notes Panel](./docs/images/app-notes-panel.png)
 
-Features:
-- Create notes
-- Markdown editor
-- Search notes
-- Auto-save
+**Features:**
+- Rich markdown editor
+- Auto-save functionality
+- Search through notes
+- Reference notes in chats
+- Organize with folders
 
 ## ✨ Features
 
@@ -452,22 +444,37 @@ MIT License - see LICENSE file for details
 - ✅ **Clean Code** - Following Angular style guide
 
 ## 🔮 Roadmap
-### Features
-- Click microphone button to start recording
-- Real-time spectrogram visualization
-- Automatic transcription via OpenWebUI API
-- Editable transcribed text
-- Error handling with retry mechanism
 
-### Requirements
-- Modern browser with Web Audio API
-- Microphone permission
-- HTTPS connection (browser security requirement)
+### Completed Features ✅
+- ✅ Conversation history with full context
+- ✅ Real-time streaming with Socket.IO
+- ✅ File upload support
+- ✅ Voice input with transcription
+- ✅ Response actions (continue, regenerate, rate)
+- ✅ Chat export (PDF, TXT, JSON)
+- ✅ Folder organization with drag & drop
+- ✅ Notes with markdown editor
+- ✅ Archived chats management
+- ✅ Tools integration
+- ✅ Reference chats and notes
+- ✅ Web search & code interpreter
+- ✅ Multi-language support (10 languages)
+
+### Planned Features 🚀
+- [ ] Image generation support
+- [ ] Voice output (TTS)
+- [ ] Custom themes
+- [ ] Plugin system
+- [ ] Collaborative chats
+- [ ] Advanced search filters
+- [ ] Chat templates
+- [ ] Keyboard shortcuts
 
 ---
 
-**Status:** Production-ready v1.0.18
+**Status:** Production-ready v1.1.0  
 **Angular Version:** 20.x  
 **Node Required:** >=20.19.0  
+**TypeScript:** ~5.8.0
 
 Made with ❤️ using Angular 2025 architecture

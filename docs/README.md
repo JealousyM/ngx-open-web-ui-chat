@@ -1,6 +1,6 @@
 # Documentation
 
-This folder contains all project documentation files.
+Comprehensive documentation for the ngx-open-web-ui-chat library.
 
 ## 📚 Documentation Files
 
@@ -8,15 +8,15 @@ This folder contains all project documentation files.
 
 | File | Description |
 |------|-------------|
-| **[API.md](./API.md)** | Complete API reference for the component |
-| **[CHANGELOG.md](./CHANGELOG.md)** | Version history and release notes |
+| **[API.md](./API.md)** | Complete API reference with all inputs, outputs, and methods |
+| **[CHANGELOG.md](./CHANGELOG.md)** | Detailed version history and release notes |
 
 ### Feature Guides
 
 | File | Description |
 |------|-------------|
-| **[MARKDOWN.md](./MARKDOWN.md)** | Markdown rendering features and examples |
-| **[I18N.md](./I18N.md)** | Multi-language support guide |
+| **[MARKDOWN.md](./MARKDOWN.md)** | Markdown rendering features, syntax, and examples |
+| **[I18N.md](./I18N.md)** | Multi-language support and translation guide |
 
 ## 🚀 Quick Links
 
@@ -37,17 +37,23 @@ docs/
 
 ## 🔍 Finding Information
 
-### For Users
+### For New Users
 
-- **Getting Started**: [Main README](../README.md)
-- **API Reference**: [API.md](./API.md)
-- **Examples**: [Library README](../projects/ngx-open-web-ui-chat/README.md)
+- **Getting Started**: [Main README](../README.md) - Installation and quick start
+- **Live Demo**: [Demo Application](https://jealousym.github.io/ngx-open-web-ui-chat/) - Try it online
+- **Examples**: [Library README](../projects/ngx-open-web-ui-chat/README.md) - Code examples
 
-### For Features
+### For Developers
 
-- **Markdown**: [MARKDOWN.md](./MARKDOWN.md)
-- **Languages**: [I18N.md](./I18N.md)
-- **Changelog**: [CHANGELOG.md](./CHANGELOG.md)
+- **API Reference**: [API.md](./API.md) - Complete API documentation
+- **Changelog**: [CHANGELOG.md](./CHANGELOG.md) - Version history and migration guides
+- **Test App**: [Test App README](../test-app/README.md) - Full-featured example
+
+### For Specific Features
+
+- **Markdown**: [MARKDOWN.md](./MARKDOWN.md) - Rich text rendering
+- **Languages**: [I18N.md](./I18N.md) - Multi-language support
+- **Architecture**: [Main README](../README.md#-angular-2025-features) - Technical details
 
 ## 📝 Contributing to Documentation
 

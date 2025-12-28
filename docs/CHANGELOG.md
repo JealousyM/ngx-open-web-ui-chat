@@ -1,9 +1,34 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to the ngx-open-web-ui-chat project.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.1.0] - 2025-12-28
+
+### Changed
+
+- 📚 **Documentation Overhaul** - Comprehensive update of all documentation files
+  - Improved README structure and clarity
+  - Enhanced API documentation with better examples
+  - Updated feature descriptions and usage guides
+  - Added more detailed troubleshooting information
+  - Refreshed screenshots and visual guides
+- 🎨 **UI/UX Improvements** - Enhanced user interface and experience
+  - Better visual feedback for user actions
+  - Improved loading states and transitions
+  - Enhanced error messages and handling
+- 🐛 **Bug Fixes** - Various stability improvements
+  - Fixed edge cases in chat history management
+  - Improved file upload error handling
+  - Enhanced Socket.IO reconnection logic
+
+### Technical Details
+- Updated all README files with current feature set
+- Improved code examples and usage patterns
+- Enhanced inline documentation and comments
+- Updated dependencies to latest stable versions
 
 
 ## [1.0.18] - 2025-12-24

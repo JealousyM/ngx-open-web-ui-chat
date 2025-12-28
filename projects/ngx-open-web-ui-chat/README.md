@@ -7,6 +7,7 @@ Angular 20 component library for embedding OpenWebUI chat with Socket.IO streami
 [![Zoneless](https://img.shields.io/badge/Zoneless-✓-green)]()
 [![Signals](https://img.shields.io/badge/Signals-✓-blue)]()
 [![Demo](https://img.shields.io/badge/Demo-Live-blue)](https://jealousym.github.io/ngx-open-web-ui-chat/)
+[![NPM Version](https://img.shields.io/npm/v/ngx-open-web-ui-chat.svg)](https://www.npmjs.com/package/ngx-open-web-ui-chat)
 ![NPM Downloads](https://img.shields.io/npm/d18m/ngx-open-web-ui-chat.svg)
 
 
@@ -49,19 +50,6 @@ Type your message in the input field and click **"Send"**:
 
 ![Typing Message](../../docs/images/app-typing-message.png)
 
-### Step 6: Receive Responses
-
-The AI will process your message and provide a response:
-
-![Chat Conversation](../../docs/images/app-chat-conversation.png)
-
-### Additional Features
-
-#### Chat History
-
-Click the history icon to view all your conversations:
-
-![Chat History](../../docs/images/app-chat-history.png)
 
 Features:
 - View all chats

@@ -1,3 +1,5 @@
+@use '../styles/variables' as *;
+
 :host {
   display: block;
   width: 100%;
@@ -9,158 +11,222 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  background: $color-bg-primary;
+  border: 1px solid $color-border-primary;
+  border-radius: $radius-2xl;
   overflow: hidden;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: $font-family-primary;
   position: relative;
+  box-shadow: $shadow-xl;
+  transition: all $transition-base;
+
+  &:hover {
+    box-shadow: $shadow-2xl;
+  }
 }
 
 .sidebar-toggle-btn {
   position: absolute;
-  top: 16px;
-  left: 16px;
+  top: $spacing-lg;
+  left: $spacing-lg;
   z-index: 100;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 8px;
+  background: $glass-bg;
+  backdrop-filter: blur($glass-blur);
+  -webkit-backdrop-filter: blur($glass-blur);
+  border: 1px solid $glass-border;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all $transition-base;
+  box-shadow: $shadow-md;
+  color: $color-text-primary;
 
   &:hover {
-    background: #f5f5f5;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background: $glass-bg-hover;
+    box-shadow: $shadow-lg;
+    transform: translateY(-2px) scale(1.05);
+
+    svg {
+      transform: scale(1.1);
+    }
   }
 
   &:active {
-    transform: scale(0.95);
+    transform: translateY(0) scale(0.98);
+    box-shadow: $shadow-sm;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-border-focus;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
   }
 
   svg {
     display: block;
+    transition: transform $transition-base;
   }
 }
 
 .notes-toggle-btn {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: $spacing-lg;
+  right: $spacing-lg;
   z-index: 100;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 8px;
+  background: $glass-bg;
+  backdrop-filter: blur($glass-blur);
+  -webkit-backdrop-filter: blur($glass-blur);
+  border: 1px solid $glass-border;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all $transition-base;
+  box-shadow: $shadow-md;
 
   &:hover {
-    background: #f5f5f5;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background: $glass-bg-hover;
+    box-shadow: $shadow-lg;
+    transform: translateY(-2px) scale(1.05);
+
+    svg {
+      transform: scale(1.1) rotate(5deg);
+    }
   }
 
   &:active {
-    transform: scale(0.95);
+    transform: translateY(0) scale(0.98);
+    box-shadow: $shadow-sm;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-border-focus;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
   }
 
   svg {
     display: block;
-    color: #3b82f6;
+    color: $color-accent-start;
+    transition: all $transition-bounce;
   }
 }
 
 .rating-confirmation {
   position: absolute;
-  top: 16px;
+  top: $spacing-lg;
   left: 50%;
   transform: translateX(-50%);
-  background: #4caf50;
+  background: $color-success-gradient;
   color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  font-size: 14px;
-  font-weight: 500;
-  z-index: 1000;
-  animation: slideDown 0.3s ease-out;
+  padding: $spacing-md $spacing-xl;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-success;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  z-index: $z-index-fixed;
+  animation: slideDownBounce 0.5s $spring-bounce;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-@keyframes slideDown {
-  from {
+@keyframes slideDownBounce {
+  0% {
     opacity: 0;
-    transform: translateX(-50%) translateY(-20px);
+    transform: translateX(-50%) translateY(-30px) scale(0.8);
   }
-
-  to {
+  60% {
+    transform: translateX(-50%) translateY(5px) scale(1.05);
+  }
+  100% {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(0) scale(1);
   }
 }
 
 .chat-messages {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
-  background: #f9f9f9;
+  padding: $spacing-xl;
+  background: $color-bg-secondary;
   min-height: 0;
+  position: relative;
+
+  scrollbar-width: thin;
+  scrollbar-color: $color-surface-tertiary transparent;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    margin: $spacing-sm;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $color-surface-tertiary;
+    border-radius: $radius-full;
+    transition: background $transition-base;
+
+    &:hover {
+      background: $color-surface-hover;
+    }
+  }
 }
 
 .message.loading {
   .message-content {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: $spacing-xs;
 
     .cursor {
       display: inline-block;
-      width: 2px;
-      height: 1em;
-      background: currentColor;
-      animation: blink 1s infinite;
+      width: 3px;
+      height: 1.2em;
+      background: $color-primary-gradient;
+      border-radius: $radius-full;
+      animation: blinkGradient 1.2s ease-in-out infinite;
     }
   }
 }
 
-@keyframes blink {
-
-  0%,
-  49% {
+@keyframes blinkGradient {
+  0%, 49% {
     opacity: 1;
+    transform: scaleY(1);
   }
-
-  50%,
-  100% {
-    opacity: 0;
+  50%, 100% {
+    opacity: 0.3;
+    transform: scaleY(0.8);
   }
 }
 
 // Global markdown styles for chat messages and previews
 ::ng-deep {
-
   .message-content,
   .preview-message .message-content {
-
-    ul,
-    ol {
+    ul, ol {
       padding-left: 1.5rem;
-      margin-bottom: 1rem;
-      margin-top: 0.5rem;
+      margin-bottom: $spacing-lg;
+      margin-top: $spacing-sm;
     }
 
     li {
-      margin-bottom: 0.25rem;
+      margin-bottom: $spacing-xs;
+      line-height: $line-height-relaxed;
     }
 
     p {
-      margin-bottom: 1rem;
+      margin-bottom: $spacing-lg;
+      line-height: $line-height-normal;
+      color: $color-text-secondary;
 
       &:last-child {
         margin-bottom: 0;
@@ -168,25 +234,125 @@
     }
 
     pre {
-      background: #f6f8fa;
-      padding: 1rem;
-      border-radius: 6px;
+      background: $color-bg-tertiary;
+      padding: $spacing-lg;
+      border-radius: $radius-lg;
       overflow-x: auto;
-      margin-bottom: 1rem;
+      margin-bottom: $spacing-lg;
+      box-shadow: $shadow-sm;
+      border: 1px solid $color-border-primary;
+      position: relative;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 32px;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, transparent 100%);
+        border-radius: $radius-lg $radius-lg 0 0;
+      }
     }
 
     code {
-      background: rgba(175, 184, 193, 0.2);
-      padding: 0.2em 0.4em;
-      border-radius: 6px;
-      font-size: 85%;
-      font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+      background: $color-surface-secondary;
+      padding: 0.2em 0.5em;
+      border-radius: $radius-sm;
+      font-size: 0.9em;
+      font-family: $font-family-mono;
+      color: $color-text-primary;
+      border: 1px solid $color-border-secondary;
     }
 
     pre code {
       background: transparent;
       padding: 0;
-      font-size: 100%;
+      font-size: $font-size-sm;
+      border: none;
+      color: $color-text-secondary;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      color: $color-text-primary;
+      font-weight: $font-weight-semibold;
+      margin-bottom: $spacing-md;
+      margin-top: $spacing-xl;
+      line-height: $line-height-tight;
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+
+    a {
+      color: $color-primary-start;
+      text-decoration: none;
+      position: relative;
+      transition: color $transition-base;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: $color-primary-gradient;
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform $transition-base;
+      }
+
+      &:hover {
+        color: $color-primary-end;
+
+        &::after {
+          transform: scaleX(1);
+          transform-origin: left;
+        }
+      }
+    }
+
+    blockquote {
+      border-left: 4px solid $color-primary-start;
+      padding-left: $spacing-lg;
+      margin: $spacing-lg 0;
+      font-style: italic;
+      color: $color-text-tertiary;
+      background: $color-surface-primary;
+      padding: $spacing-md $spacing-lg;
+      border-radius: 0 $radius-md $radius-md 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: $spacing-lg 0;
+      border-radius: $radius-md;
+      overflow: hidden;
+      box-shadow: $shadow-sm;
+
+      th, td {
+        padding: $spacing-md;
+        text-align: left;
+        border-bottom: 1px solid $color-border-primary;
+      }
+
+      th {
+        background: $color-surface-secondary;
+        font-weight: $font-weight-semibold;
+        color: $color-text-primary;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tr:hover {
+        background: $color-surface-primary;
+      }
     }
   }
 }
