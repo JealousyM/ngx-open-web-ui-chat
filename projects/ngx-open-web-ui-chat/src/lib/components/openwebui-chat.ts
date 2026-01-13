@@ -3,6 +3,7 @@ import { ChatMessage, OpenWebUIChatConfig, UploadedFile, ChatHistoryItem, ChatCo
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OpenWebUIService } from '../services/openwebui-api';
+import { AttachWebpageModalComponent } from './attach-webpage-modal/attach-webpage-modal.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { getTranslation, Translation } from '../i18n/translations';
 import { ErrorBannerComponent } from './error-banner/error-banner.component';
@@ -37,7 +38,8 @@ import { map } from 'rxjs/operators';
     NoteEditorComponent,
     NotesSidebarComponent,
     ConfirmDialogComponent,
-    ArchivedChatsModalComponent
+    ArchivedChatsModalComponent,
+    AttachWebpageModalComponent
   ],
   templateUrl: './openwebui-chat.html',
   styleUrls: ['./openwebui-chat.scss']
@@ -57,6 +59,7 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   @Input() tools = false;
   @Input() showReferenceChats = false;
   @Input() showReferenceNotes = false;
+  @Input() showAttachWebPage = false;
 
   @Output() chatInitialized = new EventEmitter<void>();
   @Output() messagesChanged = new EventEmitter<number>();
@@ -128,6 +131,10 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
   public askExplainMode = signal<'ask' | 'explain'>('explain');
   public askExplainResponse = signal('');
   public isAskExplainLoading = signal(false);
+  
+  // Webpage attachment state
+  public showWebpageModal = signal(false);
+  public isProcessingWebpage = signal(false);
   
   // Notes state
   public notesList = signal<NoteItem[]>([]);
@@ -472,6 +479,62 @@ export class OpenwebuiChatComponent implements OnInit, OnDestroy {
 
   public removeFile(fileId: string): void {
     this.uploadedFiles.update(files => files.filter(f => f.id !== fileId));
+  }
+  
+  /**
+   * Handle webpage attachment request from ChatInputComponent
+   * Shows the webpage attachment modal
+   */
+  public handleWebpageAttachmentRequested(): void {
+    this.showWebpageModal.set(true);
+    
+    if (this.debug) {
+      console.log('[OpenWebUI] Webpage attachment modal opened');
+    }
+  }
+  
+  /**
+   * Handle webpage attachment from the modal
+   * Processes the webpage and adds it to uploadedFiles
+   */
+  public async handleWebpageAttached(data: { url: string; collectionName: string }): Promise<void> {
+    this.isProcessingWebpage.set(true);
+    
+    try {
+      const webpageFile = await this.openWebUIService.processWebPage(data.url, data.collectionName);
+      
+      // Add the webpage as a file attachment
+      this.uploadedFiles.update(files => [...files, webpageFile]);
+      
+      // Close the modal
+      this.showWebpageModal.set(false);
+      
+      if (this.debug) {
+        console.log('[OpenWebUI] Webpage attached:', webpageFile);
+      }
+    } catch (error) {
+      if (this.debug) {
+        console.error('[OpenWebUI] Webpage attachment failed:', error);
+      }
+      
+      // Show error message
+      const errorMessage = error instanceof Error ? error.message : 'Failed to process webpage';
+      this.showErrorMessage(errorMessage);
+    } finally {
+      this.isProcessingWebpage.set(false);
+    }
+  }
+  
+  /**
+   * Handle closing the webpage attachment modal
+   */
+  public handleCloseWebpageModal(): void {
+    this.showWebpageModal.set(false);
+    this.isProcessingWebpage.set(false);
+    
+    if (this.debug) {
+      console.log('[OpenWebUI] Webpage attachment modal closed');
+    }
   }
 
   /**

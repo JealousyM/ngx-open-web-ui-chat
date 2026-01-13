@@ -27,6 +27,7 @@ export class ChatInputComponent implements OnInit, OnDestroy, AfterViewChecked {
   public tools = input<boolean>(false);
   public showReferenceChats = input<boolean>(false);
   public showReferenceNotes = input<boolean>(false);
+  public showAttachWebPage = input<boolean>(false);
   
   private _inputMessage = signal('');
   
@@ -66,6 +67,7 @@ export class ChatInputComponent implements OnInit, OnDestroy, AfterViewChecked {
   public codeInterpreterRequested = output<void>();
   public referenceChatSelected = output<ReferenceChatFile>();
   public referenceNoteSelected = output<ReferenceNoteFile>();
+  public webpageAttachmentRequested = output<void>();
   
   public webSearchEnabled = signal(false);
   public codeInterpreterEnabled = signal(false);
@@ -289,6 +291,11 @@ export class ChatInputComponent implements OnInit, OnDestroy, AfterViewChecked {
   public triggerFileUpload(): void {
     this.showFileMenu.set(false);
     this.fileInput?.nativeElement.click();
+  }
+  
+  public triggerWebPageAttachment(): void {
+    this.showFileMenu.set(false);
+    this.webpageAttachmentRequested.emit();
   }
   
   public onFileSelected(event: Event): void {

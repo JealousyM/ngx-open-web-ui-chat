@@ -1,0 +1,57 @@
+<div class="modal-backdrop" *ngIf="isVisible()" (click)="onBackdropClick($event)" (keydown)="onKeyDown($event)" tabindex="-1">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>{{ translations().attachWebPageTitle ?? 'Attach Web Page' }}</h2>
+      <button class="close-btn" (click)="onClose()" type="button">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <p class="modal-description">
+        {{ translations().attachWebPageDescription ?? 'Enter the URL of the webpage you want to attach to your message. The content will be processed and made available for the AI to reference.' }}
+      </p>
+      
+      <form (submit)="onSubmit()" class="url-form">
+        <div class="input-group">
+          <label for="webpage-url">{{ translations().webPageUrlLabel ?? 'Web Page URL' }}</label>
+          <input 
+            id="webpage-url"
+            type="url" 
+            [(ngModel)]="webpageUrl" 
+            name="webpageUrl"
+            [placeholder]="translations().webPageUrlPlaceholder ?? 'https://example.com'"
+            [disabled]="isProcessing()"
+            required
+            class="url-input"
+          />
+        </div>
+        
+        @if (errorMessage()) {
+          <div class="error-message">
+            {{ errorMessage() }}
+          </div>
+        }
+        
+        <div class="modal-actions">
+          <button 
+            type="button" 
+            class="cancel-btn"
+            (click)="onClose()"
+            [disabled]="isProcessing()">
+            {{ translations().cancel ?? 'Cancel' }}
+          </button>
+          <button 
+            type="submit" 
+            class="submit-btn"
+            [disabled]="isProcessing() || !webpageUrl().trim()">
+            @if (isProcessing()) {
+              <span class="processing-spinner"></span>
+              {{ translations().processing ?? 'Processing' }}...
+            } @else {
+              {{ translations().attachWebPage ?? 'Attach Web Page' }}
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

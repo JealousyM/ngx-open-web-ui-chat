@@ -14,60 +14,6 @@ Angular 20 component library for embedding OpenWebUI chat with Socket.IO streami
 
 ## 🌐 [Live Demo](https://jealousym.github.io/ngx-open-web-ui-chat/)
 
-## 📖 How to Use the Application
-
-### Step 1: Initial Configuration
-
-When you first launch the application, you'll see the configuration screen:
-
-![Initial Screen](../../docs/images/app-initial-state.png)
-
-Enter:
-1. **Host URL** - your OpenWebUI server address (e.g., `http://localhost:8080`)
-2. **API Key** - your API key for authentication
-
-### Step 2: Load Models
-
-Click the **"Show Models"** button to load available AI models:
-
-![Models Loaded](../../docs/images/app-models-loaded.png)
-
-### Step 3: Select Model
-
-Choose a model from the dropdown list:
-
-![Model Selected](../../docs/images/app-model-selected.png)
-
-### Step 4: Connect to Chat
-
-Click the **"Connect Chat"** button to initialize the chat session:
-
-![Chat Connected](../../docs/images/app-chat-connected.png)
-
-### Step 5: Send Messages
-
-Type your message in the input field and click **"Send"**:
-
-![Typing Message](../../docs/images/app-typing-message.png)
-
-
-Features:
-- View all chats
-- Organize into folders
-- Pinned chats
-- Search through history
-
-#### Notes
-
-Click the **"Notes"** button to work with notes:
-
-![Notes Panel](../../docs/images/app-notes-panel.png)
-
-Features:
-- Create notes
-- Markdown editor
-- Search notes
-- Auto-save
 
 ## Features
 

@@ -127,6 +127,7 @@
     [tools]="tools"
     [showReferenceChats]="showReferenceChats"
     [showReferenceNotes]="showReferenceNotes"
+    [showAttachWebPage]="showAttachWebPage"
     (sendMessage)="sendMessage($event)"
     (stopGeneration)="stopGeneration()"
     (fileSelected)="onFileSelected($event)"
@@ -143,6 +144,7 @@
     (toolsChanged)="handleToolsChanged($event)"
     (referenceChatSelected)="handleReferenceChatSelected($event)"
     (referenceNoteSelected)="handleReferenceNoteSelected($event)"
+    (webpageAttachmentRequested)="handleWebpageAttachmentRequested()"
   />
 
   @if (showSelectionMenu()) {
@@ -198,4 +200,12 @@
       (cancelled)="onNoteDeleteCancelled()">
     </app-confirm-dialog>
   }
+  
+  <!-- Webpage Attachment Modal -->
+  <openwebui-attach-webpage-modal
+    [isVisible]="showWebpageModal()"
+    [translations]="t"
+    (webpageAttached)="handleWebpageAttached($event)"
+    (modalClosed)="handleCloseWebpageModal()">
+  </openwebui-attach-webpage-modal>
 </div>
