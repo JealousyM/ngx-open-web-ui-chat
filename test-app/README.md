@@ -65,8 +65,15 @@ Modern Angular 20 test application showcasing all features of the `ngx-open-web-
 #### 🔗 Reference System
 - Reference previous chats in new messages
 - Reference notes for context
+- Reference web pages for content
 - Visual badge indicators
 - Browse and select references
+
+#### 🌐 Web Page Attachment
+- Process web page content via API
+- Attach web pages to messages
+- Multi-language support
+- Conditional feature toggle
 
 ### User Experience
 

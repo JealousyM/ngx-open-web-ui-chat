@@ -5,6 +5,40 @@ All notable changes to the ngx-open-web-ui-chat project.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2025-01-13
+
+### Added
+
+- 🌐 **Web Page Attachment Feature** - Process and attach web page content to messages
+  - **Attach Web Page Menu** - New "Attach Web Page" option in the "+" dropdown menu
+  - **Web Page Processing** - Uses `/api/v1/retrieval/process/web` endpoint to extract content
+  - **Modal Interface** - Clean dialog for entering web page URLs
+  - **Visual Indicator** - Attached web pages appear as badges in the input area
+  - **Error Handling** - Comprehensive validation and error messaging
+  - **API Integration** - Seamless integration with OpenWebUI web processing API
+- 🎛️ **Feature Toggle Property** - `showAttachWebPage` input to conditionally display the feature
+  - Enable/disable web page attachment functionality
+  - Granular control over advanced features
+  - Default: `false` (opt-in)
+- 🌍 **Complete Translation Support**
+  - Added `attachWebPage`, `attachWebPageTitle`, `attachWebPageDescription` translation keys
+  - Added `webPageUrlLabel`, `webPageUrlPlaceholder`, `processing` translation keys
+  - Translations for all 10 supported languages: English, Chinese, Hindi, Spanish, Arabic, French, Portuguese, Russian, Bengali, Japanese
+- 📁 **New Component** - `AttachWebpageModalComponent` for web page attachment workflow
+  - Standalone modal with form validation
+  - URL validation and error handling
+  - Loading states and user feedback
+  - Clean SCSS styling with responsive design
+
+### Technical Details
+- Added `processWebPage()` method to `OpenWebUIService` with proper API integration
+- Extended `ChatInputComponent` with web page attachment state management signals
+- Added `webpageAttached` EventEmitter for web page selection changes
+- Updated `sendMessage()` to include attached web page content in request payload
+- Added URL validation utilities and error handling
+- Created dedicated modal component with HTML/SCSS/TS separation
+- Implemented proper cleanup and state management
+
 ## [1.1.0] - 2025-12-28
 
 ### Changed
@@ -432,6 +466,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **1.2.0** - Web page attachment feature with API integration and conditional display
 - **1.0.18** - Reference Notes support for referencing notes in messages
 - **1.0.17** - Reference Chat support for referencing previous conversations
 - **1.0.16** - Tools support with API integration and selection menu
@@ -449,6 +484,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **1.0.1** - Initial release
 
 ## Migration Guides
+
+### Upgrading to 1.2.0
+
+No breaking changes. Simply update:
+
+```bash
+npm update ngx-open-web-ui-chat
+```
+
+**What's new:**
+- Web page attachment menu automatically appears in the "+" dropdown when `[showAttachWebPage]="true"`
+- Enter web page URLs to process and attach content to your messages
+- Attached web pages appear as badges in the input area
+- All features work out of the box with no configuration needed
+
+**To enable web page attachment:**
+```typescript
+<openwebui-chat
+  [showAttachWebPage]="true"
+  ...>
+</openwebui-chat>
+```
+
+**Requirements:**
+- OpenWebUI server with `/api/v1/retrieval/process/web` endpoint available
+- Valid web page URLs (HTTP/HTTPS)
+
+**No code changes required** - web page attachment functionality is automatically available when enabled.
+
+
 
 ### Upgrading to 1.0.18
 

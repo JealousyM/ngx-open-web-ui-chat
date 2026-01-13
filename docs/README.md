@@ -17,6 +17,7 @@ Comprehensive documentation for the ngx-open-web-ui-chat library.
 |------|-------------|
 | **[MARKDOWN.md](./MARKDOWN.md)** | Markdown rendering features, syntax, and examples |
 | **[I18N.md](./I18N.md)** | Multi-language support and translation guide |
+| **[WEBPAGE_ATTACHMENT.md](./WEBPAGE_ATTACHMENT.md)** | Web page attachment feature guide and API integration |
 
 ## 🚀 Quick Links
 

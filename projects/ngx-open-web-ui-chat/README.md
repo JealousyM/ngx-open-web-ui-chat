@@ -37,7 +37,9 @@ Angular 20 component library for embedding OpenWebUI chat with Socket.IO streami
 🔌 **Integrations** - Toggle Web Search and Code Interpreter capabilities  
 🛠️ **Tools Support** - Access and enable server-side tools from Open WebUI API  
 💬 **Reference Chats** - Reference previous conversations in new messages  
-📝 **Reference Notes** - Reference notes in new messages
+📝 **Reference Notes** - Reference notes in new messages  
+🌐 **Web Page Attachment** - Process and attach web page content to messages  
+🎛️ **Feature Toggles** - Conditional display of advanced features
 
 
 ## Installation
@@ -123,6 +125,7 @@ export class AppComponent {}
 | `tools` | `boolean` | ❌ | `false` | Enable tools selection menu |
 | `showReferenceChats` | `boolean` | ❌ | `false` | Enable reference chat selection |
 | `showReferenceNotes` | `boolean` | ❌ | `false` | Enable reference note selection |
+| `showAttachWebPage` | `boolean` | ❌ | `false` | Enable web page attachment feature |
 | `style` | `Partial<CSSStyleDeclaration>` | ❌ | - | Custom CSS styles |
 
 ### Outputs
@@ -341,6 +344,7 @@ src/lib/
 │   │   ├── folder-item/            ← Folder item
 │   │   └── folder-context-menu/    ← Folder context menu
 │   ├── archived-chats-modal/       ← Archived chats modal component
+│   ├── attach-webpage-modal/       ← Web page attachment modal component
 │   ├── chat-search-modal/          ← Search modal
 │   ├── confirm-dialog/             ← Confirmation dialogs
 │   ├── error-banner/               ← Error display component
@@ -863,6 +867,59 @@ Reference notes to provide context for new messages:
 4. Send your message - the referenced note provides context
 5. AI can access the referenced note content for better responses
 
+## Web Page Attachment
+
+Process and attach web page content to your messages:
+
+### Features
+
+- 🌐 **Web Page Processing** - Extract and process web page content via OpenWebUI API
+- 📥 **Attachment Menu** - Access via the "+" dropdown menu alongside file upload
+- 🔗 **API Integration** - Uses `/api/v1/retrieval/process/web` endpoint
+- 🏷️ **Visual Indicator** - Attached web pages appear as badges in input area
+- 🌍 **Multi-language** - Full translation support in 10 languages
+- 🎛️ **Conditional Display** - Enable/disable via `showAttachWebPage` property
+
+### Usage
+
+1. **Enable Feature**: Set `[showAttachWebPage]="true"` in your component
+2. **Access Menu**: Click "+" button and select "Attach Web Page"
+3. **Enter URL**: Paste the web page URL in the modal dialog
+4. **Process Content**: Click "Attach" to process the web page
+5. **Send Message**: The web page content is automatically included
+
+```typescript
+<openwebui-chat
+  [showAttachWebPage]="true"
+  ...>
+</openwebui-chat>
+```
+
+### How It Works
+
+1. Click "+" button and select "Attach Web Page"
+2. Enter a valid web page URL in the modal dialog
+3. The URL is sent to `/api/v1/retrieval/process/web` endpoint
+4. OpenWebUI processes the web page content
+5. Processed content is attached as a file-like object
+6. Send your message - the web page content provides context
+7. AI can access the processed web page content for better responses
+
+### Example
+
+```typescript
+// User attaches: https://example.com/article
+// System processes and includes content in message context
+// AI can reference the article content in responses
+```
+
+### Error Handling
+
+- Invalid URLs are rejected with clear error messages
+- Network errors are displayed with retry options
+- Processing failures show descriptive error messages
+- All errors are translated in 10 languages
+
 ## Archived Chats
 
 Access and manage your archived conversations with the archived chats modal:
@@ -903,6 +960,8 @@ Access and manage your archived conversations with the archived chats modal:
 - [x] Archived chats modal with search
 - [x] Tools support with API integration
 - [x] Reference chat support for conversation context
+- [x] Web page attachment with content processing
+- [x] Conditional feature display with toggles
 
 ## Contributing
 

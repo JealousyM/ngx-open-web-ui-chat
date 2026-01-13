@@ -100,6 +100,8 @@ Create and manage notes with a built-in markdown editor:
 - 🛠️ **Tools Support** - Access and enable server-side tools from Open WebUI API
 - 💬 **Reference Chats** - Reference previous conversations in new messages
 - 📝 **Reference Notes** - Reference notes in new messages
+- 🌐 **Web Page Attachment** - Process and attach web page content to messages
+- 🎛️ **Feature Toggles** - Conditional display of advanced features
 
 ## 🚀 Quick Start
 
@@ -213,6 +215,7 @@ openwebui-ts-embedded-sdk/
 │       │   │   │   ├── folder-item/
 │       │   │   │   └── folder-context-menu/
 │       │   │   ├── archived-chats-modal/       ← Archived chats modal
+│       │   │   ├── attach-webpage-modal/       ← Web page attachment modal
 │       │   │   ├── note-editor/                ← Note editor component
 │       │   │   ├── notes-sidebar/              ← Notes sidebar component
 │       │   │   ├── tools-menu/                 ← Tools selection submenu
@@ -269,6 +272,7 @@ openwebui-ts-embedded-sdk/
 | `tools` | `boolean` | ❌ | `false` | Enable tools selection menu |
 | `showReferenceChats` | `boolean` | ❌ | `false` | Enable reference chat selection |
 | `showReferenceNotes` | `boolean` | ❌ | `false` | Enable reference note selection |
+| `showAttachWebPage` | `boolean` | ❌ | `false` | Enable web page attachment feature |
 
 ### Outputs
 
@@ -459,6 +463,8 @@ MIT License - see LICENSE file for details
 - ✅ Reference chats and notes
 - ✅ Web search & code interpreter
 - ✅ Multi-language support (10 languages)
+- ✅ Web page attachment with content processing
+- ✅ Conditional feature display with toggles
 
 ### Planned Features 🚀
 - [ ] Image generation support
