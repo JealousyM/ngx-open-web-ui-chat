@@ -41,7 +41,7 @@ docs/
 ### For New Users
 
 - **Getting Started**: [Main README](../README.md) - Installation and quick start
-- **Live Demo**: [Demo Application](https://jealousym.github.io/ngx-open-web-ui-chat/) - Try it online
+- **Live Demo**: [Demo Application](https://micode-ai.github.io/ngx-open-web-ui-chat/) - Try it online
 - **Examples**: [Library README](../projects/ngx-open-web-ui-chat/README.md) - Code examples
 
 ### For Developers

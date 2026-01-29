@@ -30,7 +30,7 @@ Please read and follow our [Code of Conduct](./CODE_OF_CONDUCT.md). We are commi
 
 3. **Add upstream remote**
    ```bash
-   git remote add upstream https://github.com/jealousym/ngx-open-web-ui-chat.git
+   git remote add upstream https://github.com/micode-ai/ngx-open-web-ui-chat.git
    ```
 
 4. **Install dependencies**

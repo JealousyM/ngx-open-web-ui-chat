@@ -6,13 +6,13 @@ Angular 20 component library for embedding OpenWebUI chat with Socket.IO streami
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
 [![Zoneless](https://img.shields.io/badge/Zoneless-✓-green)]()
 [![Signals](https://img.shields.io/badge/Signals-✓-blue)]()
-[![Demo](https://img.shields.io/badge/Demo-Live-blue)](https://jealousym.github.io/ngx-open-web-ui-chat/)
+[![Demo](https://img.shields.io/badge/Demo-Live-blue)](https://micode-ai.github.io/ngx-open-web-ui-chat/)
 [![NPM Version](https://img.shields.io/npm/v/ngx-open-web-ui-chat.svg)](https://www.npmjs.com/package/ngx-open-web-ui-chat)
 ![NPM Downloads](https://img.shields.io/npm/d18m/ngx-open-web-ui-chat.svg)
 
 
 
-## 🌐 [Live Demo](https://jealousym.github.io/ngx-open-web-ui-chat/)
+## 🌐 [Live Demo](https://micode-ai.github.io/ngx-open-web-ui-chat/)
 
 
 ## Features
@@ -973,7 +973,7 @@ MIT License
 
 ## Support
 
-- 📧 Issues: [GitHub Issues](https://github.com/JealousyM/ngx-open-web-ui-chat/issues)
+- 📧 Issues: [GitHub Issues](https://github.com/micode-ai/ngx-open-web-ui-chat/issues)
 - 📚 Docs: [Documentation](../../docs/)
 
 ## Credits

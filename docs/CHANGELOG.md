@@ -666,8 +666,8 @@ npm install ngx-open-web-ui-chat@latest
 ## Links
 
 - [NPM Package](https://www.npmjs.com/package/ngx-open-web-ui-chat)
-- [GitHub Repository](https://github.com/JealousyM/ngx-open-web-ui-chat)
-- [Live Demo](https://jealousym.github.io/ngx-open-web-ui-chat/)
+- [GitHub Repository](https://github.com/micode-ai/ngx-open-web-ui-chat)
+- [Live Demo](https://micode-ai.github.io/ngx-open-web-ui-chat/)
 - [API Documentation](API.md)
 
 ---

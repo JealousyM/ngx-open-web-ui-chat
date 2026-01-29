@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
           <p>Test the ngx-open-web-ui-chat component with your OpenWebUI instance</p>
         </div>
         <div class="links">
-          <a href="https://github.com/JealousyM/ngx-open-web-ui-chat" 
+          <a href="https://github.com/micode-ai/ngx-open-web-ui-chat" 
              target="_blank" 
              rel="noopener"
              class="btn btn-github">

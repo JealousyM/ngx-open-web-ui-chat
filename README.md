@@ -6,7 +6,7 @@ Modern Angular 20 library for embedding OpenWebUI chat in your applications with
 
 ## 🌐 Live Demo
 
-**[Try the live demo →](https://jealousym.github.io/ngx-open-web-ui-chat/)**
+**[Try the live demo →](https://micode-ai.github.io/ngx-open-web-ui-chat/)**
 
 Interactive demo showcasing all features:
 - Dynamic configuration
